@@ -1,0 +1,15 @@
+{
+    "Hidden": {
+        "group_class": "boss",
+        "group_token": "Hidden",
+        "group_order": 0,
+        "group_child_tokens": [
+            "trill-aura",
+            "trill-slasher",
+            "slur-aura",
+            "trill-teranova",
+            "slur-twister",
+            "slur-supernova"
+        ]
+    }
+}
