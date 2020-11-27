@@ -146,7 +146,7 @@ $functions = array(
         if ($this_robot->has_attribute('quick-charge')){ $is_summoned = true; }
 
         // If the ability is already summoned and is core-match or Target Module, allow bench targeting
-        if ($is_summoned && ($is_corematch || $this_robot->has_item('target-module'))){ $this_ability->set_target('select_target'); }
+        if ($is_summoned && ($is_corematch || $this_robot->has_attribute('extended-range'))){ $this_ability->set_target('select_target'); }
         else { $this_ability->set_target('auto'); }
 
         // Define the sprite sheet and animation defaults

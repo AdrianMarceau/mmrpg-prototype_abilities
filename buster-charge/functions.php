@@ -62,7 +62,7 @@ $functions = array(
 
         // If used by support robot OR the has a Target Module, allow bench targetting
         if ($this_robot->robot_core === '' || $this_robot->robot_class == 'mecha'){ $this_ability->set_target('select_this'); }
-        elseif ($this_robot->has_item('target-module')){ $this_ability->set_target('select_this'); }
+        elseif ($this_robot->has_attribute('extended-range')){ $this_ability->set_target('select_this'); }
         else { $this_ability->set_target('auto'); }
 
         // Return true on success

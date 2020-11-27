@@ -62,8 +62,8 @@ $functions = array(
             }
         }
 
-        // If the user is holding a Target Module, allow bench targeting
-        if ($this_robot->has_item('target-module')){ $this_ability->set_target('select_target'); }
+        // If the user has Extended Range, allow bench targeting
+        if ($this_robot->has_attribute('extended-range')){ $this_ability->set_target('select_target'); }
         else { $this_ability->reset_target(); }
 
         // Return true on success

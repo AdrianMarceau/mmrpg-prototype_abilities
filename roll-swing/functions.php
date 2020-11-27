@@ -101,7 +101,7 @@ $functions = array(
         extract($objects);
 
         /*
-        // If this robot is holding a Target Module, allow target selection
+        // If this robot has Extended Range, allow target selection
         if ($this_robot->robot_item == 'target-module'){
             $this_ability->set_target('select_target');
         } else {
