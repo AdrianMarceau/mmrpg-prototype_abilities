@@ -92,7 +92,9 @@ $functions = array(
 
         // Calculate the new type for this ability given target weaknesses
         $main_ability_types = $get_ability_types($main_target_robot);
-        $main_ability_subtype = array_shift(array_slice(array_filter($main_ability_types), -1, 1));
+        $main_ability_subtype = array_filter($main_ability_types);
+        $main_ability_subtype = array_slice($main_ability_subtype, -1, 1);
+        $main_ability_subtype = array_shift($main_ability_subtype);
         $main_ability_image = $this_ability->ability_token.'_'.$main_ability_subtype;
         $base_attachment_info['ability_image'] = $main_ability_image;
 
