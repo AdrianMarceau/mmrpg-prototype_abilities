@@ -27,8 +27,8 @@ $functions = array(
         // Check if this ability is already charged
         $is_charged = isset($this_robot->robot_attachments[$this_attachment_token]) ? true : false;
 
-        // If the user is holding a Charge Module, auto-charge the ability
-        if ($this_robot->has_item('charge-module')){ $is_charged = true; }
+        // If the user has Quick Charge, auto-charge the ability
+        if ($this_robot->has_attribute('quick-charge')){ $is_charged = true; }
 
         // If the ability flag was not set, this ability begins charging
         if (!$is_charged){

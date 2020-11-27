@@ -73,8 +73,8 @@ $functions = array(
             if (!empty($is_summoned_tokens)){ $is_summoned = true; }
         }
 
-        // If the user is holding a Charge Module, auto-charge the ability
-        if ($this_robot->has_item('charge-module')){ $is_summoned = true; $is_summoned_in_full = true; }
+        // If the user has Quick Charge, auto-charge the ability
+        if ($this_robot->has_attribute('quick-charge')){ $is_summoned = true; $is_summoned_in_full = true; }
 
         // If the ability flag was not set, this ability begins charging
         if (!$is_summoned){
@@ -242,8 +242,8 @@ $functions = array(
         // Otherwise, return the weapon energy back to default
         else { $this_ability->reset_energy(); }
 
-        // If the user is holding a Charge Module, auto-charge the ability
-        if ($this_robot->has_item('charge-module')){ $is_summoned = true; $is_summoned_in_full = true; }
+        // If the user has Quick Charge, auto-charge the ability
+        if ($this_robot->has_attribute('quick-charge')){ $is_summoned = true; $is_summoned_in_full = true; }
 
         // If the ability is already charged, allow bench targeting
         if ($is_summoned){ $this_ability->set_target('select_target'); }
