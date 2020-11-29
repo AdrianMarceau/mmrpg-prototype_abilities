@@ -132,7 +132,6 @@
         "group_order": 11,
         "group_child_tokens": [
             "gemini-clone",
-            "hard-knuckle",
             "top-spin",
             "search-snake",
             "spark-shock"
@@ -146,7 +145,8 @@
             "shadow-blade",
             "needle-cannon",
             "magnet-missile",
-            "gemini-laser"
+            "gemini-laser",
+            "hard-knuckle"
         ]
     },
     "MM04\/Weapons\/025T1": {
