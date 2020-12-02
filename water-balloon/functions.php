@@ -105,6 +105,19 @@ $functions = array(
         // Return true on success
         return true;
 
+    },
+    'ability_function_onload' => function($objects){
+
+        // Extract all objects into the current scope
+        extract($objects);
+
+        // If the user has Extended Range, allow bench targeting
+        if ($this_robot->has_attribute('extended-range')){ $this_ability->set_target('select_target'); }
+        else { $this_ability->reset_target(); }
+
+        // Return true on success
+        return true;
+
     }
 );
 ?>
