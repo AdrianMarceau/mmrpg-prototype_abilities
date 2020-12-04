@@ -19,6 +19,9 @@ $functions = array(
         $this_robot->trigger_custom_function('rpg-ability_elemental-shot_before', $extra_objects);
         if ($options->return_early){ return $options->return_value; }
 
+        // Predefine the damage amount so we can reduce with subsequent shots
+        $energy_damage_amount = $this_ability->ability_damage;
+
         // Loop through the allowed number of shots and fire that many times
         for ($num_shot = 1; $num_shot <= $options->num_buster_shots; $num_shot++){
 
@@ -44,8 +47,8 @@ $functions = array(
                 'success' => array(0, -60, 0, 10, 'The '.$this_ability->print_name().' hit the target!'),
                 'failure' => array(0, -60, 0, -10, 'The '.$this_ability->print_name().' missed&hellip;')
                 ));
-            $energy_damage_amount = $this_ability->ability_damage;
-            $target_robot->trigger_damage($this_robot, $this_ability, $energy_damage_amount);
+            if ($num_shot > 1){ $energy_damage_amount -= ($energy_damage_amount * 0.10); }
+            $target_robot->trigger_damage($this_robot, $this_ability, ceil($energy_damage_amount));
 
             // Break early if the target has been disabled
             if ($target_robot->robot_energy < 1 || $target_robot->robot_status === 'disabled'){ break; }
