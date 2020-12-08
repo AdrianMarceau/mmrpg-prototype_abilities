@@ -164,7 +164,7 @@ $functions = array(
         $main_target_robot->trigger_damage($this_robot, $this_ability, $energy_damage_amount, false);
 
         // Remove any leftover attachments from this robot
-        $this_robot->unset_attachment($main_attachment_token);
+        $this_robot->unset_attachment($base_attachment_token);
         $this_robot->unset_attachment($background_attachment_token);
         $this_robot->unset_attachment($foreground_attachment_token);
 
