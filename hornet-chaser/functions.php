@@ -204,7 +204,7 @@ $functions = array(
                         if (!empty($stat_boost_tokens)){
                             foreach ($stat_boost_tokens AS $stat_token){
                                 // Call the global stat boost function with customized options
-                                rpg_ability::ability_function_stat_boost($this_robot, $stat_token, $stat_boost_amount);
+                                rpg_ability::ability_function_stat_boost($this_robot, $stat_token, $stat_boost_amount, $this_ability);
                             }
                         }
 

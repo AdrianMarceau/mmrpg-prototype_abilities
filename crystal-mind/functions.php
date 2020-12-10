@@ -114,9 +114,9 @@ $functions = array(
             if ($this_robot->robot_status != 'disabled'){
 
                 // Call the global stat break functions with customized options
-                rpg_ability::ability_function_stat_boost($this_robot, 'attack', $boost_amount);
-                rpg_ability::ability_function_stat_boost($this_robot, 'defense', $boost_amount);
-                rpg_ability::ability_function_stat_boost($this_robot, 'speed', $boost_amount);
+                rpg_ability::ability_function_stat_boost($this_robot, 'attack', $boost_amount, $this_ability);
+                rpg_ability::ability_function_stat_boost($this_robot, 'defense', $boost_amount, $this_ability);
+                rpg_ability::ability_function_stat_boost($this_robot, 'speed', $boost_amount, $this_ability);
 
             }
 

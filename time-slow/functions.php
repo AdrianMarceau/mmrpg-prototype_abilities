@@ -38,7 +38,9 @@ $functions = array(
         $this_robot->update_session();
 
         // Call the global stat break function with customized options
-        rpg_ability::ability_function_stat_break($target_robot, 'speed', 2);
+        rpg_ability::ability_function_stat_break($target_robot, 'speed', 2, $this_ability, array(
+            'initiator_robot' => $this_robot
+            ));
 
         // Return true on success
         return true;

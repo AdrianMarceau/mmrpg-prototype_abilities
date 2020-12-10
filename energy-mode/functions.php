@@ -31,13 +31,19 @@ $functions = array(
         }
 
         // Call the global stat break function with customized options
-        rpg_ability::ability_function_stat_break($this_robot, $lower_stats[0], 2, $this_ability, 1);
+        rpg_ability::ability_function_stat_break($this_robot, $lower_stats[0], 2, $this_ability, array(
+            'success_frame' => 1
+            ));
 
         // Call the global stat break function with customized options
-        rpg_ability::ability_function_stat_break($this_robot, $lower_stats[1], 2, $this_ability, 2);
+        rpg_ability::ability_function_stat_break($this_robot, $lower_stats[1], 2, $this_ability, array(
+            'success_frame' => 2
+            );
 
         // Call the global stat break function with customized options
-        rpg_ability::ability_function_stat_break($this_robot, $lower_stats[2], 2, $this_ability, 3);
+        rpg_ability::ability_function_stat_break($this_robot, $lower_stats[2], 2, $this_ability, array(
+            'success_frame' => 3
+            ));
 
         // Increase this robot's life energy stat to max
         $this_ability->recovery_options_update(array(

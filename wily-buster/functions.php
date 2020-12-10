@@ -43,7 +43,7 @@ $functions = array(
             $this_robot->trigger_target($this_robot, $this_ability);
 
             // Call the global stat boost function with customized options
-            rpg_ability::ability_function_stat_boost($this_robot, 'attack', 1);
+            rpg_ability::ability_function_stat_boost($this_robot, 'attack', 1, $this_ability);
 
             // Attach this ability attachment to the robot using it
             $this_robot->robot_attachments[$this_attachment_token] = $this_attachment_info;

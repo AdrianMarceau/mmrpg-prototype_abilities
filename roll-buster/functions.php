@@ -81,7 +81,9 @@ $functions = array(
                 && $this_ability->ability_results['this_result'] != 'failure'){
 
                 // Call the global stat break function with customized options
-                rpg_ability::ability_function_stat_break($target_robot, 'defense', 3);
+                rpg_ability::ability_function_stat_break($target_robot, 'defense', 3, $this_ability, array(
+                    'initiator_robot' => $this_robot
+                    ));
 
             }
 

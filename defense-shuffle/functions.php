@@ -29,12 +29,14 @@ $functions = array(
         if (mt_rand(0, 1) == 0){
 
             // Call the global stat boost function with customized options
-            rpg_ability::ability_function_stat_boost($this_robot, 'defense', mt_rand(1, 10));
+            rpg_ability::ability_function_stat_boost($this_robot, 'defense', mt_rand(1, 10), $this_ability);
 
         } else {
 
             // Call the global stat break function with customized options
-            rpg_ability::ability_function_stat_break($target_robot, 'defense', mt_rand(1, 10));
+            rpg_ability::ability_function_stat_break($target_robot, 'defense', mt_rand(1, 10), $this_ability, array(
+                'initiator_robot' => $this_robot
+                ));
 
         }
 

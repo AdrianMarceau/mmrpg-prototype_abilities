@@ -172,7 +172,7 @@ $functions = array(
         }
 
         // Call the global stat break function with customized options
-        rpg_ability::ability_function_stat_break($this_robot, 'attack', 2);
+        rpg_ability::ability_function_stat_break($this_robot, 'attack', 2, $this_ability);
 
         // Return true on success
         return true;
