@@ -38,7 +38,7 @@ $functions = array(
         // Call the global stat break function with customized options
         rpg_ability::ability_function_stat_break($this_robot, $lower_stats[1], 2, $this_ability, array(
             'success_frame' => 2
-            );
+            ));
 
         // Call the global stat break function with customized options
         rpg_ability::ability_function_stat_break($this_robot, $lower_stats[2], 2, $this_ability, array(
