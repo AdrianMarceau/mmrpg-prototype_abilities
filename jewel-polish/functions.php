@@ -66,7 +66,12 @@ $functions = array(
             if ($temp_ally_robot->counters[$stat.'_mods'] < 0){
                 // Call the global stat reset function with customized options
                 $stat_reset_text = $temp_ally_robot->print_name().' buffed away '.($stats_reset >= 1 ? 'another' : 'a').' stat break!<br /> ';
-                rpg_ability::ability_function_stat_reset($temp_ally_robot, $stat, $this_ability, null, null, $stat_reset_text);
+                rpg_ability::ability_function_stat_reset($temp_ally_robot, $stat, $this_ability, array(
+                    'initiator_robot' => $this_robot,
+                    'success_frame' => null,
+                    'failure_frame' => null,
+                    'extra_text' => $stat_reset_text
+                    ));
                 $something_happened = true;
                 $stats_reset += 1;
             }

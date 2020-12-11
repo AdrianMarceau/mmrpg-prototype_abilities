@@ -52,7 +52,9 @@ $functions = array(
             && $target_robot->counters['defense_mods'] > 0){
 
             // Call the global stat reset function with customized options
-            rpg_ability::ability_function_stat_reset($target_robot, 'defense');
+            rpg_ability::ability_function_stat_reset($target_robot, 'defense', $this_ability, array(
+                'initiator_robot' => $this_robot
+                ));
 
         }
 
@@ -95,13 +97,15 @@ $functions = array(
                 && $target_robot->counters['defense_mods'] > 0){
 
                 // Call the global stat reset function with customized options
-                rpg_ability::ability_function_stat_reset($target_robot, 'defense');
+                rpg_ability::ability_function_stat_reset($target_robot, 'defense', $this_ability, array(
+                    'initiator_robot' => $this_robot
+                    ));
 
             }
 
         }
 
-        // Remove the second whirlwind
+        // Remove the second drill
         if (isset($this_robot->robot_attachments[$this_attachment_token.'_2'])){
             unset($this_robot->robot_attachments[$this_attachment_token.'_2']);
             $this_robot->update_session();

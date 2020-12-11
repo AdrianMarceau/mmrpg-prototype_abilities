@@ -35,7 +35,9 @@ $functions = array(
             && $target_robot->counters['speed_mods'] > 0){
 
             // Call the global stat reset function with customized options
-            rpg_ability::ability_function_stat_reset($target_robot, 'speed');
+            rpg_ability::ability_function_stat_reset($target_robot, 'speed', $this_ability, array(
+                'initiator_robot' => $this_robot
+                ));
 
         }
 
