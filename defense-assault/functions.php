@@ -10,7 +10,9 @@ $functions = array(
         $this_robot->trigger_target($target_robot, $this_ability);
 
         // Call the global stat break function with customized options
-        rpg_ability::ability_function_stat_break($target_robot, 'defense', 1, $this_ability);
+        rpg_ability::ability_function_stat_break($target_robot, 'defense', 1, $this_ability, array(
+            'initiator_robot' => $this_robot
+            ));
 
         // Loop through the target player's active bots and lower their stats
         $backup_robots_active = $target_player->values['robots_active'];
@@ -20,7 +22,9 @@ $functions = array(
             foreach ($backup_robots_active AS $key => $info){
                 if ($info['robot_id'] == $target_robot->robot_id){ continue; }
                 $temp_target_robot = rpg_game::get_robot($this_battle, $target_player, $info);
-                rpg_ability::ability_function_stat_break($temp_target_robot, 'defense', 1, $this_ability);
+                rpg_ability::ability_function_stat_break($temp_target_robot, 'defense', 1, $this_ability, array(
+                    'initiator_robot' => $this_robot
+                    ));
                 $this_key++;
             }
         }

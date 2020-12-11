@@ -111,7 +111,7 @@ $functions = array(
             && $this_ability->ability_results['this_result'] == 'success'){
 
             // Call the global stat boost function with customized options
-            rpg_ability::ability_function_stat_boost($this_robot, 'attack', 3);
+            rpg_ability::ability_function_stat_boost($this_robot, 'attack', 3, $this_ability);
 
         }
 

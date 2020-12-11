@@ -67,7 +67,10 @@ $functions = array(
             && $target_robot->counters['speed_mods'] > 0){
 
             // Call the global stat break function with customized options
-            rpg_ability::ability_function_fixed_stat_break($target_robot, 'speed', 1);
+            $speed_breaks = $target_robot->counters['speed_mods'];
+            rpg_ability::ability_function_fixed_stat_break($target_robot, 'speed', $speed_breaks, $this_ability, array(
+                'initiator_robot' => $this_robot
+                ));
 
         }
 
@@ -103,7 +106,10 @@ $functions = array(
             if ($temp_target_robot->robot_status != 'disabled'
                 && $this_ability->ability_results['this_result'] != 'failure'
                 && $temp_target_robot->counters['speed_mods'] > 0){
-                rpg_ability::ability_function_fixed_stat_break($temp_target_robot, 'speed', 1);
+                $speed_breaks = $temp_target_robot->counters['speed_mods'];
+                rpg_ability::ability_function_fixed_stat_break($temp_target_robot, 'speed', $speed_breaks, $this_ability, array(
+                    'initiator_robot' => $this_robot
+                    ));
             }
         }
 

@@ -39,7 +39,9 @@ $functions = array(
             foreach ($check_stats AS $stat){
                 if ($target_robot->counters[$stat.'_mods'] > 0){
                     // Call the global stat break function with customized options
-                    rpg_ability::ability_function_stat_reset($target_robot, $stat);
+                    rpg_ability::ability_function_stat_reset($target_robot, $stat, $this_ability, array(
+                        'initiator_robot' => $this_robot
+                        ));
                 }
             }
 

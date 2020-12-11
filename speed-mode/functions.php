@@ -31,13 +31,19 @@ $functions = array(
         }
 
         // Call the global stat break function with customized options
-        rpg_ability::ability_function_stat_break($this_robot, $lower_stats[0], 2, $this_ability, 1);
+        rpg_ability::ability_function_stat_break($this_robot, $lower_stats[0], 2, $this_ability, array(
+            'success_frame' => 1
+            ));
 
         // Call the global stat break function with customized options
-        rpg_ability::ability_function_stat_break($this_robot, $lower_stats[1], 2, $this_ability, 2);
+        rpg_ability::ability_function_stat_break($this_robot, $lower_stats[1], 2, $this_ability, array(
+            'success_frame' => 2
+            ));
 
         // Call the global stat boost function with customized options
-        rpg_ability::ability_function_stat_boost($this_robot, $raise_stat, 5, $this_ability, 0);
+        rpg_ability::ability_function_stat_boost($this_robot, $raise_stat, 5, $this_ability, array(
+            'success_frame' => 0
+            ));
 
         // Return true on success
         return true;

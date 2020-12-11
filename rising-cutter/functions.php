@@ -36,7 +36,9 @@ $functions = array(
         // Only lower the target's stat of the ability was successful
         if ($this_ability->ability_results['this_result'] != 'failure'){
             // Call the global stat break function with customized options
-            rpg_ability::ability_function_stat_break($target_robot, 'defense', 2);
+            rpg_ability::ability_function_stat_break($target_robot, 'defense', 2, $this_ability, array(
+                'initiator_robot' => $this_robot
+                ));
         }
 
         // Return true on success

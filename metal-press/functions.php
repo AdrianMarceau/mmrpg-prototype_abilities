@@ -97,9 +97,15 @@ $functions = array(
                 && $this_ability->ability_results['this_result'] != 'failure'){
 
                 // Call the global stat break functions with customized options
-                rpg_ability::ability_function_stat_break($target_robot, 'attack', 1);
-                rpg_ability::ability_function_stat_break($target_robot, 'defense', 1);
-                rpg_ability::ability_function_stat_break($target_robot, 'speed', 1);
+                rpg_ability::ability_function_stat_break($target_robot, 'attack', 1, $this_ability, array(
+                    'initiator_robot' => $this_robot
+                    ));
+                rpg_ability::ability_function_stat_break($target_robot, 'defense', 1, $this_ability, array(
+                    'initiator_robot' => $this_robot
+                    ));
+                rpg_ability::ability_function_stat_break($target_robot, 'speed', 1, $this_ability, array(
+                    'initiator_robot' => $this_robot
+                    ));
 
             }
 
@@ -145,9 +151,15 @@ $functions = array(
                     && $this_ability->ability_results['this_result'] != 'failure'){
 
                     // Call the global stat break functions with customized options
-                    rpg_ability::ability_function_stat_break($target_robot, 'attack', 1);
-                    rpg_ability::ability_function_stat_break($target_robot, 'defense', 1);
-                    rpg_ability::ability_function_stat_break($target_robot, 'speed', 1);
+                    rpg_ability::ability_function_stat_break($target_robot, 'attack', 1, $this_ability, array(
+                        'initiator_robot' => $this_robot
+                        ));
+                    rpg_ability::ability_function_stat_break($target_robot, 'defense', 1, $this_ability, array(
+                        'initiator_robot' => $this_robot
+                        ));
+                    rpg_ability::ability_function_stat_break($target_robot, 'speed', 1, $this_ability, array(
+                        'initiator_robot' => $this_robot
+                        ));
 
                 }
 

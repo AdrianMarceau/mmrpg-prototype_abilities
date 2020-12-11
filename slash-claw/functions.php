@@ -40,7 +40,10 @@ $functions = array(
                 if ($target_robot->counters[$stat.'_mods'] >= 0){ continue; }
 
                 // Call the global stat break function with customized options
-                rpg_ability::ability_function_stat_break($target_robot, $stat, ($target_robot->counters[$stat.'_mods'] * -1));
+                $break_power = ($target_robot->counters[$stat.'_mods'] * -1);
+                rpg_ability::ability_function_stat_break($target_robot, $stat, $break_power, $this_ability, array(
+                    'initiator_robot' => $this_robot
+                    ));
 
             }
 

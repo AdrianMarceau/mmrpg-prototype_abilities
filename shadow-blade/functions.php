@@ -37,7 +37,9 @@ $functions = array(
             $best_stat = rpg_robot::get_best_stat($target_robot);
 
             // Call the global stat break function with customized options
-            rpg_ability::ability_function_stat_break($target_robot, $best_stat, 1);
+            rpg_ability::ability_function_stat_break($target_robot, $best_stat, 1, $this_ability, array(
+                'initiator_robot' => $this_robot
+                ));
 
         }
 
