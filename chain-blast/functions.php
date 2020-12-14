@@ -28,6 +28,8 @@ $functions = array(
             'ability_frame_offset' => array('x' => $attachment_x_offset, 'y' => $attachment_y_offset, 'z' => 10),
             'attachment_energy' => 0,
             'attachment_energy_base_percent' => $base_attachment_damage,
+            'attachment_weaknesses' => array('flame'),
+            'attachment_weaknesses_trigger' => 'either',
             'attachment_create' => array(
                 'kind' => 'energy',
                 'trigger' => 'special',
