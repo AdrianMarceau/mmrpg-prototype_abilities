@@ -349,7 +349,6 @@
         "group_token": "MM11\/Weapons\/081T1",
         "group_order": 31,
         "group_child_tokens": [
-            "chain-blast",
             "blazing-torch",
             "pile-driver",
             "bounce-ball",
@@ -362,6 +361,7 @@
         "group_token": "MM11\/Weapons\/081T2",
         "group_order": 32,
         "group_child_tokens": [
+            "chain-blast",
             "tundra-storm",
             "scramble-thunder",
             "acid-barrier"
