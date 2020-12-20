@@ -75,6 +75,18 @@ $functions = array(
             unset($target_robot->robot_attachments[$this_attachment_token]);
             $target_robot->update_session();
 
+            // Add this item to the robot's list of dropped items
+            $dropped_items = $this_robot->get_value('dropped_items');
+            if (empty($dropped_items)){ $dropped_items = array(); }
+            $dropped_items[] = $old_item_token;
+            $this_robot->set_value('dropped_items', $dropped_items);
+            if ($target_player->player_side == 'left'){
+                $ptoken = $target_player->player_token;
+                $rtoken = $target_robot->robot_token;
+                if (!isset($_SESSION['ITEMS_DROPPED'])){ $_SESSION['ITEMS_DROPPED'] = array(); }
+                $_SESSION['ITEMS_DROPPED'][] = array('player' => $ptoken, 'robot' => $rtoken, 'item' => $old_item_token);
+            }
+
             // If the target robot was the player, we gotta update the session
             if ($target_player->player_side == 'left'
                 && empty($this_battle->flags['player_battle'])
