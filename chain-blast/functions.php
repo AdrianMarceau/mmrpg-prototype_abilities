@@ -36,7 +36,8 @@ $functions = array(
                 'type' => '',
                 'percent' => false,
                 'frame' => 'defend',
-                'success' => array(4, $attachment_x_offset, $attachment_y_offset, 10, 'The '.$this_ability->print_name().' attached itself to '.$this_robot->print_name().'!'),
+                'rates' => array(100, 0, 0),
+                'success' => array(4, $attachment_x_offset, $attachment_y_offset, 10, 'The '.$this_ability->print_name().' attached itself to '.$target_robot->print_name().'!'),
                 'failure' => array(4, 2, ($attachment_x_offset + 40), $attachment_y_offset, 'The '.$this_ability->print_name().' flew past the target&hellip;')
                 ),
             'attachment_destroy' => array(
@@ -61,6 +62,29 @@ $functions = array(
                     'referred_damage_id' => 0,
                     'referred_damage_stats' => array()
                     )
+                ),
+            'attachment_destroy_via_weaknesses' => array(
+                'kind' => 'energy',
+                'trigger' => 'special',
+                'type' => $this_ability->ability_type,
+                'energy' => 0,
+                'percent' => true,
+                'modifiers' => true,
+                'frame' => 'defend',
+                'rates' => array(100, 0, 0),
+                'success' => array(9, $attachment_x_offset, $attachment_y_offset, 10, 'The '.$this_ability->print_name().' was defused by the attack!'),
+                'failure' => array(9, -9999, -9999, 0, 'The '.$this_ability->print_name().' fizzled and faded away&hellip;'),
+                'options' => array(
+                    'apply_modifiers' => true,
+                    'apply_type_modifiers' => true,
+                    'apply_core_modifiers' => true,
+                    'apply_field_modifiers' => true,
+                    'apply_stat_modifiers' => false,
+                    'apply_position_modifiers' => false,
+                    'referred_damage' => true,
+                    'referred_damage_id' => 0,
+                    'referred_damage_stats' => array()
+                    )
                 )
             );
 
@@ -73,6 +97,8 @@ $functions = array(
             'ability_image' => $this_ability->ability_image.'-2',
             'attachment_token' => $this_attachment_fx_token,
             'attachment_duration' => $base_attachment_duration,
+            'attachment_weaknesses' => array('flame'),
+            'attachment_weaknesses_trigger' => 'either',
             'ability_frame' => 0,
             'ability_frame_animate' => array(0),
             'ability_frame_offset' => array('x' => $attachment_x_offset, 'y' => $attachment_y_offset, 'z' => 9),
@@ -100,9 +126,9 @@ $functions = array(
             // Target this robot's self
             $this_ability->target_options_update(array(
                 'frame' => 'throw',
-                'success' => array(0, 100, $attachment_y_offset, 10, $this_robot->print_name().' throw a '.$this_ability->print_name().'!')
+                'success' => array(0, 100, $attachment_y_offset, 10, $this_robot->print_name().' throws a '.$this_ability->print_name().'!')
                 ));
-            $this_robot->trigger_target($this_robot, $this_ability);
+            $this_robot->trigger_target($target_robot, $this_ability);
 
             // Count the number of existing copies of this attachment on the target side of the field
             $count_existing_copies = function($attachment_token) use ($target_player){
@@ -163,9 +189,11 @@ $functions = array(
             // Collect the existing attachment info from the target then remove it
             $existing_attachment_info = $target_robot->robot_attachments[$this_attachment_token];
             $target_robot->unset_attachment($this_attachment_token);
+            $target_robot->unset_attachment($this_attachment_fx_token);
 
             // Update this ability with the attachment destroy data
             $this_ability->damage_options_update($existing_attachment_info['attachment_destroy']);
+            $this_ability->recovery_options_update($existing_attachment_info['attachment_destroy']);
 
             // Collect the energy damage amount and cut it in half for triggering early
             $energy_damage_amount = $existing_attachment_info['attachment_energy_base_percent'];
