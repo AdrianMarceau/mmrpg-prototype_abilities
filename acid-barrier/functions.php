@@ -106,7 +106,7 @@ $functions = array(
             // Target the opposing robot
             $this_ability->target_options_update(array(
                 'frame' => 'summon',
-                'success' => array(9, 24, 30, 18, $this_robot->print_name().' refreshed '.$target_robot->get_pronoun('possessive2').' '.$this_ability->print_name(true).'!<br /> The duration of '.$this_robot->print_name().'&#39;s protection was extended!')
+                'success' => array(9, 24, 30, 18, $this_robot->print_name().' refreshed '.$this_robot->get_pronoun('possessive2').' '.$this_ability->print_name().'!<br /> The duration of '.$this_robot->print_name().'&#39;s protection was extended!')
                 ));
             $this_robot->trigger_target($this_robot, $this_ability);
 
