@@ -66,8 +66,14 @@ $functions = array(
             $failure_text = '';
 
             // Adjust damage/recovery text based on results
-            if ($this_ability->ability_results['total_strikes'] == 1){ $success_text = 'Another drill hit!'; }
-            if ($this_ability->ability_results['total_misses'] == 1){ $failure_text = 'Another drill missed!'; }
+            if (isset($this_ability->ability_results['total_strikes'])
+                && $this_ability->ability_results['total_strikes'] == 1){
+                $success_text = 'Another drill hit!';
+            }
+            if (isset($this_ability->ability_results['total_misses'])
+                && $this_ability->ability_results['total_misses'] == 1){
+                $failure_text = 'Another drill missed!';
+            }
 
             // Remove the second extra whirlwind attached to the robot
             if (isset($this_robot->robot_attachments[$this_attachment_token.'_2'])){
