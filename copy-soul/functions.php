@@ -70,7 +70,8 @@ $functions = array(
                     && $new_core_type != 'empty'){
 
                     // Create the item object to trigger data loading (mostly for display)
-                    $new_item_info = array('item_token' => $new_core_type.'-core');
+                    $new_item_token = $new_core_type.'-'.($target_robot->robot_class === 'mecha' ? 'shard' : 'core');
+                    $new_item_info = array('item_token' => $new_item_token);
                     $this_new_item = rpg_game::get_item($this_battle, $this_player, $this_robot, $new_item_info);
 
                     // Set the success frames for the player and robot
@@ -89,12 +90,12 @@ $functions = array(
                         $core_shield_refreshed = false;
                         if (empty($this_robot->robot_item)
                             || (preg_match('/-core$/i', $this_robot->robot_item)
-                                && $this_robot->robot_item != $new_core_type.'-core')){
+                                && $this_robot->robot_item != $new_item_token)){
 
                             // Update the core type for the robot
                             if (empty($this_robot->robot_item)){ $new_item_generated = true; }
                             else { $existing_item_transformed = true; }
-                            $this_robot->set_item($new_core_type.'-core');
+                            $this_robot->set_item($new_item_token);
 
                         } else {
 
@@ -108,9 +109,11 @@ $functions = array(
                             || $existing_item_transformed
                             || $core_shield_refreshed){
                             $existing_shields = !empty($this_robot->robot_attachments) ? substr_count(implode('|', array_keys($this_robot->robot_attachments)), 'ability_core-shield_') : 0;
-                            $shield_info = rpg_ability::get_static_core_shield($new_core_type, 3, $existing_shields);
+                            $shield_duration = 3;
+                            $shield_kind = 'core';
+                            if ($target_robot->robot_class === 'mecha'){ $shield_duration = 1; $shield_kind = 'shard'; }
+                            $shield_info = rpg_ability::get_static_core_shield($new_core_type, $shield_duration, $existing_shields, $shield_kind);
                             $shield_token = $shield_info['attachment_token'];
-                            $shield_duration = $shield_info['attachment_duration'];
                             if (!isset($this_robot->robot_attachments[$shield_token])){ $this_robot->robot_attachments[$shield_token] = $shield_info; }
                             else { $this_robot->robot_attachments[$shield_token]['attachment_duration'] += $shield_duration; }
                         }
@@ -138,7 +141,7 @@ $functions = array(
                             && empty($this_battle->flags['challenge_battle'])){
                             $ptoken = $this_player->player_token;
                             $rtoken = $this_robot->robot_token;
-                            $itoken = $new_core_type.'-core';
+                            $itoken = $new_item_token;
                             if (!empty($_SESSION[$session_token]['values']['battle_settings'][$ptoken]['player_robots'][$rtoken])){
                                 $_SESSION[$session_token]['values']['battle_settings'][$ptoken]['player_robots'][$rtoken]['robot_item'] = $itoken;
                             }
