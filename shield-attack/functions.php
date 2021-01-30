@@ -30,8 +30,8 @@ $functions = array(
             'failure' => array(1, -65, 0, -10, 'The '.$this_ability->print_name().' missed the target&hellip;')
             ));
         $energy_damage_amount = $this_ability->ability_damage;
-        $trigger_options = array();
-        $target_robot->trigger_damage($this_robot, $this_ability, $energy_damage_amount);
+        $trigger_options = array('target_stat_substitution' => array('robot_attack' => 'robot_defense'));
+        $target_robot->trigger_damage($this_robot, $this_ability, $energy_damage_amount, true, $trigger_options);
 
         // Return true on success
         return true;
