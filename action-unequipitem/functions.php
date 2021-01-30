@@ -2,6 +2,8 @@
 $functions = array(
     'ability_function' => function($objects){
 
+        // NOT USED ANYMORE!!!
+
         // Extract all objects into the current scope
         extract($objects);
 
