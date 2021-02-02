@@ -100,15 +100,6 @@ $functions = array(
         // Extract all objects into the current scope
         extract($objects);
 
-        /*
-        // If this robot has Extended Range, allow target selection
-        if ($this_robot->robot_item == 'target-module'){
-            $this_ability->set_target('select_target');
-        } else {
-            $this_ability->reset_target();
-        }
-        */
-
         // Update the ability damage and image based on turn
         $next_battle_turn = $this_battle->counters['battle_turn'] + 1;
         if ($next_battle_turn > 3){ $next_battle_turn = $next_battle_turn % 3; }
@@ -129,6 +120,10 @@ $functions = array(
         if (in_array($this_robot->robot_image, $alt_image_triggers)){
             $this_ability->set_image($this_ability->ability_image.'-b');
         }
+
+        // If the user has Extended Range, allow bench targeting
+        if ($this_robot->has_attribute('extended-range')){ $this_ability->set_target('select_target'); }
+        else { $this_ability->reset_target(); }
 
         // Return true on success
         return true;
