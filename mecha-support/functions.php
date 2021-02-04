@@ -92,11 +92,11 @@ $functions = array(
             if ($this_player->player_side === 'left'){
                 if (!isset($_SESSION['GAME']['values']['robot_database'][$this_mecha_token])){ $_SESSION['GAME']['values']['robot_database'][$this_mecha_token] = array('robot_token' => $this_mecha_token); }
                 if (empty($_SESSION['GAME']['values']['robot_database'][$this_mecha_token]['robot_summoned'])){ $_SESSION['GAME']['values']['robot_database'][$this_mecha_token]['robot_summoned'] = 0; }
-                if (empty($_SESSION['GAME']['values']['robot_database'][$this_mecha_token]['robot_encountered'])){ $_SESSION['GAME']['values']['robot_database'][$this_mecha_token]['robot_encountered'] = 0; }
+                //if (empty($_SESSION['GAME']['values']['robot_database'][$this_mecha_token]['robot_encountered'])){ $_SESSION['GAME']['values']['robot_database'][$this_mecha_token]['robot_encountered'] = 0; }
                 $this_mecha_summoned_counter = $_SESSION['GAME']['values']['robot_database'][$this_mecha_token]['robot_summoned'] + 1;
-                $this_mecha_encountered_counter = $_SESSION['GAME']['values']['robot_database'][$this_mecha_token]['robot_encountered'] + 1;
+                //$this_mecha_encountered_counter = $_SESSION['GAME']['values']['robot_database'][$this_mecha_token]['robot_encountered'] + 1;
                 $_SESSION['GAME']['values']['robot_database'][$this_mecha_token]['robot_summoned'] = $this_mecha_summoned_counter;
-                $_SESSION['GAME']['values']['robot_database'][$this_mecha_token]['robot_encountered'] = $this_mecha_encountered_counter;
+                //$_SESSION['GAME']['values']['robot_database'][$this_mecha_token]['robot_encountered'] = $this_mecha_encountered_counter;
             }
 
             // Update the summon flag now that we're done with it
