@@ -152,18 +152,69 @@ $functions = array(
             $this_mecha_info['counters']['defense_mods'] = !empty($this_robot->counters['defense_mods']) ? $this_robot->counters['defense_mods'] : 0;
             $this_mecha_info['counters']['speed_mods'] = !empty($this_robot->counters['speed_mods']) ? $this_robot->counters['speed_mods'] : 0;
 
-            // Give this mecha any abilities from the summoner they're compatible with
+            // Decide which abilities this mecha should have, let's start fresh
+            $mecha_ability_list = array();
+
+            // This mecha always gets it's signature ability/abilities
+            if (!empty($this_mecha_info['robot_rewards']['abilities'])){
+                foreach ($this_mecha_info['robot_rewards']['abilities'] AS $key => $ability){
+                    if (isset($ability['level']) && $this_robot->robot_level < $ability['level']){ continue; }
+                    if (in_array($ability['token'], $mecha_ability_list)){ continue; }
+                    $mecha_ability_list[] = $ability['token'];
+                }
+            }
+
+            // Define the base order for the support move types and the stats that can be altered
+            $support_stat_order = array('attack', 'defense', 'speed');
+            $support_kind_order = array('boost', 'break', 'swap');
+
+            // Define how many rotations there should be given player number and mecha counters
+            $rotations_required = 0;
+            $rotations_required += $this_player->player_number > 0 ? ($this_player->player_number - 1) : 0;
+            $rotations_required += $this_robot->counters['ability_mecha_support'] > 0 ? ($this_robot->counters['ability_mecha_support'] - 1) : 0;
+            $rotate_support_kinds = function() use(&$support_kind_order){
+                $first_support = array_shift($support_kind_order);
+                array_push($support_kind_order, $first_support);
+                $support_kind_order = array_values($support_kind_order);
+                };
+
+            // Rotate the order of the support moves kinds based on the above counter
+            for ($i = 1; $i <= $rotations_required; $i++){ $rotate_support_kinds(); }
+
+            // Collect a list of unlocked abilities for the player (if human) so we can prevent early-usage
+            $filter_unlocked_abilities = false;
+            if (intval($this_player->user_id) !== MMRPG_SETTINGS_TARGET_PLAYERID){
+                rpg_user::pull_unlocked_abilities($this_player->user_id, $filter_unlocked_abilities);
+            }
+
+            // Loop through and give this mecha up to three more abilities given above rotations
+            $support_key = 0;
+            for ($i = 1; $i <= 9; $i++){
+                if (count($mecha_ability_list) >= 4){ break; }
+                $allowed = true;
+                $support_ability_token = $support_stat_order[$support_key].'-'.$support_kind_order[$support_key];
+                if ($filter_unlocked_abilities !== false && !in_array($support_ability_token, $filter_unlocked_abilities)){ $allowed = false; }
+                if ($allowed){ $mecha_ability_list[] = $support_ability_token; }
+                if ($i % 3 === 0){ $rotate_support_kinds(); $support_key = 0; }
+                else { $support_key++; }
+            }
+
+            // Finally, give this mecha any abilities from the summoner they're compatible with
             foreach ($this_robot->robot_abilities AS $key => $extra_ability){
                 if ($extra_ability == 'mecha-support'){ continue; }
+                if (in_array($extra_ability, $mecha_ability_list)){ continue; }
                 if (rpg_robot::has_ability_compatibility($this_mecha_token, $extra_ability, $this_mecha_info['robot_item'])){
-                    $this_mecha_info['robot_abilities'][] = $extra_ability;
+                    $mecha_ability_list[] = $extra_ability;
                 }
             }
 
             // Crop if there are too many abilities
-            if (count($this_mecha_info['robot_abilities']) > 8){
-                $this_mecha_info['robot_abilities'] = array_slice($this_mecha_info['robot_abilities'], 0, 8);
+            if (count($mecha_ability_list) > 8){
+                $mecha_ability_list = array_slice($mecha_ability_list, 0, 8);
             }
+
+            // Imprint the generated abilities onto the mecha's final info array
+            $this_mecha_info['robot_abilities'] = $mecha_ability_list;
 
             // Now that we're set everything up, we can create the new mecha object and apply flags
             $temp_mecha = rpg_game::get_robot($this_battle, $this_player, $this_mecha_info);
