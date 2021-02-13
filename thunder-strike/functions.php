@@ -40,7 +40,7 @@ $functions = array(
             'kind' => 'energy',
             'frame' => 'taunt',
             'kickback' => array(0, 0, 0),
-            'success' => array(0, 0, 10, 10, 'The '.$this_ability->print_name().' charged by the target!'),
+            'success' => array(0, 0, 10, 10, 'The '.$this_ability->print_name().' charged the target!'),
             'failure' => array(1, 0, 10, -10, 'The '.$this_ability->print_name().' missed the target&hellip;')
             ));
         $energy_damage_amount = $this_ability->ability_damage;
