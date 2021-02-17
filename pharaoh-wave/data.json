@@ -35,6 +35,6 @@
     "ability_target": "auto",
     "ability_flag_hidden": 1,
     "ability_flag_complete": 0,
-    "ability_flag_published": 1,
+    "ability_flag_published": 0,
     "ability_flag_unlockable": 0
 }
