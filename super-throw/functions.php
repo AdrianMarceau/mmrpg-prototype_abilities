@@ -17,20 +17,32 @@ $functions = array(
             'ability_frame_offset' => array('x' => 0, 'y' => 0, 'z' => 0),
             'attachment_destroy' => false,
             );
+        
+        // Check to see if this ability will be successful
+        $ability_success = true;
+        $ability_failure_reason = '';
+        if ($this_robot->robot_speed <= 0){ 
+            $ability_success = false; 
+            $ability_failure_reason = 'speed-break'; 
+        } elseif ($target_robot->has_immunity($this_ability->ability_type)
+            || $target_robot->has_immunity($this_ability->ability_type2)){ 
+            $ability_success = false; 
+            $ability_failure_reason = 'has-immunity'; 
+        }
+
+        // Target the opposing robot
+        $this_ability->target_options_update(array(
+            'frame' => 'summon',
+            'success' => array(0, 0, 0, 10, $this_robot->print_name().' prepares for the '.$this_ability->print_name().'!')
+        ));
+        $this_robot->trigger_target($target_robot, $this_ability);
 
         // Ensure this robot is not prevented from attacking by speed break
-        if ($this_robot->robot_speed > 0){
+        if ($ability_success){
 
             // Attach this ability attachment to the robot using it
             $target_robot->robot_attachments[$this_attachment_token] = $this_attachment_info;
             $target_robot->update_session();
-
-            // Target the opposing robot
-            $this_ability->target_options_update(array(
-                'frame' => 'summon',
-                'success' => array(0, 0, 0, 10, $this_robot->print_name().' prepares for the '.$this_ability->print_name().'!')
-                ));
-            $this_robot->trigger_target($target_robot, $this_ability);
 
             // Check to see which keys are already being used
             $available_keys = array(0, 1, 2, 3, 4, 5, 6, 7);
@@ -140,12 +152,28 @@ $functions = array(
         else {
 
             // Target the opposing robot
-            $temp_pronoun = in_array($this_robot->robot_token, array('roll', 'disco', 'rhythm', 'spash-woman')) ? 'her' : 'him';
-            $this_ability->target_options_update(array(
-                'frame' => 'throw',
-                'success' => array(0, 0, 0, 10, $this_ability->print_name().' attempts to throw '.$target_robot->print_name().' to the bench&hellip;<br />But speed break prevents '.$temp_pronoun.' from getting a lock on the target!')
-                ));
-            $this_robot->trigger_target($target_robot, $this_ability);
+            $failure_subtext = '';
+            if ($ability_failure_reason === 'speed-break'){
+                $this_ability->target_options_update(array(
+                    'frame' => 'throw',
+                    'success' => array(0, 0, 0, 10, '...but speed-break prevents '.$this_robot->print_name().' from getting a lock on the target!')
+                    ));
+                $this_robot->trigger_target($target_robot, $this_ability, array('prevent_default_text' => true));
+            } elseif ($ability_failure_reason === 'has-immunity'){
+                $this_robot->set_frame('throw');
+                $this_ability->target_options_update(array(
+                    'frame' => 'throw',
+                    'success' => array(0, 0, 0, 10, '...but '.$target_robot->print_name().' is immune to the attack!')
+                    ));
+                $target_robot->trigger_target($target_robot, $this_ability, array('prevent_default_text' => true));
+                $this_robot->reset_frame();
+            } else {            
+                $this_ability->target_options_update(array(
+                    'frame' => 'defend',
+                    'success' => array(0, 0, 0, 10, '...but the attack failed!')
+                    ));
+                $this_robot->trigger_target($target_robot, $this_ability, array('prevent_default_text' => true));
+            }
 
         }
 
