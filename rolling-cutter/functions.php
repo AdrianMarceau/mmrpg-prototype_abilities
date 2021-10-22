@@ -4,6 +4,7 @@ $functions = array(
 
         // Extract all objects into the current scope
         extract($objects);
+     
 
         // Target the opposing robot
         $this_ability->target_options_update(array(
