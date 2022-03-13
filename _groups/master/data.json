@@ -496,24 +496,24 @@
             "time-overdrive"
         ]
     },
-    "MMRPG\/Weapons\/08\/Wind": {
+    "MMRPG\/Weapons\/08\/Earth": {
         "group_class": "master",
-        "group_token": "MMRPG\/Weapons\/08\/Wind",
+        "group_token": "MMRPG\/Weapons\/08\/Earth",
         "group_order": 45,
-        "group_child_tokens": [
-            "wind-shot",
-            "wind-buster",
-            "wind-overdrive"
-        ]
-    },
-    "MMRPG\/Weapons\/09\/Earth": {
-        "group_class": "master",
-        "group_token": "MMRPG\/Weapons\/09\/Earth",
-        "group_order": 46,
         "group_child_tokens": [
             "earth-shot",
             "earth-buster",
             "earth-overdrive"
+        ]
+    },
+    "MMRPG\/Weapons\/09\/Wind": {
+        "group_class": "master",
+        "group_token": "MMRPG\/Weapons\/09\/Wind",
+        "group_order": 46,
+        "group_child_tokens": [
+            "wind-shot",
+            "wind-buster",
+            "wind-overdrive"
         ]
     },
     "MMRPG\/Weapons\/10\/Water": {
