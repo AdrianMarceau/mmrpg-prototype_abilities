@@ -8,4 +8,3 @@ $functions = array(
     }
 );
 ?>
-?>
