@@ -4,163 +4,173 @@ $functions = array(
 
         // Extract all objects into the current scope
         extract($objects);
-
-        // Count the number of active robots on the target's side of the  field
-        $target_robots_active_count = $target_player->counters['robots_active'];
-        $target_robot_ids = array($target_robot->robot_id);
-        $get_next_target_robot = function() use($this_battle, $target_player, &$target_robot_ids){
-            foreach ($target_player->values['robots_active'] AS $key => $info){
-                if (!in_array($info['robot_id'], $target_robot_ids)){
-                    $target_robot_ids[] = $info['robot_id'];
-                    $next_target_robot = rpg_game::get_robot($this_battle, $target_player, $info);
-                    return $next_target_robot;
-                    }
-                }
-            };
-
-        // Attach up to two extra object attachments to the robot (for a total of three on-screen)
-        $this_attachment_token = 'ability_'.$this_ability->ability_token;
-        $this_attachment_info = array(
-            'class' => 'ability',
-            'ability_id' => $this_ability->ability_id,
-            'ability_token' => $this_ability->ability_token,
-            'ability_frame' => 0,
-            'ability_frame_animate' => array(5,6,7),
-            'ability_frame_offset' => array('x' => 0, 'y' => 0, 'z' => 20)
-            );
-
-        // The first attachment always exists (though it's part of the attack itself)
-        $this_attachment_info1 = $this_attachment_info;
-
-        // Only add an additional attachments if there are enough targets
-        if ($target_robots_active_count >= 2){
-            $this_attachment_info2 = $this_attachment_info;
-            $this_attachment_info2['ability_id'] .= '02';
-            $this_attachment_info2['ability_frame_offset'] = array('x' => 95, 'y' => 14, 'z' => 5);
-            $this_attachment_info2['ability_frame_animate'] = array(6,7,5);
-            $this_robot->set_attachment($this_attachment_token.'_2', $this_attachment_info2);
-            $target_robot_2 = $get_next_target_robot();
-        }
-
-        // Only add an additional attachments if there are enough targets
-        if ($target_robots_active_count >= 3){
-            $this_attachment_info3 = $this_attachment_info;
-            $this_attachment_info3['ability_id'] .= '03';
-            $this_attachment_info3['ability_frame_offset'] = array('x' => 65, 'y' => -14, 'z' => 10);
-            $this_attachment_info3['ability_frame_animate'] = array(7,5,6);
-            $this_robot->set_attachment($this_attachment_token.'_3', $this_attachment_info3);
-            $target_robot_3 = $get_next_target_robot();
-        }
-
+        
         // Target the opposing robot
         $this_ability->target_options_update(array(
             'frame' => 'throw',
-            'success' => array(5, 135, 0, 10, $this_robot->print_name().' releases a trio of '.$this_ability->print_name(true).'!')
+            'success' => array(0, 100, 10, 10, $this_robot->print_name().' throws the '.$this_ability->print_name().'!')
             ));
         $this_robot->trigger_target($target_robot, $this_ability);
-
-        // Update the second attachment object's animation frames
-        if ($this_robot->has_attachment($this_attachment_token.'_2')){
-            $this_attachment_info2['ability_frame'] = 0;
-            $this_robot->set_attachment($this_attachment_token.'_2', $this_attachment_info2);
-        }
-
-        // Update the third attachment object's animation frames
-        if ($this_robot->has_attachment($this_attachment_token.'_3')){
-            $this_attachment_info3['ability_frame'] = 0;
-            $this_robot->set_attachment($this_attachment_token.'_3', $this_attachment_info3);
-        }
 
         // Inflict damage on the opposing robot
         $this_ability->damage_options_update(array(
             'kind' => 'energy',
             'kickback' => array(10, 0, 0),
-            'success' => array(1, -45, 0, 10, 'The '.$this_ability->print_name().' collided with the target!'),
-            'failure' => array(4, -105, 0, -10, 'The '.$this_ability->print_name().' drifted past the target&hellip;')
+            'success' => array(1, -140, 0, 10, 'The '.$this_ability->print_name().'\s blades cut through the target!'),
+            'failure' => array(2, -160, 0, -10, 'The '.$this_ability->print_name().' missed&hellip;')
             ));
         $this_ability->recovery_options_update(array(
             'kind' => 'energy',
             'frame' => 'taunt',
-            'kickback' => array(10, 0, 0),
-            'success' => array(1, -45, 0, 10, 'The '.$this_ability->print_name().' healed the target!'),
-            'failure' => array(4, -105, 0, -10, 'The '.$this_ability->print_name().' drifted past the target&hellip;')
+            'kickback' => array(5, 0, 0),
+            'success' => array(1, -140, 0, 10, 'The '.$this_ability->print_name().'\'s wind invigorated the target!'),
+            'failure' => array(2, -160, 0, -10, 'The '.$this_ability->print_name().' missed&hellip;')
             ));
         $energy_damage_amount = $this_ability->ability_damage;
-        $target_robot->trigger_damage($this_robot, $this_ability, $energy_damage_amount);
+        $target_robot->trigger_damage($this_robot, $this_ability, $energy_damage_amount, false);
+                        // Only lower the target's stat of the ability was successful
+        if ($this_ability->ability_results['this_result'] != 'failure'){
+            // Call the global stat break function with customized options
+            rpg_ability::ability_function_stat_break($target_robot, 'attack', 1, $this_ability, array(
+                'initiator_robot' => $this_robot
+                ));
+        }
 
-        // If a second attachment has been created, we can fire it off at a different target
-        if ($this_robot->has_attachment($this_attachment_token.'_2')){
+        // Check to see if we're there are MULTI BENCHED robots to target
+        if ($target_player->counters['robots_positions']['bench'] >= 2){
 
-            // Define the success/failure text variables
-            $success_text = '';
-            $failure_text = '';
+            // Collect a list of benched robots from the target
+            $temp_target_robots = rpg_game::find_robots(array(
+                'player_id' => $target_player->player_id,
+                'robot_position' => 'bench',
+                'robot_status' => 'active'
+                ));
 
-            // Adjust damage/recovery text based on results
-            if ($this_ability->ability_results['total_strikes'] == 1){ $success_text = 'Another column hit!'; }
-            if ($this_ability->ability_results['total_misses'] == 1){ $failure_text = 'Another column missed!'; }
+            // Sort the robots by key (very important!)
+            usort($temp_target_robots, function($a, $b){
+                if ($a->robot_key < $b->robot_key){ return -1; }
+                elseif ($a->robot_key > $b->robot_key){ return 1; }
+                else { return 0; }
+                });
 
-            // Remove the attachment before we fire it off as an ability sprite
-            if ($this_robot->has_attachment($this_attachment_token.'_2')){ $this_robot->unset_attachment($this_attachment_token.'_2'); }
+            // Select the first target from the top of the list
+            $temp_first_target_robot = $temp_target_robots[0];
 
-            // Attempt to trigger damage to the target robot again
-            $this_ability->ability_results_reset();
+            // Deal damage to the first target robot immediately
             $this_ability->damage_options_update(array(
                 'kind' => 'energy',
                 'kickback' => array(10, 0, 0),
-                'success' => array(1, -45, 0, 10, $success_text),
-                'failure' => array(4, -105, 0, -10, $failure_text)
+                'success' => array(3, 15, -15, 10, 'The '.$this_ability->print_name().' zapped the target!'),
+                'failure' => array(1, -60, -15, 10, 'The '.$this_ability->print_name().' missed the target&hellip;')
                 ));
             $this_ability->recovery_options_update(array(
                 'kind' => 'energy',
                 'frame' => 'taunt',
-                'kickback' => array(0, 0, 0),
-                'success' => array(1, -45, 0, 10, $success_text),
-                'failure' => array(4, -105, 0, -10, $failure_text)
+                'kickback' => array(10, 0, 0),
+                'success' => array(3, 15, -15, 10, 'The '.$this_ability->print_name().' was absorbed by the target!'),
+                'failure' => array(1, -65, -15, 10, 'The '.$this_ability->print_name().' missed the target&hellip;')
                 ));
-            $target_robot_2->trigger_damage($this_robot, $this_ability, $energy_damage_amount);
+            $energy_damage_amount = $this_ability->ability_damage;
+            $temp_first_target_robot->trigger_damage($this_robot, $this_ability, $energy_damage_amount);
+            
+            // Only lower the target's stat of the ability was successful
+            if ($this_ability->ability_results['this_result'] != 'failure'){
+                // Call the global stat break function with customized options
+                rpg_ability::ability_function_stat_break($target_robot, 'defense', 1, $this_ability, array(
+                    'initiator_robot' => $this_robot
+                    ));
+            }
+            if ($this_ability->ability_results['this_result'] != 'failure'){ 
+                $num_hits_counter++; 
+            }
+
+            // Select the last target from the bottom of the list
+            $temp_second_target_robot = $temp_target_robots[count($temp_target_robots) - 1];
+
+            // Deal damage to the second target robot if not disabled
+            if ($temp_second_target_robot->robot_energy > 0){
+                $this_ability->ability_results_reset();
+                $this_ability->damage_options_update(array(
+                    'kind' => 'energy',
+                    'kickback' => array(-5, 0, 0),
+                    'success' => array(4, -15, -15, -10, 'The '.$this_ability->print_name().' zapped the target'.($num_hits_counter > 0 ? ' again' : '').'!'),
+                    'failure' => array(1, -75, -15, -10, 'The '.$this_ability->print_name().' missed the target&hellip;')
+                    ));
+                $this_ability->recovery_options_update(array(
+                    'kind' => 'energy',
+                    'frame' => 'taunt',
+                    'kickback' => array(-5, 0, 0),
+                    'success' => array(4, -15, -15, -10, 'The '.$this_ability->print_name().' was absorbed by the target'.($num_hits_counter > 0 ? ' again' : '').'!'),
+                    'failure' => array(1, -75, -15, -10, 'The '.$this_ability->print_name().' missed the target&hellip;')
+                    ));
+                $energy_damage_amount = $this_ability->ability_damage;
+                $temp_second_target_robot->trigger_damage($this_robot, $this_ability, $energy_damage_amount);
+                                // Only lower the target's stat of the ability was successful
+        if ($this_ability->ability_results['this_result'] != 'failure'){
+            // Call the global stat break function with customized options
+            rpg_ability::ability_function_stat_break($target_robot, 'speed', 1, $this_ability, array(
+                'initiator_robot' => $this_robot
+                ));
+        }
+                if ($this_ability->ability_results['this_result'] != 'failure'){ $num_hits_counter++; }
+            }
 
         }
+        // Otherwise ability will automatically target ACTIVE robot or LONE BENCHED robot
+        else {
 
-        // If a third attachment has been created, we can fire it off at a different target
-        if ($this_robot->has_attachment($this_attachment_token.'_3')){
+            // Define the temp target robot for the ability
+            if ($target_player->counters['robots_positions']['bench'] == 1){
+                $temp_target_robot = rpg_game::find_robot(array(
+                    'player_id' => $target_player->player_id,
+                    'robot_position' => 'bench',
+                    'robot_status' => 'active'
+                    ));
+            } else {
+                $temp_target_robot = $target_robot;
+            }
 
-            // Adjust damage/recovery text based on results again
-            if ($this_ability->ability_results['total_strikes'] == 1){ $success_text = 'Another column hit!'; }
-            elseif ($this_ability->ability_results['total_strikes'] == 2){ $success_text = 'A third column hit!'; }
-            if ($this_ability->ability_results['total_misses'] == 1){ $failure_text = 'Another column missed!'; }
-            elseif ($this_ability->ability_results['total_misses'] == 2){ $failure_text = 'A third column missed!'; }
-
-            // Remove the attachment before we fire it off as an ability sprite
-            if ($this_robot->has_attachment($this_attachment_token.'_3')){ $this_robot->unset_attachment($this_attachment_token.'_3'); }
-
-            // Attempt to trigger damage to the target robot a third time
-            $this_ability->ability_results_reset();
+            // Inflict damage on the opposing robot
             $this_ability->damage_options_update(array(
                 'kind' => 'energy',
-                'kickback' => array(15, 0, 0),
-                'success' => array(1, -45, 0, 10, $success_text),
-                'failure' => array(4, -105, 0, -10, $failure_text)
+                'kickback' => array(10, 0, 0),
+                'success' => array(3, 15, -10, 10, 'The '.$this_ability->print_name().' zapped the target!'),
+                'failure' => array(1, -60, -10, 10, 'The '.$this_ability->print_name().' missed the target&hellip;')
                 ));
             $this_ability->recovery_options_update(array(
                 'kind' => 'energy',
                 'frame' => 'taunt',
-                'kickback' => array(0, 0, 0),
-                'success' => array(1, -45, 0, 10, $success_text),
-                'failure' => array(4, -105, 0, -10, $failure_text)
+                'kickback' => array(10, 0, 0),
+                'success' => array(3, 15, -15, 10, 'The '.$this_ability->print_name().' was absorbed by the target!'),
+                'failure' => array(1, -65, -15, 10, 'The '.$this_ability->print_name().' missed the target&hellip;')
                 ));
-            $target_robot_3->trigger_damage($this_robot, $this_ability, $energy_damage_amount);
+            $energy_damage_amount = $this_ability->ability_damage;
+            $temp_target_robot->trigger_damage($this_robot, $this_ability, $energy_damage_amount);
+            if ($this_ability->ability_results['this_result'] != 'failure'){ $num_hits_counter++; }
+
+            // Inflict damage again if target not disabled
+            if ($temp_target_robot->robot_status != 'disabled'
+                && $temp_target_robot->robot_energy > 0){
+                $this_ability->ability_results_reset();
+                $this_ability->damage_options_update(array(
+                    'kind' => 'energy',
+                    'kickback' => array(-5, 0, 0),
+                    'success' => array(4, -15, -15, -10, 'The '.$this_ability->print_name().' zapped the target'.($num_hits_counter > 0 ? ' again' : '').'!'),
+                    'failure' => array(1, -75, -15, -10, 'The '.$this_ability->print_name().' missed the target&hellip;')
+                    ));
+                $this_ability->recovery_options_update(array(
+                    'kind' => 'energy',
+                    'frame' => 'taunt',
+                    'kickback' => array(-5, 0, 0),
+                    'success' => array(4, -15, -15, -10, 'The '.$this_ability->print_name().' was absorbed by the target'.($num_hits_counter > 0 ? ' again' : '').'!'),
+                    'failure' => array(1, -75, -15, -10, 'The '.$this_ability->print_name().' missed the target&hellip;')
+                    ));
+                $energy_damage_amount = $this_ability->ability_damage;
+                $temp_target_robot->trigger_damage($this_robot, $this_ability, $energy_damage_amount);
+                if ($this_ability->ability_results['this_result'] != 'failure'){ $num_hits_counter++; }
+            }
 
         }
-        
-                    // If there are no benched robots, we should hit the ACTIVE robot again
-            $is_same_robot = false;
-            if ($target_player->counters['robots_positions']['bench'] < 1){
-
-                // Set the target as the opposing robot again
-                $temp_target_robot = $target_robot;
-                $is_same_robot = true;
-
-            }
 
         // Return true on success
         return true;
