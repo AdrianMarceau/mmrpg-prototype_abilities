@@ -13,7 +13,7 @@
     "ability_image_editor2": "",
     "ability_type": "water",
     "ability_type2": "crystal",
-    "ability_description": "The user emits a sinister siphoning energy blast at a target to deal damage and steal life energy, restoring the user's own by up to {RECOVERY2}% of the damage dealt!",
+    "ability_description": "The user emits a siphoning energy attack at the target to deal damage and steal life energy, restoring the user's own by up to {RECOVERY2}% of the damage dealt!",
     "ability_description2": "",
     "ability_speed": 1,
     "ability_speed2": 1,
