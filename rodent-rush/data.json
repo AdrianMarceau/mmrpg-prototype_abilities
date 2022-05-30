@@ -33,7 +33,7 @@
     "ability_shop_tab": "",
     "ability_shop_level": 0,
     "ability_target": "select_target",
-    "ability_flag_hidden": 0,
+    "ability_flag_hidden": 1,
     "ability_flag_complete": 1,
     "ability_flag_published": 1,
     "ability_flag_unlockable": 0
