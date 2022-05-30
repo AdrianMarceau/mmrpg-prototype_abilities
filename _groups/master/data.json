@@ -239,7 +239,7 @@
         "group_token": "MM07\/Weapons\/049T1",
         "group_order": 21,
         "group_child_tokens": [
-            "thunder-bolt",
+            "storm-bolt",
             "noise-crush",
             "slash-claw"
         ]
@@ -772,6 +772,7 @@
             "defense-shuffle",
             "energy-shuffle",
             "speed-shuffle",
+            "thunder-bolt",
             "repair-mode"
         ]
     }
