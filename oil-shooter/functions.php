@@ -20,7 +20,7 @@ $functions = array(
         // Define this ability's attachment token and info
         $static_attachment_key = $target_robot->get_static_attachment_key();
         $static_attachment_duration = 6;
-        $this_attachment_info = rpg_ability::get_static_crude_oil($static_attachment_key, $static_attachment_duration);
+        $this_attachment_info = rpg_ability::get_static_attachment($this_ability->ability_token, 'crude-oil', $static_attachment_key, $static_attachment_duration);
         $this_attachment_token = $this_attachment_info['attachment_token'];
 
         // Target the opposing robot
@@ -66,6 +66,51 @@ $functions = array(
         // Return true on success
         return true;
 
-        }
+        },
+    'static_attachment_function_crude-oil' => function($objects, $static_attachment_key, $this_attachment_duration = 99){
+
+        // Extract all objects and config into the current scope
+        extract($objects);
+        
+        // Generate the static attachment info using provided config
+        $existing_attachments = isset($this_battle->battle_attachments[$static_attachment_key]) ? count($this_battle->battle_attachments[$static_attachment_key]) : 0;
+        $this_ability_token = $this_ability->ability_token;
+        $this_attachment_token = 'ability_'.$this_ability_token.'_'.$this_attachment->attachment_token.'_'.$static_attachment_key;
+        $this_attachment_image = $this_ability_token;
+        $this_attachment_destroy_text = 'The puddle of <span class="ability_name ability_type ability_type_earth">Crude Oil</span> below {this_robot} faded away... ';
+        $this_attachment_info = array(
+            'class' => 'ability',
+            'sticky' => true,
+            'ability_token' => $this_ability_token,
+            'ability_image' => $this_attachment_image,
+            'attachment_token' => $this_attachment_token,
+            'attachment_duration' => $this_attachment_duration,
+            'attachment_sticky' => true,
+            'attachment_damage_input_booster_flame' => 2.0,
+            'attachment_damage_input_booster_explode' => 2.0,
+            'attachment_destroy' => array(
+                'trigger' => 'special',
+                'kind' => '',
+                'type' => '',
+                'percent' => true,
+                'modifiers' => false,
+                'frame' => 'defend',
+                'rates' => array(100, 0, 0),
+                'success' => array(9, -9999, -9999, 10, $this_attachment_destroy_text),
+                'failure' => array(9, -9999, -9999, 10, $this_attachment_destroy_text)
+                ),
+            'ability_frame' => 1,
+            'ability_frame_animate' => array(1, 2),
+            'ability_frame_offset' => array(
+                'x' => (0 + ($existing_attachments * 8)),
+                'y' => (-10 + ($existing_attachments * 2)),
+                'z' => (-8 - $existing_attachments)
+                )
+            );      
+
+        // Return true on success
+        return $this_attachment_info;
+
+    }
 );
 ?>
