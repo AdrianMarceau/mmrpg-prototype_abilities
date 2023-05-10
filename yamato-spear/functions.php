@@ -18,8 +18,10 @@ $functions = array(
         );
 
         // Define the ability's Y-offset given the user
-        $x_offset = 140;
-        $y_offset = 0;
+        $x_offset_values = array(140, 150, 140, 130);
+        $x_offset = $x_offset_values[0];
+        $y_offset_values = array(0, -25, 0, 25);
+        $y_offset = $y_offset_values[0];
         
         // Use a different attacking frame for the robot depending on who is using the ability
         $target_frame = 'throw';
@@ -55,8 +57,18 @@ $functions = array(
         $weapon_energy_required = $this_robot->calculate_weapon_energy($this_ability, $this_ability->ability_energy, $temp_ability_energy_mods);
 
         // Continue triggering the attack until target disabled OR user runs out of weapon energy
+        $loop_key = 0;
         while ($target_robot->robot_status != 'disabled'
                && $this_robot->robot_weapons >= $weapon_energy_required){
+            
+            // Immediately increment loop as we've already shot once
+            $loop_key++; 
+            
+            // Tweak the offsets before each hit
+            $y_offset_key = $loop_key % count($y_offset_values);
+            $x_offset_key = $loop_key % count($x_offset_values);
+            $y_offset = $y_offset_values[$y_offset_key];
+            $x_offset = $x_offset_values[$x_offset_key];
 
             // Decrement required weapon energy from this robot
             $this_robot->robot_weapons -= $weapon_energy_required;
