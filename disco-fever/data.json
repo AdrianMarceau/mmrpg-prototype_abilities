@@ -13,7 +13,7 @@
     "ability_image_editor2": "",
     "ability_type": "laser",
     "ability_type2": "",
-    "ability_description": "The user summons a spinning disco ball that hovers in front of the target to divert its attention! Only one disco ball can be on the field at once, but the target deals half damage from all their attacks while distracted by it!",
+    "ability_description": "The user summons a spinning disco ball that hovers in front of the target robot to divert its attention!  As long as the disco ball keeps spinning, active robots on the opposing team have their damage output lowered by {DAMAGE2}%!",
     "ability_description2": "",
     "ability_speed": 1,
     "ability_speed2": 1,
