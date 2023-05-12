@@ -20,8 +20,7 @@ $functions = array(
         // Define this ability's attachment token
         $static_attachment_key = $target_robot->get_static_attachment_key();
         $static_attachment_duration = 6;
-        //$this_attachment_info = rpg_ability::get_static_foamy_bubbles($static_attachment_key, $static_attachment_duration);
-        $this_attachment_info = rpg_ability::get_static_attachment($this_ability->ability_token, 'foamy-bubbles', $static_attachment_key, $static_attachment_duration);
+        $this_attachment_info = rpg_ability::get_static_attachment($this_ability, 'foamy-bubbles', $static_attachment_key, $static_attachment_duration);
         $this_attachment_token = $this_attachment_info['attachment_token'];
 
         // Target the opposing robot
