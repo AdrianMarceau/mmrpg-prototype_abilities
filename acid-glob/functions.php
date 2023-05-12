@@ -20,79 +20,15 @@ $functions = array(
         $this_create_text = ($target_robot->print_name().' found '.$target_robot->get_pronoun('reflexive').' in a puddle of corrosive fluid!<br /> '.
             $target_robot->print_name().' will take damage at the end of each turn!'
             );
-        $this_destroy_text = ('The '.$this_ability->print_name().'\'s corrosive fluid faded away...<br /> '.
-            'This robot won\'t take end-of-turn damage any more!'
-            );
         $this_refresh_text = ('The '.$this_ability->print_name().' extended the corrosive fluid\'s duration!<br /> '.
             'This robot will continue taking damage at the end of each turn!'
             );
-        $this_repeat_text = ('The '.$this_ability->print_name().'\'s corrosive fluid damaged the target!');
-        $this_repeat_text2 = ('The '.$this_ability->print_name().'\'s corrosive fluid was ignored by the target!');
 
         // Define this ability's attachment token
         $static_attachment_key = $target_robot->get_static_attachment_key();
         $static_attachment_duration = 9;
-        $this_attachment_token = 'ability_'.$this_ability->ability_token.'_'.$static_attachment_key;
-        $this_attachment_info = array(
-            'class' => 'ability',
-            'sticky' => true,
-            'ability_id' => $this_ability->ability_id.'_'.$static_attachment_key,
-            'ability_token' => $this_ability->ability_token,
-            'ability_image' => $this_ability->ability_image,
-            'attachment_duration' => $static_attachment_duration,
-            'attachment_energy' => 0,
-            'attachment_energy_base_percent' => $this_ability->ability_damage,
-            'attachment_token' => $this_attachment_token,
-            'attachment_sticky' => true,
-            'attachment_create' => array(
-                'trigger' => 'special',
-                'kind' => '',
-                'percent' => true,
-                'frame' => 'defend',
-                'rates' => array(100, 0, 0),
-                'success' => array(9, -10, -5, -10, $this_create_text),
-                'failure' => array(9, -10, -5, -10, $this_create_text)
-                ),
-            'attachment_destroy' => array(
-                'trigger' => 'special',
-                'kind' => '',
-                'type' => '',
-                'type2' => '',
-                'percent' => true,
-                'modifiers' => false,
-                'frame' => 'taunt',
-                'rates' => array(100, 0, 0),
-                'success' => array(9, 0, -9999, 0,  $this_destroy_text),
-                'failure' => array(9, 0, -9999, 0, $this_destroy_text)
-                ),
-            'attachment_repeat' => array(
-                'kind' => 'energy',
-                'trigger' => 'damage',
-                'type' => $this_ability->ability_type,
-                'type2' => $this_ability->ability_type2,
-                'energy' => $this_ability->ability_damage,
-                'percent' => true,
-                'modifiers' => true,
-                'frame' => 'damage',
-                'rates' => array(100, 0, 0),
-                'success' => array(9, -5, 30, 10, $this_repeat_text),
-                'failure' => array(9, -5, 30, 10, $this_repeat_text2),
-                'options' => array(
-                    'apply_modifiers' => true,
-                    'apply_type_modifiers' => true,
-                    'apply_core_modifiers' => true,
-                    'apply_field_modifiers' => true,
-                    'apply_stat_modifiers' => false,
-                    'apply_position_modifiers' => false,
-                    'referred_damage' => true,
-                    'referred_damage_id' => $this_robot->robot_id,
-                    'referred_damage_stats' => $this_robot->get_stats()
-                    )
-                ),
-            'ability_frame' => 2,
-            'ability_frame_animate' => array(2, 3),
-            'ability_frame_offset' => array('x' => 5, 'y' => 0, 'z' => 10)
-            );
+        $this_attachment_info = rpg_ability::get_static_attachment($this_ability, 'acid-glob', $static_attachment_key, $static_attachment_duration);
+        $this_attachment_token = $this_attachment_info['attachment_token'];
 
         // Target the opposing robot
         $this_ability->target_options_update(array(
@@ -137,7 +73,10 @@ $functions = array(
                 if ($target_robot->robot_status != 'disabled'){
                     $this_robot->robot_frame = 'base';
                     $this_robot->update_session();
-                    $this_ability->target_options_update($this_attachment_info['attachment_create']);
+                    $this_ability->target_options_update(array(
+                        'frame' => 'defend',
+                        'success' => array(9, -5, 5, -10, $this_create_text)
+                    ));
                     $target_robot->trigger_target($target_robot, $this_ability);
                 }
 
@@ -206,6 +145,76 @@ $functions = array(
         // Return true on success
         return true;
 
-        }
+        },
+    'static_attachment_function_acid-glob' => function($objects, $static_attachment_key, $this_attachment_duration = 99){
+
+        // Extract all objects and config into the current scope
+        extract($objects);
+        
+        // Generate the static attachment info using provided config
+        $existing_attachments = isset($this_battle->battle_attachments[$static_attachment_key]) ? count($this_battle->battle_attachments[$static_attachment_key]) : 0;
+        $this_ability_token = $this_ability->ability_token;
+        $this_attachment_token = 'ability_'.$this_ability_token.'_'.$this_attachment->attachment_token.'_'.$static_attachment_key;
+        $this_attachment_image = !empty($this_ability->ability_image) ? $this_ability->ability_image : $this_ability_token;
+        $this_attachment_destroy_text = 'The corrosive <span class="ability_name ability_type ability_type_water">Acid Glob</span> below {this_robot} faded away... ';
+        $this_attachment_repeat_text = 'The corrosive <span class="ability_name ability_type ability_type_water">Acid Glob</span> melted through {this_robot}\'s armor! ';
+        $this_attachment_info = array(
+            'class' => 'ability',
+            'sticky' => true,
+            'ability_token' => $this_ability_token,
+            'ability_image' => $this_attachment_image,
+            'attachment_token' => $this_attachment_token,
+            'attachment_duration' => $this_attachment_duration,
+            'attachment_energy' => 0,
+            'attachment_energy_base_percent' => $this_ability->ability_damage,
+            'attachment_sticky' => true,
+            'attachment_destroy' => array(
+                'trigger' => 'special',
+                'kind' => '',
+                'type' => '',
+                'percent' => true,
+                'modifiers' => false,
+                'frame' => 'defend',
+                'rates' => array(100, 0, 0),
+                'success' => array(9, -9999, -9999, 10, $this_attachment_destroy_text),
+                'failure' => array(9, -9999, -9999, 10, $this_attachment_destroy_text)
+                ),
+            'attachment_repeat' => array(
+                'kind' => 'energy',
+                'trigger' => 'damage',
+                'type' => 'water',
+                'type2' => '',
+                'energy' => 8,
+                'percent' => true,
+                'modifiers' => true,
+                'frame' => 'damage',
+                'rates' => array(100, 0, 0),
+                'success' => array(1, -5, 5, -10, $this_attachment_repeat_text),
+                'failure' => array(1, -5, 5, -99, $this_attachment_repeat_text),
+                'options' => array(
+                    'apply_modifiers' => true,
+                    'apply_type_modifiers' => true,
+                    'apply_core_modifiers' => true,
+                    'apply_field_modifiers' => true,
+                    'apply_stat_modifiers' => false,
+                    'apply_position_modifiers' => false,
+                    'referred_damage' => true,
+                    'referred_damage_id' => 0,
+                    'referred_damage_stats' => array()
+                    )
+                ),
+            'ability_frame' => 2,
+            'ability_frame_animate' => array(2, 3),
+            'ability_frame_offset' => array(
+                'x' => (5 + ($existing_attachments * 2)),
+                'y' => (0 + ($existing_attachments * 1)),
+                'z' => (10 - $existing_attachments)
+                )
+            );
+
+        // Return true on success
+        return $this_attachment_info;
+
+    }
 );
 ?>
