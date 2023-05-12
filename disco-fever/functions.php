@@ -38,7 +38,7 @@ $functions = array(
         $attachment_was_moved = false;
         $static_attachment_key = $this_robot->get_static_attachment_key();
         $static_attachment_duration = 6;
-        $this_attachment_info = rpg_ability::get_static_disco_ball($static_attachment_key, $static_attachment_duration);
+        $this_attachment_info = rpg_ability::get_static_attachment($this_ability, 'disco-ball', $static_attachment_key, $static_attachment_duration);
         $this_attachment_token = $this_attachment_info['attachment_token'];
         if (isset($this_battle->battle_attachments[$static_attachment_key][$this_attachment_token])){
             $static_attachment_duration = $this_battle->battle_attachments[$static_attachment_key][$this_attachment_token]['attachment_duration'];
@@ -135,6 +135,50 @@ $functions = array(
         // Return true on success
         return true;
 
-        }
+        },
+    'static_attachment_function_disco-ball' => function($objects, $static_attachment_key, $this_attachment_duration = 99){
+
+        // Extract all objects and config into the current scope
+        extract($objects);
+        
+        // Generate the static attachment info using provided config
+        $existing_attachments = isset($this_battle->battle_attachments[$static_attachment_key]) ? count($this_battle->battle_attachments[$static_attachment_key]) : 0;
+        $this_ability_token = $this_ability->ability_token;
+        $this_attachment_token = 'ability_'.$this_ability_token.'_'.$this_attachment->attachment_token.'_'.$static_attachment_key;
+        $this_attachment_image = $this_ability_token;
+        $this_attachment_destroy_text = 'The spinning <span class="ability_name ability_type ability_type_laser">Disco Ball</span> in front of {this_robot} faded away... ';
+        $this_attachment_info = array(
+            'class' => 'ability',
+            'sticky' => true,
+            'ability_token' => $this_ability_token,
+            'ability_image' => $this_attachment_image,
+            'attachment_token' => $this_attachment_token,
+            'attachment_duration' => $this_attachment_duration,
+            'attachment_sticky' => true,
+            'attachment_damage_output_breaker' => ($this_ability->ability_damage2 / 100),
+            'attachment_destroy' => array(
+                'trigger' => 'special',
+                'kind' => '',
+                'type' => '',
+                'percent' => true,
+                'modifiers' => false,
+                'frame' => 'defend',
+                'rates' => array(100, 0, 0),
+                'success' => array(9, -9999, -9999, 10, $this_attachment_destroy_text),
+                'failure' => array(9, -9999, -9999, 10, $this_attachment_destroy_text)
+                ),
+            'ability_frame' => 0,
+            'ability_frame_animate' => array(0, 1, 2, 1),
+            'ability_frame_offset' => array(
+                'x' => (70 + ($existing_attachments * 10)),
+                'y' => (10),
+                'z' => (20 + $existing_attachments)
+                )
+            );   
+
+        // Return true on success
+        return $this_attachment_info;
+
+    }
 );
 ?>
