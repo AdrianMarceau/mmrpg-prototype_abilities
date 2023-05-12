@@ -16,8 +16,7 @@ $functions = array(
         // Define this ability's attachment token
         $static_attachment_key = $target_robot->get_static_attachment_key();
         $static_attachment_duration = 5;
-        //$this_attachment_info = rpg_ability::get_static_black_hole($static_attachment_key, $static_attachment_duration);
-        $this_attachment_info = rpg_ability::get_static_attachment($this_ability->ability_token, 'black-hole', $static_attachment_key, $static_attachment_duration);
+        $this_attachment_info = rpg_ability::get_static_attachment($this_ability, 'black-hole', $static_attachment_key, $static_attachment_duration);
         $this_attachment_token = $this_attachment_info['attachment_token'];
 
         // Target the opposing robot
@@ -108,7 +107,7 @@ $functions = array(
             'attachment_token' => $this_attachment_token,
             'attachment_duration' => $this_attachment_duration,
             'attachment_energy' => 0,
-            'attachment_energy_base_percent' => 10,
+            'attachment_energy_base_percent' => $this_ability->ability_damage,
             'attachment_sticky' => true,
             'attachment_destroy' => array(
                 'trigger' => 'special',
