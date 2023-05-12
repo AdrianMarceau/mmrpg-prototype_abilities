@@ -59,7 +59,7 @@ $functions = array(
                 $this_ability->damage_options_update(array(
                     'kind' => 'energy',
                     'kickback' => array(30, 0, 0),
-                    'success' => array(5, 0, 5, 10, 'A third hit! That feels GOOD!'),
+                    'success' => array(5, 0, 5, 10, 'A third hit! Amazing!'),
                     'failure' => array(6, 0, 5, 10, '')
                     ));
                 $this_ability->recovery_options_update(array(
@@ -71,16 +71,16 @@ $functions = array(
                     ));
                 $target_robot->trigger_damage($this_robot, $this_ability, $energy_damage_amount);
                 
-                                // Randomly trigger a defense break if the ability was successful
-        if ($target_robot->robot_status != 'disabled'
-            && $this_ability->ability_results['this_result'] != 'failure'){
+                // Randomly trigger a defense break if the ability was successful
+                if ($target_robot->robot_status != 'disabled'
+                    && $this_ability->ability_results['this_result'] != 'failure'){
 
-            // Call the global stat break function with customized options
-            rpg_ability::ability_function_stat_break($target_robot, 'attack', 3, $this_ability, array(
-                'initiator_robot' => $this_robot
-                ));
+                    // Call the global stat break function with customized options
+                    rpg_ability::ability_function_stat_break($target_robot, 'attack', 3, $this_ability, array(
+                        'initiator_robot' => $this_robot
+                        ));
 
-        }
+                }
 
             }
 
