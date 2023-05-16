@@ -14,7 +14,7 @@ $functions = array(
         $static_attachment_key = $target_robot->get_static_attachment_key();
         $static_attachment_duration = 99;
         $static_attachment_created = $this_battle->counters['battle_turn'];
-        $this_attachment_info = rpg_ability::get_static_remote_mine($static_attachment_key, $static_attachment_duration, $static_attachment_created);
+        $this_attachment_info = rpg_ability::get_static_attachment($this_ability, 'remote-mine', $static_attachment_key, $static_attachment_duration, $static_attachment_created);
         $this_attachment_token = $this_attachment_info['attachment_token'];
 
         // If the target does not already have a Remote Mine set, attach the hazard to the target position
@@ -187,6 +187,52 @@ $functions = array(
 
         // Return true on success
         return true;
+
+    },
+    'static_attachment_function_remote-mine' => function($objects, $static_attachment_key, $this_attachment_duration = 99, $this_attachment_created = 0){
+
+        // Extract all objects and config into the current scope
+        extract($objects);
+
+        // Generate the static attachment info using provided config
+        $existing_attachments = isset($this_battle->battle_attachments[$static_attachment_key]) ? count($this_battle->battle_attachments[$static_attachment_key]) : 0;
+        $this_ability_token = $this_ability->ability_token;
+        $this_attachment_token = 'ability_'.$this_ability_token.'_'.$this_attachment->attachment_token.'_'.$static_attachment_key;
+        $this_attachment_image = $this_ability_token;
+        $this_attachment_destroy_text = 'The <span class="ability_name ability_type ability_type_explode">Remote Mine</span> below {this_robot} was defused... ';
+        $this_attachment_info = array(
+            'class' => 'ability',
+            'sticky' => true,
+            'ability_token' => $this_ability_token,
+            'ability_image' => $this_attachment_image,
+            'attachment_token' => $this_attachment_token,
+            'attachment_duration' => $this_attachment_duration,
+            'attachment_created' => $this_attachment_created,
+            'attachment_sticky' => true,
+            'attachment_weaknesses' => array('flame'),
+            'attachment_weaknesses_trigger' => 'user',
+            'attachment_destroy' => array(
+                'trigger' => 'special',
+                'kind' => '',
+                'type' => '',
+                'percent' => true,
+                'modifiers' => false,
+                'frame' => 'defend',
+                'rates' => array(100, 0, 0),
+                'success' => array(8, 0, -10, 10, $this_attachment_destroy_text),
+                'failure' => array(8, 0, -10, 10, $this_attachment_destroy_text)
+                ),
+            'ability_frame' => 6,
+            'ability_frame_animate' => array(6, 7),
+            'ability_frame_offset' => array(
+                'x' => (30 + ($existing_attachments * 8)),
+                'y' => (-5),
+                'z' => (6 + $existing_attachments)
+                )
+            );
+
+        // Return true on success
+        return $this_attachment_info;
 
     }
 );
