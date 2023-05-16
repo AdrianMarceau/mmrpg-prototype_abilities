@@ -95,6 +95,15 @@ $functions = array(
         if ($is_charged){ $this_ability->set_target('select_target'); }
         else { $this_ability->set_target('auto'); }
 
+        // If this ability is being already charged, we should put an indicator
+        if ($is_charged){
+            $new_name = $this_ability->ability_base_name;
+            if ($is_charged){ $new_name .= ' ✦'; }
+            $this_ability->set_name($new_name);
+        } else {
+            $this_ability->reset_name();
+        }
+
         // Return true on success
         return true;
 

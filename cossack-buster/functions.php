@@ -80,7 +80,7 @@ $functions = array(
         // Return true on success
         return true;
 
-        },
+    },
     'ability_function_onload' => function($objects){
 
         // Extract all objects into the current scope
@@ -105,17 +105,27 @@ $functions = array(
         else { $this_ability->reset_target(); }
 
         // If this ability is being used by a robot of a matching original player, boost power
+        $is_boosted = false;
         if (!empty($this_robot->robot_original_player) && $this_robot->robot_original_player == 'dr-cossack'){
-            $this_ability->set_name($this_ability->ability_base_name . ' Δ');
+            $is_boosted = true;
             $this_ability->set_damage(ceil($this_ability->ability_base_damage * 1.2));
         } else {
-            $this_ability->reset_name();
             $this_ability->reset_damage();
+        }
+
+        // If this ability is being used by a robot of a matching original player, boost power
+        if ($is_charged || $is_boosted){
+            $new_name = $this_ability->ability_base_name;
+            if ($is_boosted){ $new_name .= '+'; }
+            if ($is_charged){ $new_name .= ' ✦'; }
+            $this_ability->set_name($new_name);
+        } else {
+            $this_ability->reset_name();
         }
 
         // Return true on success
         return true;
 
-        }
+    }
 );
 ?>
