@@ -5,15 +5,6 @@ $functions = array(
         // Extract all objects into the current scope
         extract($objects);
 
-        // If this ability is being used by a robot of a matching original player, boost power
-        if (!empty($this_robot->robot_original_player) && $this_robot->robot_original_player == 'dr-cossack'){
-            $this_ability->set_name($this_ability->ability_base_name . ' Δ');
-            $this_ability->set_damage(ceil($this_ability->ability_base_damage * 1.2));
-        } else {
-            $this_ability->reset_name();
-            $this_ability->reset_damage();
-        }
-
         // Define this ability's attachment token
         $this_attachment_token = 'ability_'.$this_ability->ability_token;
         $this_attachment_info = array(
@@ -23,14 +14,34 @@ $functions = array(
             'ability_frame_animate' => array(1, 2, 1, 0),
             'ability_frame_offset' => array('x' => -10, 'y' => -10, 'z' => -20)
             );
+
         // Loop through each existing attachment and alter the start frame by one
         foreach ($this_robot->robot_attachments AS $key => $info){ array_push($this_attachment_info['ability_frame_animate'], array_shift($this_attachment_info['ability_frame_animate'])); }
 
         // Check if this ability is already charged
         $is_charged = isset($this_robot->robot_attachments[$this_attachment_token]) ? true : false;
 
+        // If this ability is being used by a robot of a matching original player, boost power
+        $is_boosted = false;
+        if (!empty($this_robot->robot_original_player) && $this_robot->robot_original_player == 'dr-cossack'){
+            $is_boosted = true;
+            $this_ability->set_damage(ceil($this_ability->ability_base_damage * 1.2));
+        } else {
+            $this_ability->reset_damage();
+        }
+
         // If the user has Quick Charge, auto-charge the ability
         if ($this_robot->has_attribute('quick-charge')){ $is_charged = true; }
+
+        // If this ability is being used by a robot of a matching original player, boost power
+        if ($is_charged || $is_boosted){
+            $new_name = $this_ability->ability_base_name;
+            if ($is_boosted){ $new_name .= '+'; }
+            if ($is_charged){ $new_name .= ' ✦'; }
+            $this_ability->set_name($new_name);
+        } else {
+            $this_ability->reset_name();
+        }
 
         // If the ability flag was not set, this ability begins charging
         if (!$is_charged){
