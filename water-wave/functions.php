@@ -9,7 +9,9 @@ $functions = array(
         $target_robots_active_count = $target_player->counters['robots_active'];
         $target_robot_ids = array($target_robot->robot_id);
         $get_next_target_robot = function() use($this_battle, $target_player, &$target_robot_ids){
-            foreach ($target_player->values['robots_active'] AS $key => $info){
+            $target_robots_active = $target_player->values['robots_active'];
+            shuffle($target_robots_active);
+            foreach ($target_robots_active AS $key => $info){
                 if (!in_array($info['robot_id'], $target_robot_ids)){
                     $target_robot_ids[] = $info['robot_id'];
                     $next_target_robot = rpg_game::get_robot($this_battle, $target_player, $info);
