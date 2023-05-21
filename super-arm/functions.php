@@ -51,7 +51,8 @@ $functions = array(
         if (!$is_summoned){
 
             // Attach this ability attachment to the battle field itself
-            $this_attachment_info['ability_frame_styles'] = 'opacity: 0.1; ';
+            //$this_attachment_info['ability_frame_styles'] = 'opacity: 0.5; ';
+            $this_attachment_info['ability_frame_styles'] = 'transform: scale(0.5) translate(0, 50%); ';
             $this_battle->battle_attachments[$static_attachment_key][$this_attachment_token] = $this_attachment_info;
             $this_battle->update_session();
 
