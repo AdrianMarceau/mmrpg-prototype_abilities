@@ -9,15 +9,15 @@ $functions = array(
         if ($this_robot->player_id == $target_robot->player_id){ $temp_target_robot = $target_robot; }
         else { $temp_target_robot = $this_robot; }
 
-        // Update the ability's target options and trigger
-        $this_ability->target_options_update(array(
-            'frame' => 'defend',
-            'success' => array(0, 0, 0, -10, $this_robot->print_name().' starts charging weapon energy&hellip;')
-            ));
-        $this_robot->trigger_target($this_robot, $this_ability);
-
         // If the target of this ability is not the user
         if ($temp_target_robot->robot_id != $this_robot->robot_id){
+
+            // Update the ability's target options and trigger
+            $this_ability->target_options_update(array(
+                'frame' => 'defend',
+                'success' => array(0, 0, 0, -10, $this_robot->print_name().' starts charging '.$temp_target_robot->print_name_s().' weapon energy&hellip;')
+                ));
+            $this_robot->trigger_target($this_robot, $this_ability);
 
             // Recover the target robot's weapon energy
             $this_ability->recovery_options_update(array(
@@ -35,6 +35,13 @@ $functions = array(
         }
         // Otherwise if the user if targeting themselves
         else {
+
+            // Update the ability's target options and trigger
+            $this_ability->target_options_update(array(
+                'frame' => 'defend',
+                'success' => array(0, 0, 0, -10, $this_robot->print_name().' starts charging weapon energy&hellip;')
+                ));
+            $this_robot->trigger_target($this_robot, $this_ability);
 
             // Recover this robot's weapon energy
             $this_ability->recovery_options_update(array(
