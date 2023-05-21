@@ -97,6 +97,8 @@ $functions = array(
                 && $this_ability->ability_results['this_result'] != 'failure'){
 
                 // Call the global stat break functions with customized options
+                $this_ability->damage_options_update(array('kickback' => array(0, 0, 0)));
+                $this_ability->recovery_options_update(array('kickback' => array(0, 0, 0)));
                 rpg_ability::ability_function_stat_break($target_robot, 'attack', 1, $this_ability, array(
                     'initiator_robot' => $this_robot
                     ));
@@ -151,6 +153,8 @@ $functions = array(
                     && $this_ability->ability_results['this_result'] != 'failure'){
 
                     // Call the global stat break functions with customized options
+                    $this_ability->damage_options_update(array('kickback' => array(0, 0, 0)));
+                    $this_ability->recovery_options_update(array('kickback' => array(0, 0, 0)));
                     rpg_ability::ability_function_stat_break($target_robot, 'attack', 1, $this_ability, array(
                         'initiator_robot' => $this_robot
                         ));
