@@ -14,19 +14,21 @@ $functions = array(
             );
 
         // Define this ability's attachment token and info
-        $static_attachment_key = $this_robot->get_static_attachment_key();
-        $static_attachment_duration = 99;
-        $this_attachment_info = rpg_ability::get_static_attachment($this_ability, 'crystal-frag', $static_attachment_key, $static_attachment_duration);
+        $static_attachment_key = 0; //$this_robot->get_static_attachment_key();
+        $this_attachment_info = rpg_ability::get_static_attachment($this_ability, 'crystal-frag', $static_attachment_key);
         $this_attachment_token = $this_attachment_info['attachment_token'];
 
         // Check to see if the attachment has already been generated
-        $attachment_already_exists = $this_battle->has_attachment($static_attachment_key, $this_attachment_token);
+        //$attachment_already_exists = $this_battle->has_attachment($static_attachment_key, $this_attachment_token);
+        $attachment_already_exists = $this_robot->has_attachment($this_attachment_token);
         
         // If the attachment does not exist yet, we must generate it now
         if (!$attachment_already_exists){
 
             // Save this attachment to the battle field at the current position
-            $this_battle->set_attachment($static_attachment_key, $this_attachment_token, $this_attachment_info);
+            //$this_battle->events_create(false, false, 'debug', 'onabilityfunction');
+            //$this_battle->set_attachment($static_attachment_key, $this_attachment_token, $this_attachment_info);
+            $this_robot->set_attachment($this_attachment_token, $this_attachment_info);
             
             // Target this robot's self and trigger the appropriate text
             $this_ability->target_options_update(array('frame' => 'summon', 'success' => array(0, -9999, -9999, -9999, $this_create_text)));
@@ -37,7 +39,8 @@ $functions = array(
         else {
 
             // Remove this attachment from the battle field's current position
-            $this_battle->unset_attachment($static_attachment_key, $this_attachment_token);
+            //$this_battle->unset_attachment($static_attachment_key, $this_attachment_token);
+            $this_robot->unset_attachment($this_attachment_token);
 
             // Target the opposing robot
             $this_ability->target_options_update(array(
@@ -80,11 +83,12 @@ $functions = array(
         extract($objects);
 
         // Define this ability's attachment token and info
-        $static_attachment_key = $this_robot->get_static_attachment_key();
+        $static_attachment_key = 0; //$this_robot->get_static_attachment_key();
         $this_attachment_token = rpg_ability::get_static_attachment_token($this_ability, 'crystal-frag', $static_attachment_key);
 
         // Check to see if the attachment has already been generated
-        $attachment_already_exists = $this_battle->has_attachment($static_attachment_key, $this_attachment_token);
+        //$attachment_already_exists = $this_battle->has_attachment($static_attachment_key, $this_attachment_token);
+        $attachment_already_exists = $this_robot->has_attachment($this_attachment_token);
 
         // If the attachment already exists, reduce the weapon energy to zero
         if ($attachment_already_exists){ $this_ability->set_energy(0); }
@@ -95,7 +99,7 @@ $functions = array(
         return true;
 
     },
-    'static_attachment_function_crystal-frag' => function($objects, $static_attachment_key, $this_attachment_duration = 99){
+    'static_attachment_function_crystal-frag' => function($objects, $static_attachment_key = 0, $this_attachment_duration = 99){
 
         // Extract all objects and config into the current scope
         extract($objects);
