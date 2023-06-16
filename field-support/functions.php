@@ -46,7 +46,7 @@ $functions = array(
             $this_ability->target_options_update(array(
                 'frame' => 'summon',
                 'success' => array(0, -9999, -9999, -10,
-                    $this_robot->print_name().' activated the '.$this_ability->print_name().'!<br />'.
+                    $this_robot->print_name().' uses '.$this_robot->get_pronoun('possessive2').' '.$this_ability->print_name().'!<br />'.
                     'The ability altered the conditions of the battle field&hellip;'
                     )
                 ));
@@ -109,9 +109,16 @@ $functions = array(
                     // CREATE ATTACHMENTS
                     if (true){
 
-                        // Define this ability's attachment token and effect parameters
+                        // Collect the elemental type arrow index
                         $kind = $temp_modify_amount < 0 ? 'break' : 'boost';
                         $this_arrow_index = rpg_prototype::type_arrow_image($kind, $type_token);
+                        $this_types_index = rpg_type::get_index();
+
+                        // Collect the type colours so we can use them w/ effects
+                        $temp_boost_colour_dark = 'rgb('.implode(', ', $this_types_index[$type_token]['type_colour_dark']).')';
+                        $temp_boost_colour_light = 'rgb('.implode(', ', $this_types_index[$type_token]['type_colour_light']).')';
+
+                        // Define this ability's attachment token and effect parameters
                         $this_attachment_token = 'ability_effects_'.$this_ability->ability_token;
                         $this_attachment_info = array(
                             'class' => 'ability',
@@ -123,10 +130,25 @@ $functions = array(
                             'ability_frame_offset' => array('x' => 0, 'y' => 0, 'z' => -10)
                             );
 
+                        // Define a separate attachment for the background to show a large colour overlay
+                        $fx_attachment_token = 'ability_effects_field-support_overlay';
+                        $fx_attachment_info = array(
+                            'class' => 'ability',
+                            'attachment_token' => $fx_attachment_token,
+                            'sticky' => true,
+                            'ability_token' => $this_ability->ability_token,
+                            'ability_image' => '_effects/arrow-overlay_'.$kind.'-2',
+                            'ability_frame' => 0,
+                            'ability_frame_animate' => array(0),
+                            'ability_frame_offset' => array('x' => -5, 'y' => 20, 'z' => -100),
+                            'ability_frame_classes' => 'sprite_fullscreen ',
+                            'ability_frame_styles' => 'opacity: 0.6; filter: alpha(opacity=60); background-color: '.$temp_boost_colour_dark.'; '
+                            );
+
                         // Attach this ability attachment to this robot temporarily
-                        $this_robot->robot_frame = $temp_modify_amount > 0 ? 'taunt' : 'defend';
-                        $this_robot->robot_attachments[$this_attachment_token] = $this_attachment_info;
-                        $this_robot->update_session();
+                        $this_robot->set_frame($temp_modify_amount > 0 ? 'taunt' : 'defend');
+                        $this_robot->set_attachment($this_attachment_token, $this_attachment_info);
+                        $this_robot->set_attachment($fx_attachment_token, $fx_attachment_info);
 
                         // Attach this ability to all robots on this player's side of the field
                         $backup_robots_active = $this_player->values['robots_active'];
@@ -138,9 +160,7 @@ $functions = array(
                                 if ($info['robot_id'] == $this_robot->robot_id){ continue; }
                                 $temp_this_robot = rpg_game::get_robot($this_battle, $this_player, $info);
                                 // Attach this ability attachment to the this robot temporarily
-                                $temp_this_robot->robot_frame = $temp_modify_amount > 0 ? 'taunt' : 'defend';
-                                $temp_this_robot->robot_attachments[$this_attachment_token] = $this_attachment_info;
-                                $temp_this_robot->update_session();
+                                $temp_this_robot->set_frame($temp_modify_amount > 0 ? 'taunt' : 'defend');
                                 $this_key++;
                             }
                         }
@@ -154,9 +174,7 @@ $functions = array(
                             foreach ($backup_robots_active AS $key => $info){
                                 $temp_target_robot = rpg_game::get_robot($this_battle, $target_player, $info);
                                 // Attach this ability attachment to the target robot temporarily
-                                $temp_target_robot->robot_frame = $temp_modify_amount > 0 ? 'taunt' : 'defend';
-                                $temp_target_robot->robot_attachments[$this_attachment_token] = $this_attachment_info;
-                                $temp_target_robot->update_session();
+                                $temp_target_robot->set_frame($temp_modify_amount > 0 ? 'taunt' : 'defend');
                                 $target_key++;
                             }
                         }
@@ -172,7 +190,13 @@ $functions = array(
                         //$temp_change_alert.' '.$effect_text.
                         $effect_text.
                         'The multiplier is now at <span class="ability_name ability_type ability_type_'.$type_name.'">'.$type_name.' x '.number_format($temp_new_amount, 1).'</span>!',
-                        array('canvas_show_this_ability_overlay' => true)
+                        array(
+                            'canvas_show_this_ability_overlay' => true,
+                            'event_flag_camera_action' => true,
+                            'event_flag_camera_side' => $this_robot->player->player_side,
+                            'event_flag_camera_focus' => $this_robot->robot_position,
+                            'event_flag_camera_depth' => $this_robot->robot_key,
+                            )
                         );
 
                     // DESTROY ATTACHMENTS
@@ -188,8 +212,7 @@ $functions = array(
                                 if ($info['robot_id'] == $this_robot->robot_id){ continue; }
                                 $temp_this_robot = rpg_game::get_robot($this_battle, $this_player, $info);
                                 // Attach this ability attachment to the this robot temporarily
-                                unset($temp_this_robot->robot_attachments[$this_attachment_token]);
-                                $temp_this_robot->update_session();
+                                $temp_this_robot->reset_frame();
                                 $this_key++;
                             }
                         }
@@ -204,19 +227,15 @@ $functions = array(
                                 if ($info['robot_id'] == $target_robot->robot_id){ continue; }
                                 $temp_target_robot = rpg_game::get_robot($this_battle, $target_player, $info);
                                 // Attach this ability attachment to the target robot temporarily
-                                unset($temp_target_robot->robot_attachments[$this_attachment_token]);
-                                $temp_target_robot->update_session();
+                                $temp_target_robot->reset_frame();
                                 $target_key++;
                             }
                         }
 
-                        // Remove this ability attachment from this robot
-                        unset($this_robot->robot_attachments[$this_attachment_token]);
-                        $this_robot->update_session();
-
-                        // Remove this ability attachment from the target robot
-                        unset($target_robot->robot_attachments[$this_attachment_token]);
-                        $target_robot->update_session();
+                        // Remove this item attachment from this robot
+                        $this_robot->reset_frame();
+                        $this_robot->unset_attachment($this_attachment_token);
+                        $this_robot->unset_attachment($fx_attachment_token);
 
                     }
 
@@ -239,8 +258,7 @@ $functions = array(
             }
 
             // Update this robot's frame to a base
-            $this_robot->robot_frame = 'base';
-            $this_robot->update_session();
+            $this_robot->reset_frame();
 
         }
         // Otherwise print a nothing happened message
@@ -250,7 +268,7 @@ $functions = array(
             $this_ability->target_options_update(array(
                 'frame' => 'summon',
                 'success' => array(0, -9999, -9999, -10,
-                    $this_robot->print_name().' activated the '.$this_ability->print_name().'&hellip;'
+                    $this_robot->print_name().' uses '.$this_robot->get_pronoun('possessive2').' '.$this_ability->print_name().'!'
                     )
                 ));
             $this_robot->trigger_target($this_robot, $this_ability, array('prevent_default_text' => true));
