@@ -8,7 +8,7 @@ $functions = array(
         // Target the opposing robot
         $this_ability->target_options_update(array(
             'frame' => 'slide',
-            'kickback' => array(160, 0, 0),
+            'kickback' => array(160, 0, 50),
             'success' => array(0, 12, 0, -10, $this_robot->print_name().' uses '.$this_ability->print_name().'!')
             ));
         $this_robot->trigger_target($target_robot, $this_ability);
