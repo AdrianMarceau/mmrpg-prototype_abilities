@@ -5,11 +5,11 @@ $functions = array(
         // Extract all objects into the current scope
         extract($objects);
         
-                // Use a different attacking frame for the robot depending on who is using the ability
+        // Use a different attacking frame for the robot depending on who is using the ability
         $target_frame = 'summon';
         if ($this_robot->robot_token === 'sword-man'){ $target_frame = 'taunt'; }
 
-                // Target the opposing robot
+        // Target the opposing robot
         $this_ability->target_options_update(array(
             'frame' => $target_frame,
             'success' => array(0, 75, 0, 10, $this_robot->print_name().' readies their stance...')
@@ -19,6 +19,7 @@ $functions = array(
         // Target the opposing robot
         $this_ability->target_options_update(array(
             'frame' => 'throw',
+            'kickback' => array(200, 0, 0),
             'success' => array(1, 105, 0, 10, $this_robot->print_name().' tears through the air with '.$this_ability->print_name().'!')
             ));
         $this_robot->trigger_target($target_robot, $this_ability);
@@ -40,7 +41,7 @@ $functions = array(
         $energy_damage_amount = $this_ability->ability_damage;
         $target_robot->trigger_damage($this_robot, $this_ability, $energy_damage_amount);
         
-                // Ensure the target is not disabled before apply a stat change
+        // Ensure the target is not disabled before apply a stat change
         if ($target_robot->robot_status != 'disabled'
             && $this_ability->ability_results['this_result'] != 'failure'){
 
@@ -57,7 +58,7 @@ $functions = array(
 
         }
 
-        },
+    },
     'ability_function_onload' => function($objects){
 
         // Extract all objects into the current scope
