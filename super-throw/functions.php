@@ -91,8 +91,9 @@ $functions = array(
                 }
             }
 
-            // IF THERE ARE OTHER ROBOTS we can throw to the bench
-            if ($target_player->counters['robots_active'] > 1){
+            // IF THERE ARE OTHER ROBOTS we can throw to the bench AND SPACE FOR IT
+            if ($target_player->counters['robots_active'] > 1
+                && $target_player->counters['robots_active'] < 8){
 
                 // Inflict damage on the opposing robot
                 $this_robot->robot_frame = 'throw';
