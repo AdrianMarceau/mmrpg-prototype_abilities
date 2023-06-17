@@ -159,17 +159,23 @@ $functions = array(
             unset($temp_target_robot);
         }
 
-        // Loop through all robots on the target side and disable any that need it
+        // Loop through all robots on the target side and check to see if any need to be disabled
         $target_robots_active = $target_player->get_robots();
+        $target_robots_to_disable = array();
         foreach ($target_robots_active AS $key => $robot){
-            if ($robot->robot_id == $target_robot->robot_id){ $temp_target_robot = $target_robot; }
-            else { $temp_target_robot = $robot; }
-            if (($temp_target_robot->robot_energy < 1 || $temp_target_robot->robot_status == 'disabled')
-                && empty($temp_target_robot->flags['apply_disabled_state'])){
-                $temp_target_robot->trigger_disabled($this_robot);
+            if (($robot->robot_energy < 1 || $robot->robot_status == 'disabled') && empty($robot->flags['apply_disabled_state'])){
+                if ($robot->robot_id == $target_robot->robot_id){ $target_robots_to_disable[] = $target_robot; }
+                else { $target_robots_to_disable[] = $robot; }
             }
-            unset($temp_target_robot);
         }
+
+        // Loop through robots to disable and trigger it, delaying experience gains until the end
+        do {
+            $robot = array_shift($target_robots_to_disable);
+            if (!empty($target_robots_to_disable)){ $options = array('delay_stat_bonuses' => true, 'delay_experience_points' => true); }
+            else { $options = array(); }
+            $robot->trigger_disabled($this_robot, $options);
+        } while (!empty($target_robots_to_disable));
 
         // Call the global stat break function with customized options
         rpg_ability::ability_function_stat_break($this_robot, 'attack', 2, $this_ability);
@@ -177,7 +183,7 @@ $functions = array(
         // Return true on success
         return true;
 
-        },
+    },
     'ability_function_onload' => function($objects){
 
         // Extract all objects into the current scope
@@ -192,6 +198,6 @@ $functions = array(
         // Return true on success
         return true;
 
-        }
+    }
 );
 ?>
