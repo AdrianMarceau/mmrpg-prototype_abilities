@@ -88,7 +88,7 @@ $functions = array(
             'failure' => array(4, -105, 0, -10, 'The '.$this_ability->print_name().' drifted past the target&hellip;')
             ));
         $energy_damage_amount = $this_ability->ability_damage;
-        $target_robot->trigger_damage($this_robot, $this_ability, $energy_damage_amount);
+        $target_robot->trigger_damage($this_robot, $this_ability, $energy_damage_amount, false);
 
         // If a second attachment has been created, we can fire it off at a different target
         if ($this_robot->has_attachment($this_attachment_token.'_2')){
@@ -119,7 +119,7 @@ $functions = array(
                 'success' => array(1, -45, 0, 10, $success_text),
                 'failure' => array(4, -105, 0, -10, $failure_text)
                 ));
-            $target_robot_2->trigger_damage($this_robot, $this_ability, $energy_damage_amount);
+            $target_robot_2->trigger_damage($this_robot, $this_ability, $energy_damage_amount, false);
 
         }
 
@@ -150,9 +150,12 @@ $functions = array(
                 'success' => array(1, -45, 0, 10, $success_text),
                 'failure' => array(4, -105, 0, -10, $failure_text)
                 ));
-            $target_robot_3->trigger_damage($this_robot, $this_ability, $energy_damage_amount);
+            $target_robot_3->trigger_damage($this_robot, $this_ability, $energy_damage_amount, false);
 
         }
+
+        // Now that all the damage has been dealt, allow the player to check for disabled
+        $target_player->check_robots_disabled($this_player, $this_robot);
 
         // Return true on success
         return true;
