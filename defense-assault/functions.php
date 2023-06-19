@@ -22,7 +22,7 @@ $functions = array(
             foreach ($backup_robots_active AS $key => $info){
                 if ($info['robot_id'] == $target_robot->robot_id){ continue; }
                 $temp_target_robot = rpg_game::get_robot($this_battle, $target_player, $info);
-                rpg_ability::ability_function_stat_break($temp_target_robot, 'defense', 1, $this_ability, array(
+                rpg_ability::ability_function_stat_break($temp_target_robot, 'defense', $this_ability->ability_damage2, $this_ability, array(
                     'initiator_robot' => $this_robot
                     ));
                 $this_key++;
