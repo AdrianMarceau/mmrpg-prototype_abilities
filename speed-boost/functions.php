@@ -14,7 +14,7 @@ $functions = array(
         else { $temp_target_robot = $this_robot; }
 
         // Call the global stat boost function with customized options
-        rpg_ability::ability_function_stat_boost($temp_target_robot, 'speed', 2, $this_ability, array(
+        rpg_ability::ability_function_stat_boost($temp_target_robot, 'speed', $this_ability->ability_recovery2, $this_ability, array(
             'initiator_robot' => $this_robot
             ));
 
