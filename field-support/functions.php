@@ -140,13 +140,14 @@ $functions = array(
                             'ability_image' => '_effects/arrow-overlay_'.$kind.'-2',
                             'ability_frame' => 0,
                             'ability_frame_animate' => array(0),
-                            'ability_frame_offset' => array('x' => -5, 'y' => 20, 'z' => -100),
+                            'ability_frame_offset' => array('x' => -5, 'y' => 20, 'z' => -9999),
                             'ability_frame_classes' => 'sprite_fullscreen ',
                             'ability_frame_styles' => 'opacity: 0.6; filter: alpha(opacity=60); background-color: '.$temp_boost_colour_dark.'; '
                             );
 
                         // Attach this ability attachment to this robot temporarily
                         $this_robot->set_frame($temp_modify_amount > 0 ? 'taunt' : 'defend');
+                        $this_robot->set_frame_styles('z-index: 9999; ');
                         $this_robot->set_attachment($this_attachment_token, $this_attachment_info);
                         $this_robot->set_attachment($fx_attachment_token, $fx_attachment_info);
 
@@ -232,12 +233,13 @@ $functions = array(
                             }
                         }
 
-                        // Remove this item attachment from this robot
-                        $this_robot->reset_frame();
-                        $this_robot->unset_attachment($this_attachment_token);
-                        $this_robot->unset_attachment($fx_attachment_token);
-
                     }
+
+                    // Remove this item attachment from this robot
+                    $this_robot->reset_frame();
+                    $this_robot->reset_frame_styles();
+                    $this_robot->unset_attachment($this_attachment_token);
+                    $this_robot->unset_attachment($fx_attachment_token);
 
                     // Update the field multiplier
                     $temp_modifiers_applied++;
