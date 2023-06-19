@@ -10,7 +10,7 @@ $functions = array(
         $this_robot->trigger_target($target_robot, $this_ability);
 
         // Call the global stat break function with customized options
-        rpg_ability::ability_function_stat_break($target_robot, 'defense', 2, $this_ability, array(
+        rpg_ability::ability_function_stat_break($target_robot, 'defense', $this_ability->ability_damage2, $this_ability, array(
             'initiator_robot' => $this_robot
             ));
 
