@@ -12,17 +12,19 @@ $functions = array(
         // Target the opposing robot
         $this_ability->target_options_update(array(
             'frame' => $target_frame,
-            'success' => array(0, 75, 0, 10, $this_robot->print_name().' readies their stance...')
+            'success' => array(0, 50, 0, 10, $this_robot->print_name().' readies their stance...')
             ));
         $this_robot->trigger_target($target_robot, $this_ability);
         
         // Target the opposing robot
+        $this_robot->set_frame_offset('z', 50);
         $this_ability->target_options_update(array(
             'frame' => 'throw',
-            'kickback' => array(200, 0, 0),
-            'success' => array(1, 105, 0, 10, $this_robot->print_name().' tears through the air with '.$this_ability->print_name().'!')
+            'kickback' => array(180, 0, 0),
+            'success' => array(1, 50, 0, 10, $this_robot->print_name().' tears through the air with '.$this_ability->print_name().'!')
             ));
         $this_robot->trigger_target($target_robot, $this_ability);
+        $this_robot->reset_frame_offset('z');
 
         // Inflict damage on the opposing robot
         $this_ability->damage_options_update(array(
