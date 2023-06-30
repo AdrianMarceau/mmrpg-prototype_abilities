@@ -223,7 +223,7 @@ $functions = array(
             'ability_frame' => $this_target_frame,
             'ability_frame_animate' => array($this_target_frame),
             'ability_frame_offset' => array(
-                'x' => (40 + ($existing_attachments * 8)),
+                'x' => (44 + ($existing_attachments * 8)),
                 'y' => (0),
                 'z' => (2 + $existing_attachments)
                 )
