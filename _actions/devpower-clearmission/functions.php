@@ -5,6 +5,8 @@ $functions = array(
         // Extract all objects into the current scope
         extract($objects);
 
+        error_log('test B');
+
         // Ensure this robot stays in the summon position for the duration of the attack
         $this_robot->robot_frame = 'summon';
         $this_robot->update_session();
@@ -36,7 +38,7 @@ $functions = array(
             ));
         $energy_damage_amount = $target_robot->robot_base_energy * 2;
         $trigger_options = array('apply_modifiers' => true, 'apply_position_modifiers' => false, 'apply_stat_modifiers' => false);
-        $target_robot->trigger_damage($this_robot, $this_ability, $energy_damage_amount, true, $trigger_options);
+        $target_robot->trigger_damage($this_robot, $this_ability, $energy_damage_amount, false, $trigger_options);
 
         // Loop through the target's benched robots, inflicting damage to each
         $backup_target_robots_active = $target_player->values['robots_active'];
@@ -64,8 +66,11 @@ $functions = array(
 	            'success' => array(0, 0, 0, 0, 'The <strong class="ability_name ability_type type_'.(!empty($damage_type) ? $damage_type : 'none').'">DevPower</strong> cleared out '.$temp_target_robot->print_name().'!')
                 ));
             $energy_damage_amount = $temp_target_robot->robot_base_energy * 2;
-            $temp_target_robot->trigger_damage($this_robot, $this_ability, $energy_damage_amount, true, $trigger_options);
+            $temp_target_robot->trigger_damage($this_robot, $this_ability, $energy_damage_amount, false, $trigger_options);
         }
+
+        // Now that all the damage has been dealt, allow the player to check for disabled
+        $target_player->check_robots_disabled($this_player, $this_robot);
 
         // Return true on success
         return true;
