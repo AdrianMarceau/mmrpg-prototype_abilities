@@ -6,11 +6,15 @@ $functions = array(
         extract($objects);
 
         // Target the opposing robot
+        $target_options = array();
+        $target_options['event_flag_sound_effects'] = array(
+            array('name' => 'thunder-beam', 'volume' => 1.5)
+            );
         $this_ability->target_options_update(array(
             'frame' => 'throw',
             'success' => array(0, 95, 0, 10, $this_robot->print_name().' throws a '.$this_ability->print_name().'!')
             ));
-        $this_robot->trigger_target($target_robot, $this_ability);
+        $this_robot->trigger_target($target_robot, $this_ability, $target_options);
 
         // Inflict damage on the opposing robot
         $this_ability->damage_options_update(array(
