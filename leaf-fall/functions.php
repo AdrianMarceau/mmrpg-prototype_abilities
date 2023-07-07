@@ -58,12 +58,12 @@ $functions = array(
         $trigger_options = array('apply_modifiers' => true, 'apply_position_modifiers' => false);
         $target_robot_1->trigger_damage($this_robot, $this_ability, $energy_damage_amount, false, $trigger_options);
 
+        // Define the success/failure text variables
+        $success_text = '';
+        $failure_text = '';
+
         // Inflict damage on the second opposing robot if they're not disabled
         if ($target_robot_2->robot_status !== 'disabled'){
-
-            // Define the success/failure text variables
-            $success_text = '';
-            $failure_text = '';
 
             // Adjust damage/recovery text based on results
             if ($this_ability->ability_results['total_strikes'] == 1){ $success_text = 'Another leaf hit!'; }
