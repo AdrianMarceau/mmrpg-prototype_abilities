@@ -63,11 +63,15 @@ $functions = array(
         if (!isset($this_battle->battle_attachments[$static_attachment_key][$this_attachment_token])){
 
             // Target this robot's self
+            $trigger_options = array();
+            $trigger_options['event_flag_sound_effects'] = array(
+                array('name' => 'get-weird-item', 'volume' => 1.5)
+                );
             $this_ability->target_options_update(array(
                 'frame' => 'summon',
                 'success' => array(0, -10, 0, -18, $this_robot->print_name().(!$attachment_was_moved ? ' started a ' : ' moved the ').$this_ability->print_name().'!')
                 ));
-            $this_robot->trigger_target($this_robot, $this_ability);
+            $this_robot->trigger_target($this_robot, $this_ability, $trigger_options);
 
             // Attach this ability attachment to the robot using it
             $this_attachment_info['ability_frame_animate'] = array(0, 1, 2, 1);
@@ -75,21 +79,31 @@ $functions = array(
             $this_battle->update_session();
 
             // Target this robot's self
+            $trigger_options = array();
+            $trigger_options['prevent_default_text'] = true;
+            $trigger_options['event_flag_sound_effects'] = array(
+                array('name' => 'full-screen-down', 'volume' => 1.5)
+                );
             $this_robot->robot_frame = 'base';
             $this_robot->update_session();
             $this_ability->target_options_update(array('frame' => 'defend', 'success' => array(0, -9999, -9999, -9999, $this_create_text)));
-            $target_robot->trigger_target($target_robot, $this_ability, array('prevent_default_text' => true));
+            $target_robot->trigger_target($target_robot, $this_ability, $trigger_options);
 
         }
         // Else if the ability flag was set, reinforce the fever by one more duration point
         else {
 
             // Target this robot's self
+            $trigger_options = array();
+            $trigger_options['prevent_default_text'] = true;
+            $trigger_options['event_flag_sound_effects'] = array(
+                array('name' => 'full-screen-down', 'volume' => 1.5)
+                );
             $this_ability->target_options_update(array(
                 'frame' => 'summon',
                 'success' => array(0, -10, 0, -18, $this_robot->print_name().' continued the '.$this_ability->print_name().'!')
                 ));
-            $this_robot->trigger_target($this_robot, $this_ability);
+            $this_robot->trigger_target($this_robot, $this_ability, $trigger_options);
 
             // Collect the attachment from the robot to back up its info
             $this_attachment_info = $this_battle->battle_attachments[$static_attachment_key][$this_attachment_token];
