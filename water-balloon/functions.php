@@ -23,11 +23,15 @@ $functions = array(
         if ($this_robot->robot_token == 'aqua-man'){ $y_offset = -10; }
 
         // Target the opposing robot
+        $target_options = array();
+        $target_options['event_flag_sound_effects'] = array(
+            array('name' => 'splash', 'volume' => 1.5)
+            );
         $this_ability->target_options_update(array(
             'frame' => 'shoot',
             'success' => array(0, $x_offset, $y_offset, 10, $this_robot->print_name().' shoots a '.$this_ability->print_name().'!'),
             ));
-        $this_robot->trigger_target($target_robot, $this_ability);
+        $this_robot->trigger_target($target_robot, $this_ability, $target_options);
 
         // Add the splash attachment to the target robot
         $target_robot->robot_attachments[$splash_attachment_token] = $splash_attachment_info;
@@ -72,7 +76,7 @@ $functions = array(
                 'frame' => 'shoot',
                 'success' => array(0, $x_offset, $y_offset, 10, $this_robot->print_name().' shoots another '.$this_ability->print_name().'!'),
                 ));
-            $this_robot->trigger_target($target_robot, $this_ability);
+            $this_robot->trigger_target($target_robot, $this_ability, $target_options);
 
             // Add the splash attachment to the target robot
             $target_robot->robot_attachments[$splash_attachment_token] = $splash_attachment_info;
