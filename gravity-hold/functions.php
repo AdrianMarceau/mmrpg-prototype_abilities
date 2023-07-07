@@ -18,13 +18,14 @@ $functions = array(
 
         // Define this ability's attachment token
         $static_attachment_key = $target_robot->get_static_attachment_key();
+        $static_attachment_duration = 3;
         $this_gender = preg_match('/^(roll|disco|rhythm|[-a-z]+woman)$/i', $target_robot->robot_token) ? 'female' : 'male';
         $this_attachment_token = 'ability_'.$this_ability->ability_token.'_'.$static_attachment_key;
         $this_attachment_info = array(
             'class' => 'ability',
             'sticky' => true,
             'ability_token' => $this_ability->ability_token,
-            'attachment_duration' => 3,
+            'attachment_duration' => $static_attachment_duration,
             'attachment_switch_disabled' => true,
             'attachment_create' => array(
                 'trigger' => 'special',
