@@ -5,14 +5,20 @@ $functions = array(
         // Extract all objects into the current scope
         extract($objects);
 
-        error_log('test B');
-
         // Ensure this robot stays in the summon position for the duration of the attack
         $this_robot->robot_frame = 'summon';
         $this_robot->update_session();
 
        	// Print out the DEVPOWER header so we know it's serious
-		$this_battle->events_create(false, false, 'DEVPOWER', '<strong class="ability_name ability_type ability_type_nature_shield">DevPower : Clear Mission!</strong>');
+		$this_battle->events_create(
+            false, false,
+            'DEVPOWER // CLEARMISSION',
+            '<strong class="ability_name ability_type ability_type_nature_shield">DevPower : Clear Mission!</strong>',
+            array(
+                'event_flag_sound_effects' => array(
+                    array('name' => 'summon', 'volume' => 1.5)
+                    )
+                ));
 
         // Count the number of active robots on the target's side of the field
         $target_robots_active = $target_player->counters['robots_active'];
@@ -37,7 +43,10 @@ $functions = array(
             'success' => array(0, 0, 0, 0, 'The <strong class="ability_name ability_type type_'.(!empty($damage_type) ? $damage_type : 'none').'">DevPower</strong> cleared out '.$target_robot->print_name().'!')
             ));
         $energy_damage_amount = $target_robot->robot_base_energy * 2;
-        $trigger_options = array('apply_modifiers' => true, 'apply_position_modifiers' => false, 'apply_stat_modifiers' => false);
+        $trigger_options = array();
+        $trigger_options['apply_modifiers'] = true;
+        $trigger_options['apply_position_modifiers'] = false;
+        $trigger_options['apply_stat_modifiers'] = false;
         $target_robot->trigger_damage($this_robot, $this_ability, $energy_damage_amount, false, $trigger_options);
 
         // Loop through the target's benched robots, inflicting damage to each
