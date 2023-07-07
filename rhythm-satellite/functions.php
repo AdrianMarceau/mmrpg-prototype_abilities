@@ -57,6 +57,11 @@ $functions = array(
         $this_attachment = rpg_game::get_ability($this_battle, $this_player, $temp_ally_robot, $this_attachment_info);
 
         // Target this robot's self
+        $trigger_options = array();
+        $trigger_options['prevent_default_text'] = true;
+        $trigger_options['event_flag_sound_effects'] = array(
+            array('name' => 'get-weird-item', 'volume' => 1.5)
+            );
         $already_has_satellite = isset($temp_ally_robot->robot_attachments[$this_attachment_token]) ? true : false;
         $this_ability->target_options_update(array(
             'frame' => 'summon',
@@ -69,9 +74,14 @@ $functions = array(
                 $this_robot->print_name().' '.(!$already_has_satellite ? 'summons the' : 'refreshed '.$temp_ally_robot->get_pronoun('possessive2')).' '.$this_ability->print_name(true).'!'
                 )
             ));
-        $this_robot->trigger_target($this_robot, $this_ability, array('prevent_default_text' => true));
+        $this_robot->trigger_target($this_robot, $this_ability, $trigger_options);
 
         // If the ability flag was not set, attach the ability to the target
+        $trigger_options = array();
+        $trigger_options['prevent_default_text'] = true;
+        $trigger_options['event_flag_sound_effects'] = array(
+            array('name' => 'buff-received', 'volume' => 1.5)
+            );
         if (!$already_has_satellite){
 
             // If this robot is targetting itself
@@ -79,7 +89,7 @@ $functions = array(
 
                 // Target this robot's self
                 $this_attachment->target_options_update($this_attachment_info['attachment_create']);
-                $this_robot->trigger_target($this_robot, $this_attachment);
+                $this_robot->trigger_target($this_robot, $this_attachment, $trigger_options);
 
                 // Attach this ability attachment to the robot using it
                 //$this_attachment_info['ability_frame_animate'] = array(2, 1, 0, 1);
@@ -94,7 +104,7 @@ $functions = array(
                 $this_robot->robot_frame = 'base';
                 $this_robot->update_session();
                 $this_attachment->target_options_update($this_attachment_info['attachment_create']);
-                $temp_ally_robot->trigger_target($temp_ally_robot, $this_attachment);
+                $temp_ally_robot->trigger_target($temp_ally_robot, $this_attachment, $trigger_options);
 
                 // Attach this ability attachment to the robot using it
                 //$this_attachment_info['ability_frame_animate'] = array(0, 1, 2, 1);
@@ -124,7 +134,7 @@ $functions = array(
                     ' <br /> The duration of their reinforcement has been extended! '
                     )
                     ));
-                $temp_ally_robot->trigger_target($temp_ally_robot, $this_ability, array('prevent_default_text' => true));
+                $temp_ally_robot->trigger_target($temp_ally_robot, $this_ability, $trigger_options);
 
             }
             // Otherwise if targetting a team mate
@@ -144,7 +154,7 @@ $functions = array(
                     ' <br /> The duration of their reinforcement has been extended! '
                     )
                     ));
-                $temp_ally_robot->trigger_target($temp_ally_robot, $this_ability, array('prevent_default_text' => true));
+                $temp_ally_robot->trigger_target($temp_ally_robot, $this_ability, $trigger_options);
 
             }
 
