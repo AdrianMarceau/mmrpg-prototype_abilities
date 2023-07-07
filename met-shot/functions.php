@@ -13,7 +13,7 @@ $functions = array(
         // Update the ability's target options and trigger
         $target_options = array();
         $target_options['event_flag_sound_effects'] = array(
-            array('name' => 'shot', 'volume' => 1.25)
+            array('name' => 'shot-sound', 'volume' => 1.25)
             );
         $this_ability->target_options_update(array(
             'frame' => 'shoot',
