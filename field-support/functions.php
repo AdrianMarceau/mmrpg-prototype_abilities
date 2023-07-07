@@ -82,11 +82,13 @@ $functions = array(
                     $this_field->update_session();
 
                     // Define the boost or lower percent
+                    $temp_change_kind = '';
                     $temp_change_text = '';
                     $temp_change_text2 = '';
                     if ($temp_new_amount > $temp_first_amount){
                         $temp_change = $temp_new_amount - $temp_first_amount;
                         $temp_change_percent = round(($temp_change / $temp_first_amount) * 100);
+                        $temp_change_kind = 'boost';
                         $temp_change_text = 'boosted';
                         $temp_change_text2 = 'intensified';
                         //$temp_change_alert = rpg_battle::random_positive_word();
@@ -94,6 +96,7 @@ $functions = array(
                     } elseif ($temp_new_amount < $temp_first_amount){
                         $temp_change = $temp_first_amount - $temp_new_amount;
                         $temp_change_percent = round(($temp_change / $temp_first_amount) * 100);
+                        $temp_change_kind = 'break';
                         $temp_change_text = 'reduced';
                         $temp_change_text2 = 'worsened';
                         //$temp_change_alert = rpg_battle::random_positive_word();
@@ -197,6 +200,9 @@ $functions = array(
                             'event_flag_camera_side' => $this_robot->player->player_side,
                             'event_flag_camera_focus' => $this_robot->robot_position,
                             'event_flag_camera_depth' => $this_robot->robot_key,
+                            'event_flag_sound_effects' => array(
+                                array('name' => 'field-'.$temp_change_kind, 'volume' => 1.5)
+                                )
                             )
                         );
 
