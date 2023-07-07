@@ -27,11 +27,17 @@ $functions = array(
         if (!$is_charged){
 
             // Target this robot's self
+            $trigger_options = array();
+            $trigger_options['event_flag_sound_effects'] = array(
+                array('name' => 'charge-sound', 'volume' => 1.2),
+                array('name' => 'charge-sound', 'volume' => 1.4, 'delay' => 95),
+                array('name' => 'charge-sound', 'volume' => 1.6, 'delay' => 195),
+                );
             $this_ability->target_options_update(array(
                 'frame' => 'defend',
                 'success' => array(1, -10, 0, -10, $this_robot->print_name().' charges the '.$this_ability->print_name().'&hellip;')
                 ));
-            $this_robot->trigger_target($this_robot, $this_ability);
+            $this_robot->trigger_target($this_robot, $this_ability, $trigger_options);
 
             // Increase this robot's defense stat slightly
             if ($this_robot->robot_energy < $this_robot->robot_base_energy){
@@ -61,20 +67,29 @@ $functions = array(
             $this_robot->update_session();
 
             // Update this ability's target options and trigger
+            $trigger_options = array();
+            $trigger_options['event_flag_sound_effects'] = array(
+                array('name' => 'blast-sound', 'volume' => 1.5),
+                );
             $this_ability->target_options_update(array(
                 'frame' => 'shoot',
                 'kickback' => array(-5, 0, 0),
                 'success' => array(3, 100, -15, 10, $this_robot->print_name().' fires the '.$this_ability->print_name().'!'),
                 ));
-            $this_robot->trigger_target($target_robot, $this_ability);
+            $this_robot->trigger_target($target_robot, $this_ability, $trigger_options);
 
             // Update this ability's target options and trigger
+            $trigger_options = array();
+            $trigger_options['prevent_default_text'] = true;
+            $trigger_options['event_flag_sound_effects'] = array(
+                array('name' => 'damage', 'volume' => 1.5),
+                );
             $this_ability->target_options_update(array(
                 'frame' => 'damage',
                 'kickback' => array(-10, 0, 0),
                 'success' => array(3, -110, -15, 10, 'A massive energy shot hit the target!'),
                 ));
-            $target_robot->trigger_target($this_robot, $this_ability, array('prevent_default_text' => true));
+            $target_robot->trigger_target($this_robot, $this_ability, $trigger_options);
 
             // Ensure the target is not disabled before apply a stat change
             if ($target_robot->robot_status != 'disabled'
