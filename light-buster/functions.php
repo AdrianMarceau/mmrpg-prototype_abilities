@@ -47,11 +47,17 @@ $functions = array(
         if (!$is_charged){
 
             // Target this robot's self
+            $trigger_options = array();
+            $trigger_options['event_flag_sound_effects'] = array(
+                array('name' => 'charge-sound', 'volume' => 1.2),
+                array('name' => 'charge-sound', 'volume' => 1.4, 'delay' => 105),
+                array('name' => 'charge-sound', 'volume' => 1.6, 'delay' => 205),
+                );
             $this_ability->target_options_update(array(
                 'frame' => 'defend',
                 'success' => array(1, -10, 0, -10, $this_robot->print_name().' charges the '.$this_ability->print_name().'&hellip;')
                 ));
-            $this_robot->trigger_target($this_robot, $this_ability);
+            $this_robot->trigger_target($this_robot, $this_ability, $trigger_options);
 
             // Call the global stat boost function with customized options
             rpg_ability::ability_function_stat_boost($this_robot, 'defense', 1, $this_ability);
@@ -69,12 +75,16 @@ $functions = array(
             $this_robot->update_session();
 
             // Update this ability's target options and trigger
+            $trigger_options = array();
+            $trigger_options['event_flag_sound_effects'] = array(
+                array('name' => 'blast-sound', 'volume' => 1.5),
+                );
             $this_ability->target_options_update(array(
                 'frame' => 'shoot',
                 'kickback' => array(-5, 0, 0),
                 'success' => array(3, 100, -15, 10, $this_robot->print_name().' fires the '.$this_ability->print_name().'!'),
                 ));
-            $this_robot->trigger_target($target_robot, $this_ability);
+            $this_robot->trigger_target($target_robot, $this_ability, $trigger_options);
 
             // Inflict damage on the opposing robot
             $this_ability->damage_options_update(array(
