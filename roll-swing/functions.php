@@ -33,6 +33,11 @@ $functions = array(
         }
 
         // Target the opposing robot
+        $trigger_options = array();
+        $trigger_options['prevent_default_text'] = true;
+        $trigger_options['event_flag_sound_effects'] = array(
+            array('name' => 'get-weird-item', 'volume' => 1.5)
+            );
         $this_ability->target_options_update(array(
             'frame' => 'summon',
             'kickback' => array(15, 0, 0),
@@ -41,7 +46,7 @@ $functions = array(
                 ' to generate '.(preg_match('/^(a|e|i|o|u)/i', $this_swing_weapon) ? 'an' : 'a').' '.
                 $this_swing_weapon.'!')
             ));
-        $this_robot->trigger_target($target_robot, $this_ability, array('prevent_default_text' => true));
+        $this_robot->trigger_target($target_robot, $this_ability, $trigger_options);
 
         // Move the user forward so it looks like their swining the weapon
         $this_robot->set_frame('throw');
