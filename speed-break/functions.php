@@ -6,8 +6,12 @@ $functions = array(
         extract($objects);
 
         // Target the opposing robot
+        $target_options = array();
+        $target_options['event_flag_sound_effects'] = array(
+            array('name' => 'summon-negative', 'volume' => 1.25)
+            );
         $this_ability->target_options_update(array('frame' => 'summon', 'success' => array(0, -2, 0, -10, $this_robot->print_name().' uses '.$this_ability->print_name().'!')));
-        $this_robot->trigger_target($target_robot, $this_ability);
+        $this_robot->trigger_target($target_robot, $this_ability, $target_options);
 
         // Call the global stat break function with customized options
         rpg_ability::ability_function_stat_break($target_robot, 'speed', $this_ability->ability_damage2, $this_ability, array(
