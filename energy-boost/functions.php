@@ -23,11 +23,15 @@ $functions = array(
         }
 
         // Target this robot's self
+        $target_options = array();
+        $target_options['event_flag_sound_effects'] = array(
+            array('name' => 'summon-positive', 'volume' => 1.25)
+            );
         $this_ability->target_options_update(array(
             'frame' => 'summon',
             'success' => array(0, 0, 10, -10, $this_robot->print_name().' uses the '.$this_ability->print_name().' technique!')
             ));
-        $this_robot->trigger_target($this_robot, $this_ability);
+        $this_robot->trigger_target($this_robot, $this_ability, $target_options);
 
         // If the target of this ability is not the user
         if ($temp_target_robot->robot_id != $this_robot->robot_id){
