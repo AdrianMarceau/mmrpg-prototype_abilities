@@ -16,7 +16,7 @@ $functions = array(
             '<strong class="ability_name ability_type ability_type_nature_shield">DevPower : Clear Mission!</strong>',
             array(
                 'event_flag_sound_effects' => array(
-                    array('name' => 'summon', 'volume' => 1.5)
+                    array('name' => 'hyper-summon-sound', 'volume' => 1.5)
                     )
                 ));
 
