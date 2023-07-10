@@ -35,7 +35,7 @@ $functions = array(
                 $target_options['prevent_default_text'] = true;
             }
             $target_options['event_flag_sound_effects'] = array(
-                array('name' => 'shot-sound', 'volume' => 1.2)
+                array('name' => 'shot-sound', 'volume' => 1.0)
                 );
             $this_ability->target_options_update(array(
                 'frame' => 'shoot',
