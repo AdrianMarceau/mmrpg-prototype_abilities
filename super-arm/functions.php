@@ -57,11 +57,16 @@ $functions = array(
             $this_battle->update_session();
 
             // Target this robot's self
+            $trigger_options = array();
+            $trigger_options['prevent_default_text'] = true;
+            $trigger_options['event_flag_sound_effects'] = array(
+                array('name' => 'spawn-sound', 'volume' => 1.0),
+                );
             $this_ability->target_options_update(array(
                 'frame' => 'summon',
                 'success' => array($this_target_frame, -9999, -9999, 0, $this_robot->print_name().' uses the '.$this_ability->print_name().' technique! ')
                 ));
-            $this_robot->trigger_target($target_robot, $this_ability, array('prevent_default_text' => true));
+            $this_robot->trigger_target($target_robot, $this_ability, $trigger_options);
 
             // Attach this ability attachment to the battle field itself
             $this_attachment_info['ability_frame_styles'] = '';
@@ -69,6 +74,11 @@ $functions = array(
             $this_battle->update_session();
 
             // Target this robot's self
+            $trigger_options = array();
+            $trigger_options['prevent_default_text'] = true;
+            $trigger_options['event_flag_sound_effects'] = array(
+                array('name' => 'smack-sound', 'volume' => 1.0),
+                );
             $this_ability->target_options_update(array(
                 'frame' => 'defend',
                 'success' => array($this_target_frame, -9999, -9999, 0, 'The '.$this_ability->print_name().' created '.
@@ -78,7 +88,7 @@ $functions = array(
                     'Damage from incoming attacks will be reduced!'
                     )
                 ));
-            $this_robot->trigger_target($target_robot, $this_ability, array('prevent_default_text' => true));
+            $this_robot->trigger_target($target_robot, $this_ability, $trigger_options);
 
         }
         // Else if the ability flag was set, the block is thrown and the attachment goes away
@@ -89,11 +99,15 @@ $functions = array(
             $this_battle->update_session();
 
             // Target the opposing robot
+            $trigger_options = array();
+            $trigger_options['event_flag_sound_effects'] = array(
+                array('name' => 'swing-sound', 'volume' => 1.0),
+                );
             $this_ability->target_options_update(array(
                 'frame' => 'throw',
                 'success' => array($this_impact_frame, 175, 15, 10, $this_ability->print_name().' throws the '.$this_object_name_span.'!')
                 ));
-            $this_robot->trigger_target($target_robot, $this_ability);
+            $this_robot->trigger_target($target_robot, $this_ability, $trigger_options);
 
             // Inflict damage on the opposing robot
             $this_ability->damage_options_update(array(
@@ -224,8 +238,8 @@ $functions = array(
             'ability_frame_animate' => array($this_target_frame),
             'ability_frame_offset' => array(
                 'x' => (55 + ($existing_attachments * 8)),
-                'y' => (-2),
-                'z' => (2 + $existing_attachments)
+                'y' => (2),
+                'z' => strstr($static_attachment_key, 'active') ? -20 : (2 + $existing_attachments)
                 )
             );
 
