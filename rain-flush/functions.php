@@ -26,11 +26,18 @@ $functions = array(
         $this_ability->update_session();
 
         // Target the opposing robot
+        $target_options = array();
+        $target_options['prevent_stats_text'] = true;
+        $target_options['event_flag_sound_effects'] = array(
+            array('name' => 'rain-sound', 'volume' => 1.0),
+            array('name' => 'rain-sound', 'volume' => 1.0, 'delay' => 200),
+            array('name' => 'rain-sound', 'volume' => 1.0, 'delay' => 400)
+            );
         $this_ability->target_options_update(array(
             'frame' => 'summon',
             'success' => array(1, 10, 100, 10, $this_robot->print_name().' releases the '.$this_ability->print_name().'!')
             ));
-        $this_robot->trigger_target($target_robot, $this_ability, array('prevent_stats_text' => true));
+        $this_robot->trigger_target($target_robot, $this_ability, $target_options);
 
         // Change the image to the full-screen rain effect
         $this_ability->ability_image = 'rain-flush-2';
