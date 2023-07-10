@@ -10,17 +10,21 @@ $functions = array(
         if ($this_battle_turn > 3){ $this_battle_turn = $this_battle_turn % 3; }
 
         // Define which type of weapon will be generated and power
+        $this_swing_stage = 1;
         if ($this_battle_turn % 3 == 0){
+            $this_swing_stage = 3;
             $this_swing_weapon = 'vaccuum';
             $this_ability->set_image($this_ability->ability_token.'-3');
             $this_ability->set_damage($this_ability->ability_base_damage * 3);
         }
         elseif ($this_battle_turn % 2 == 0){
+            $this_swing_stage = 2;
             $this_swing_weapon = 'umbrella';
             $this_ability->set_image($this_ability->ability_token.'-2');
             $this_ability->set_damage($this_ability->ability_base_damage * 2);
         }
         else {
+            $this_swing_stage = 1;
             $this_swing_weapon = 'broom';
             $this_ability->set_image($this_ability->ability_token.'-1');
             $this_ability->reset_damage();
@@ -35,9 +39,15 @@ $functions = array(
         // Target the opposing robot
         $trigger_options = array();
         $trigger_options['prevent_default_text'] = true;
-        $trigger_options['event_flag_sound_effects'] = array(
-            array('name' => 'get-weird-item', 'volume' => 1.5)
-            );
+        $trigger_options['event_flag_sound_effects'] = array();
+        for ($i = 0; $i < $this_swing_stage; $i++){
+            $trigger_options['event_flag_sound_effects'][] = array(
+                'name' => 'get-weird-item',
+                'volume' => 1.5,
+                'delay' => 0 + (50 * $i)
+                );
+        }
+
         $this_ability->target_options_update(array(
             'frame' => 'summon',
             'kickback' => array(15, 0, 0),
