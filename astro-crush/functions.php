@@ -63,13 +63,19 @@ $functions = array(
             );
 
         // Target the opposing robot amd trigger the ability summon
+        $trigger_options = array();
+        $trigger_options['prevent_default_text'] = true;
+        $trigger_options['prevent_stats_text'] = true;
+        $trigger_options['event_flag_sound_effects'] = array(
+            array('name' => 'cosmic-sound', 'volume' => 1.0),
+        );
         $this_ability->ability_image = $image_index['base'];
         $this_ability->update_session();
         $this_ability->target_options_update(array(
             'frame' => 'summon',
             'success' => array(9, 0, 0, -999, $this_robot->print_name().' summons an '.$this_ability->print_name().'!')
             ));
-        $this_robot->trigger_target($target_robot, $this_ability, array('prevent_default_text' => true, 'prevent_stats_text' => true));
+        $this_robot->trigger_target($target_robot, $this_ability, $trigger_options);
 
         // Loop through the target's benched robots, inflicting damage to each
         $num_hits_counter = 0;
