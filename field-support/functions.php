@@ -115,7 +115,7 @@ $functions = array(
                         // Collect the elemental type arrow index
                         $kind = $temp_modify_amount < 0 ? 'break' : 'boost';
                         $this_arrow_index = rpg_prototype::type_arrow_image($kind, $type_token);
-                        $this_types_index = rpg_type::get_index();
+                        $this_types_index = rpg_type::get_index(true, false, true, true);
 
                         // Collect the type colours so we can use them w/ effects
                         $temp_boost_colour_dark = 'rgb('.implode(', ', $this_types_index[$type_token]['type_colour_dark']).')';
