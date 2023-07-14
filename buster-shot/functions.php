@@ -34,13 +34,11 @@ $functions = array(
                 $target_text = $this_robot->print_name().' fires another '.$this_ability->print_name().'!';
                 $target_options['prevent_default_text'] = true;
             }
-            $target_options['event_flag_sound_effects'] = array(
-                array('name' => 'shot-sound', 'volume' => 1.0)
-                );
             $this_ability->target_options_update(array(
                 'frame' => 'shoot',
                 'success' => array(0, 105, 0, 10, $target_text)
                 ));
+            $this_battle->queue_sound_effect('shot-sound');
             $this_robot->trigger_target($target_robot, $this_ability, $target_options);
 
             // Inflict damage on the opposing robot
