@@ -6,14 +6,12 @@ $functions = array(
         extract($objects);
 
         // Target the opposing robot
-        $target_options = array();
-        $target_options['event_flag_sound_effects'] = array(
-            array('name' => 'summon-negative', 'volume' => 1.25)
-            );
+        $this_battle->queue_sound_effect('summon-negative');
         $this_ability->target_options_update(array(
             'frame' => 'summon',
             'success' => array(0, -2, 0, -10, $this_robot->print_name().' uses '.$this_ability->print_name().'!')
             ));
+        $target_options = array();
         $this_robot->trigger_target($target_robot, $this_ability, $target_options);
 
         // Decrease the target robot's attack stat
