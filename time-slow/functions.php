@@ -10,6 +10,8 @@ $functions = array(
             'frame' => 'defend',
             'success' => array(1, -10, 0, -10, $this_robot->print_name().' charges the '.$this_ability->print_name().'&hellip;')
             ));
+        $this_battle->queue_sound_effect('charge-sound');
+        $this_battle->queue_sound_effect('timer-sound');
         $this_robot->trigger_target($target_robot, $this_ability);
 
         // Shift user into summon mode right before the target is hit
@@ -31,6 +33,7 @@ $functions = array(
             'failure' => array(9, 5, 70, -10, 'The '.$this_ability->print_name().' didn\'t affect the target&hellip;')
             ));
         $energy_damage_amount = $this_ability->ability_damage;
+        $this_battle->queue_sound_effect('full-screen-down');
         $target_robot->trigger_damage($this_robot, $this_ability, $energy_damage_amount);
 
         // Return the user to their base frame after attack
