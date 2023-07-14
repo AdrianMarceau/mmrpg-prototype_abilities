@@ -13,16 +13,14 @@ $functions = array(
         if ($temp_target_robot->robot_id != $this_robot->robot_id){
 
             // Update the ability's target options and trigger
-            $target_options = array();
-            $target_options['event_flag_sound_effects'] = array(
-                array('name' => 'charge-sound', 'volume' => 0.6),
-                array('name' => 'charge-sound', 'volume' => 0.8, 'delay' => 100)
-                );
+        	$this_battle->queue_sound_effect(array('name' => 'charge-sound', 'volume' => 0.6));
+            $this_battle->queue_sound_effect(array('name' => 'charge-sound', 'volume' => 0.8, 'delay' => 100));
+            $this_battle->queue_sound_effect(array('name' => 'charge-sound', 'volume' => 1.0, 'delay' => 200));
             $this_ability->target_options_update(array(
                 'frame' => 'defend',
                 'success' => array(0, 0, 0, -10, $this_robot->print_name().' starts charging '.$temp_target_robot->print_name_s().' weapon energy...')
                 ));
-            $this_robot->trigger_target($temp_target_robot, $this_ability, $trigger_options);
+            $this_robot->trigger_target($temp_target_robot, $this_ability);
 
             // Recover the target robot's weapon energy
             $this_ability->recovery_options_update(array(
@@ -42,16 +40,14 @@ $functions = array(
         else {
 
             // Update the ability's target options and trigger
-            $target_options = array();
-            $target_options['event_flag_sound_effects'] = array(
-                array('name' => 'charge-sound', 'volume' => 0.6),
-                array('name' => 'charge-sound', 'volume' => 0.8, 'delay' => 100)
-                );
+        	$this_battle->queue_sound_effect(array('name' => 'charge-sound', 'volume' => 0.6));
+            $this_battle->queue_sound_effect(array('name' => 'charge-sound', 'volume' => 0.8, 'delay' => 100));
+            $this_battle->queue_sound_effect(array('name' => 'charge-sound', 'volume' => 1.0, 'delay' => 200));
             $this_ability->target_options_update(array(
                 'frame' => 'defend',
                 'success' => array(1, -10, 0, -10, $this_robot->print_name().' starts charging weapon energy')
                 ));
-            $this_robot->trigger_target($this_robot, $this_ability, $target_options);
+            $this_robot->trigger_target($this_robot, $this_ability);
 
             // Recover this robot's weapon energy
             $this_ability->recovery_options_update(array(
