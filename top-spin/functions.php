@@ -6,11 +6,17 @@ $functions = array(
         extract($objects);
 
         // Target the opposing robot
+        $target_options = array();
+        $target_options['event_flag_sound_effects'] = array(
+            array('name' => 'spinning-sound', 'volume' => 0.8),
+            array('name' => 'spinning-sound', 'volume' => 0.9, 'delay' => 200),
+            array('name' => 'spinning-sound', 'volume' => 1.0, 'delay' => 300)
+            );
         $this_ability->target_options_update(array(
             'frame' => 'throw',
             'success' => array(0, 100, 0, 10, $this_robot->print_name().' throws a '.$this_ability->print_name().'!')
             ));
-        $this_robot->trigger_target($target_robot, $this_ability);
+        $this_robot->trigger_target($target_robot, $this_ability, $target_options);
 
         // Inflict damage on the opposing robot
         $this_ability->damage_options_update(array(
@@ -47,6 +53,11 @@ $functions = array(
             $this_ability->ability_accuracy = $temp_accuracy;
             $this_ability->update_session();
 
+            // Check to see if the doctor's sprite should 'flip' visually
+            $temp_doctor_flip = $temp_hit_counter % 2 === 0 ? true : false;
+            if ($temp_hit_counter >= 10){ $temp_doctor_flip = mt_rand(0, 1) === 0 ? true : false; }
+            $target_player->set_frame_styles($temp_doctor_flip ? 'transform: scaleX(-1); ' : '');
+
             // Inflict damage on the opposing robot
             $this_ability->damage_options_update(array(
                 'kind' => 'energy',
@@ -72,6 +83,9 @@ $functions = array(
         // Reset the accuracy back to base values
         $this_ability->ability_accuracy = $this_ability->ability_base_accuracy;
         $this_ability->update_session();
+
+        // Reset the doctor back to base styles
+        $target_player->reset_frame_styles();
 
         // Return true on success
         return true;
