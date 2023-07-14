@@ -45,6 +45,8 @@ $functions = array(
             $this_robot->update_session();
 
             // Target this robot's self
+            $this_battle->queue_sound_effect(array('name' => 'spawn-sound', 'volume' => 0.5));
+            $this_battle->queue_sound_effect('beeping-sound');
             $this_ability->target_options_update(array(
                 'frame' => 'summon',
                 'success' => array(7,
@@ -76,6 +78,8 @@ $functions = array(
                 $clone_attachment = rpg_game::get_ability($this_battle, $this_player, $this_robot, $clone_attachment_info);
 
                 // Trigger the summon animation a second time and then attach the duplicate ball
+                $this_battle->queue_sound_effect(array('name' => 'spawn-sound', 'volume' => 0.5));
+                $this_battle->queue_sound_effect('beeping-sound');
                 $this_robot->unset_flag('robot_is_using_ability');
                 $this_robot->set_flag('gemini-clone_is_using_ability', true);
                 $this_robot->set_attachment($clone_attachment_token, $clone_attachment_info);
@@ -119,6 +123,9 @@ $functions = array(
             $this_robot->unset_attachment($this_attachment_token);
 
             // Update this ability's target options and trigger
+            $this_battle->queue_sound_effect('slide-sound');
+            $this_battle->queue_sound_effect(array('name' => 'smack-sound', 'delay' => 100));
+            $this_battle->queue_sound_effect(array('name' => 'bounce-sound', 'delay' => 100));
             $this_ability->target_options_update(array(
                 'frame' => 'slide',
                 'kickback' => array(60, 0, 0),
