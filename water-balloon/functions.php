@@ -25,7 +25,7 @@ $functions = array(
         // Target the opposing robot
         $target_options = array();
         $target_options['event_flag_sound_effects'] = array(
-            array('name' => 'splash', 'volume' => 1.5)
+            array('name' => 'splash-sound', 'volume' => 1.0)
             );
         $this_ability->target_options_update(array(
             'frame' => 'shoot',
