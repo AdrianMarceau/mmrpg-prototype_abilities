@@ -10,6 +10,7 @@ $functions = array(
             'frame' => 'throw',
             'success' => array(1, 125, 0, 10, $this_robot->print_name().' throws a '.$this_ability->print_name().'!')
             ));
+        $this_battle->queue_sound_effect('timer-sound');
         $this_robot->trigger_target($target_robot, $this_ability);
 
         // Inflict damage on the opposing robot
