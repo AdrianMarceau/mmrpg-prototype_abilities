@@ -50,6 +50,8 @@ $functions = array(
         if (!isset($target_robot->robot_attachments[$this_attachment_token])){
 
             // Target this robot's self
+            $this_battle->queue_sound_effect(array('name' => 'spawn-sound', 'volume' => 0.5));
+            $this_battle->queue_sound_effect('summon-negative');
             $this_ability->target_options_update(array(
                 'frame' => 'summon',
                 'success' => array((!isset($this_robot->robot_attachments[$this_attachment_token]) ? 0 : 9), -10, 0, -18, $this_robot->print_name().' summons a '.$this_ability->print_name().'!')
@@ -57,6 +59,9 @@ $functions = array(
             $this_robot->trigger_target($this_robot, $this_ability);
 
             // Target this robot's self
+            $this_battle->queue_sound_effect('horn-blow-sound');
+            $this_battle->queue_sound_effect(array('name' => 'debuff-received', 'delay' => 200));
+            $this_battle->queue_sound_effect(array('name' => 'debuff-received', 'delay' => 400));
             $this_robot->robot_frame = 'base';
             $this_robot->update_session();
             $this_attachment->target_options_update($this_attachment_info['attachment_create']);
@@ -79,6 +84,10 @@ $functions = array(
             $target_robot->update_session();
 
             // Target the opposing robot
+            $this_battle->queue_sound_effect('summon-negative');
+            $this_battle->queue_sound_effect('horn-blow-sound');
+            $this_battle->queue_sound_effect(array('name' => 'debuff-received', 'delay' => 200));
+            $this_battle->queue_sound_effect(array('name' => 'debuff-received', 'delay' => 400));
             $this_attachment->target_options_update(array(
                 'frame' => 'summon',
                 'success' => array(9, -10, 0, -10, $this_robot->print_name().' intensified the effects of the '.$this_ability->print_name().'!<br /> The duration of '.$target_robot->print_name().'&#39;s distress was extended!')
