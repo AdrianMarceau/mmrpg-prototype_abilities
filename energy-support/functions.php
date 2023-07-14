@@ -6,6 +6,7 @@ $functions = array(
         extract($objects);
 
         // Target this robot's self
+        $this_battle->queue_sound_effect('summon-positive');
         $this_ability->target_options_update(array(
             'frame' => 'summon',
             'success' => array(9, 0, 0, -10, $this_robot->print_name().' uses '.$this_ability->print_name().'!')
@@ -33,6 +34,7 @@ $functions = array(
             $this_key = 0;
             foreach ($backup_robots_active AS $key => $info){
                 if ($info['robot_id'] == $this_robot->robot_id){ continue; }
+                $this_battle->queue_sound_effect(array('name' => 'summon-positive', 'volume' => 0.3));
                 $temp_this_robot = rpg_game::get_robot($this_battle, $this_player, $info);
                 // Increase this robot's energy stat
                 $this_ability->recovery_options_update(array(
