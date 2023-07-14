@@ -34,6 +34,7 @@ $functions = array(
                 'frame' => 'shoot',
                 'success' => array(0, 105, 0, 10, $target_text)
                 ));
+            $this_battle->queue_sound_effect('shot-sound');
             $this_robot->trigger_target($target_robot, $this_ability, $target_options);
 
             // Inflict damage on the opposing robot
