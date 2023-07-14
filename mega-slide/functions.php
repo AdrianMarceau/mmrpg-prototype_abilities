@@ -6,18 +6,18 @@ $functions = array(
         extract($objects);
 
         // Target the opposing robot
-        $trigger_options = array();
-        $trigger_options['event_flag_sound_effects'] = array(
-            array('name' => 'hyper-slide-sound', 'volume' => 1.5),
-            );
+        $this_battle->queue_sound_effect(array('name' => 'hyper-slide-sound', 'volume' => 1.0));
+        $this_battle->queue_sound_effect(array('name' => 'hyper-slide-sound', 'volume' => 0.6, 'delay' => 200));
         $this_ability->target_options_update(array(
             'frame' => 'slide',
             'kickback' => array(150, 0, 0),
             'success' => array(0, 25, 0, -10, $this_robot->print_name().' uses '.$this_ability->print_name().'!')
             ));
+        $trigger_options = array();
         $this_robot->trigger_target($target_robot, $this_ability, $trigger_options);
 
         // Inflict damage on the opposing robot
+        $this_battle->queue_sound_effect('hyper-slide-sound');
         $this_ability->damage_options_update(array(
             'kind' => 'energy',
             'kickback' => array(60, 0, 0),
