@@ -54,6 +54,8 @@ $functions = array(
         if (!isset($temp_ally_robot->robot_attachments[$this_attachment_token])){
 
             // Target this robot's self
+            $this_battle->queue_sound_effect(array('name' => 'spawn-sound', 'volume' => 0.5));
+            $this_battle->queue_sound_effect('summon-positive');
             $this_ability->target_options_update(array(
                 'frame' => 'summon',
                 'success' => array(0, 50, 0, 18, $this_robot->print_name().' summons a '.$this_ability->print_name().'!')
@@ -64,6 +66,7 @@ $functions = array(
             if ($this_robot->robot_id == $temp_ally_robot->robot_id){
 
                 // Target this robot's self
+                $this_battle->queue_sound_effect('small-buff-received');
                 $this_ability->target_options_update($this_attachment_info['attachment_create']);
                 $this_robot->trigger_target($this_robot, $this_ability);
 
@@ -77,6 +80,7 @@ $functions = array(
             else {
 
                 // Target this robot's self
+                $this_battle->queue_sound_effect('small-buff-received');
                 $this_robot->robot_frame = 'base';
                 $this_robot->update_session();
                 $this_attachment->target_options_update($this_attachment_info['attachment_create']);
@@ -104,6 +108,8 @@ $functions = array(
                 $this_robot->update_session();
 
                 // Target the opposing robot
+                $this_battle->queue_sound_effect('summon-positive');
+                $this_battle->queue_sound_effect('small-buff-received');
                 $this_ability->target_options_update(array(
                     'frame' => 'summon',
                     'success' => array(9, 85, -10, -10, $this_robot->print_name().' refreshed the '.$this_ability->print_name().'!<br /> The duration of the shield\'s protection has been extended!')
@@ -122,6 +128,8 @@ $functions = array(
                 $temp_ally_robot->update_session();
 
                 // Target the opposing robot
+                $this_battle->queue_sound_effect('summon-positive');
+                $this_battle->queue_sound_effect('small-buff-received');
                 $this_attachment->target_options_update(array(
                     'frame' => 'summon',
                     'success' => array(9, 85, -10, -10, $this_robot->print_name().' refreshed the '.$this_ability->print_name().' in front of '.$temp_ally_robot->print_name().'!<br /> The duration of the shield\'s protection has been extended!')
