@@ -10,6 +10,8 @@ $functions = array(
         else { $temp_ally_robot = $this_robot; }
 
         // Update the ability's target options and trigger
+        $target_options = array();
+        $target_options['prevent_default_text'] = true;
         $this_ability->target_options_update(array(
             'frame' => 'summon',
             'success' => array(0, 0, 0, 10,
@@ -21,7 +23,8 @@ $functions = array(
                 $this_robot->print_name().' uses the '.$this_ability->print_name().'!'
                 )
             ));
-        $this_robot->trigger_target($temp_ally_robot, $this_ability, array('prevent_default_text' => true));
+        $this_battle->queue_sound_effect('beeping-sound');
+        $this_robot->trigger_target($temp_ally_robot, $this_ability, $target_options);
 
         // Define the default ability info vars
         $relay_buster_token = '';
@@ -32,8 +35,11 @@ $functions = array(
         if ($temp_ally_robot->robot_id == $this_robot->robot_id){
 
             // Print out a failure message as the robot can't target itself
+            $target_options = array();
+            $target_options['prevent_default_text'] = true;
             $this_ability->target_options_update(array('frame' => 'defend', 'success' => array(9, 0, 0, -10, 'But this robot cannot target itself!<br />' )));
-            $this_robot->trigger_target($this_robot, $this_ability, array('prevent_default_text' => true));
+            $this_battle->queue_sound_effect('no-effect');
+            $this_robot->trigger_target($this_robot, $this_ability, $target_options);
 
         }
         // Automatically fail if there was no buster charge to transfer
@@ -43,8 +49,11 @@ $functions = array(
             && empty($this_robot->counters['speed_mods'])){
 
                 // Print out a failure message if nothing could be transferred
+                $target_options = array();
+                $target_options['prevent_default_text'] = true;
                 $this_ability->target_options_update(array('frame' => 'defend', 'success' => array(9, 0, 0, -10, 'But there was nothing to transfer&hellip;')));
-                $this_robot->trigger_target($this_robot, $this_ability, array('prevent_default_text' => true));
+                $this_battle->queue_sound_effect('no-effect');
+                $this_robot->trigger_target($this_robot, $this_ability, $target_options);
 
         }
         // Otherwise, we have at least something to transfer
@@ -123,6 +132,8 @@ $functions = array(
             if (!empty($transferred_things)){
 
                 // Print out a failure message if nothing could be transferred
+                $target_options = array();
+                $target_options['prevent_default_text'] = true;
                 $this_find = array('{target_player}', '{target_robot}', '{this_player}', '{this_robot}');
                 $this_replace = array($target_player->player_name, $target_robot->robot_name, $this_player->player_name, $temp_ally_robot->robot_name);
                 $temp_ally_robot->set_frame('taunt');
@@ -130,14 +141,18 @@ $functions = array(
                     $this_robot->print_name().' transferred '.preg_replace('/, ([a-z]+)$/', ' and $1', implode(', ', $transferred_things)).' to '.$temp_ally_robot->print_name().'! '.
                     (!empty($temp_ally_robot->robot_quotes['battle_taunt']) ? '<br /> '.$temp_ally_robot->print_quote('battle_taunt', $this_find, $this_replace) : '')
                     )));
-                $temp_ally_robot->trigger_target($temp_ally_robot, $this_ability, array('prevent_default_text' => true));
+                $this_battle->queue_sound_effect('growing-sound');
+                $temp_ally_robot->trigger_target($temp_ally_robot, $this_ability, $target_options);
                 $temp_ally_robot->set_frame('base');
 
             } else {
 
                 // Print out a failure message if nothing could be transferred
+                $target_options = array();
+                $target_options['prevent_default_text'] = true;
                 $this_ability->target_options_update(array('frame' => 'defend', 'success' => array(9, 0, 0, -10, 'But there was nothing to transfer&hellip;')));
-                $this_robot->trigger_target($this_robot, $this_ability, array('prevent_default_text' => true));
+                $this_battle->queue_sound_effect('no-effect');
+                $this_robot->trigger_target($this_robot, $this_ability, $target_options);
 
             }
 
