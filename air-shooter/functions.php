@@ -15,6 +15,9 @@ $functions = array(
         $this_robot->update_session();
 
         // Target the opposing robot
+        $this_battle->queue_sound_effect('whirlwind-sound');
+        $this_battle->queue_sound_effect(array('name' => 'whirlwind-sound', 'delay' => 200));
+        $this_battle->queue_sound_effect(array('name' => 'whirlwind-sound', 'delay' => 400));
         $this_ability->target_options_update(array(
             'frame' => 'shoot',
             'success' => array(0, 115, -25, 10, $this_ability->print_name().' fires whirlwinds!')
@@ -27,6 +30,7 @@ $functions = array(
         $this_robot->update_session();
 
         // Inflict damage on the opposing robot
+        $this_battle->queue_sound_effect(array('name' => 'whirlwind-sound', 'volume' => 0.6));
         $this_ability->damage_options_update(array(
             'kind' => 'energy',
             'kickback' => array(5, 0, 0),
@@ -65,6 +69,7 @@ $functions = array(
             $this_robot->update_session();
 
             // Attempt to trigger damage to the target robot again
+            $this_battle->queue_sound_effect(array('name' => 'whirlwind-sound', 'volume' => 0.6));
             $this_ability->damage_options_update(array(
                 'kind' => 'energy',
                 'kickback' => array(10, 0, 0),
@@ -96,6 +101,7 @@ $functions = array(
                 }
 
                 // Attempt to trigger damage to the target robot a third time
+                $this_battle->queue_sound_effect(array('name' => 'whirlwind-sound', 'volume' => 0.6));
                 $this_ability->damage_options_update(array(
                     'kind' => 'energy',
                     'kickback' => array(15, 0, 0),
