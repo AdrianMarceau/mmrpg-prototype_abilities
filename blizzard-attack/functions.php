@@ -23,6 +23,9 @@ $functions = array(
         $this_ability->update_session();
 
         // Target the opposing robot
+        $this_battle->queue_sound_effect('ice-sound');
+        $this_battle->queue_sound_effect(array('name' => 'ice-sound', 'delay' => 200));
+        $this_battle->queue_sound_effect(array('name' => 'ice-sound', 'delay' => 400));
         $this_ability->target_options_update(array(
             'frame' => 'summon',
             'success' => array(0, 0, 100, 10, $this_robot->print_name().' summons a '.$this_ability->print_name().'!')
@@ -37,6 +40,7 @@ $functions = array(
         // -- DAMAGE TARGETS -- //
 
         // Inflict damage on the opposing robot
+        $this_battle->queue_sound_effect(array('name' => 'ice-sound', 'volume' => 0.3));
         $num_hits_counter = 0;
         $this_robot->set_frame('throw');
         $target_robot->set_attachment($this_attachment_token.'_fx', $this_attachment_info);
@@ -78,6 +82,7 @@ $functions = array(
         $backup_target_robots_active = $target_player->values['robots_active'];
         foreach ($backup_target_robots_active AS $key => $info){
             if ($info['robot_id'] == $target_robot->robot_id){ continue; }
+            $this_battle->queue_sound_effect(array('name' => 'ice-sound', 'volume' => 0.3));
             $this_robot->set_frame($num_hits_counter % 2 === 0 ? 'defend' : 'taunt');
             $temp_target_robot = rpg_game::get_robot($this_battle, $target_player, $info);
             $temp_target_robot->set_attachment($this_attachment_token.'_fx', $this_attachment_info);
