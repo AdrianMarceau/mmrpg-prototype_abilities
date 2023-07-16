@@ -6,6 +6,7 @@ $functions = array(
         extract($objects);
 
         // Target the opposing robot
+        $this_battle->queue_sound_effect('bubble-sound');
         $this_ability->target_options_update(array(
             'frame' => 'throw',
             'success' => array(0, 85, 35, 10, $this_robot->print_name().' thows a '.$this_ability->print_name().'!'),
@@ -13,6 +14,7 @@ $functions = array(
         $this_robot->trigger_target($target_robot, $this_ability);
 
         // Inflict damage on the opposing robot
+        $this_battle->queue_sound_effect('explode-sound');
         $this_ability->damage_options_update(array(
             'kind' => 'energy',
             'kickback' => array(20, 0, 0),
