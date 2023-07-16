@@ -35,6 +35,7 @@ $functions = array(
         $this_robot->update_session();
 
         // Update the ability's target options and trigger
+        $this_battle->queue_sound_effect('shining-sound');
         $this_ability->target_options_update(array(
             'frame' => 'summon',
             'success' => array($this_frames['target'], -5, 0, -10, $this_robot->print_name().' uses the '.$this_ability->print_name().'!')
