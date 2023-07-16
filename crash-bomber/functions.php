@@ -121,6 +121,7 @@ $functions = array(
         if (!isset($target_robot->robot_attachments[$this_attachment_token])){
 
             // Target the opposing robot
+            $this_battle->queue_sound_effect('throw-sound');
             $this_ability->target_options_update(array(
                 'frame' => 'shoot',
                 'success' => array(0, 95, 0, 10, $this_robot->print_name().' fires a '.$this_ability->print_name().'!')
@@ -140,6 +141,7 @@ $functions = array(
             $target_robot->update_session();
 
             // Create the attachment event manually as no damage/recovery occurs
+            $this_battle->queue_sound_effect('beeping-sound');
             $temp_console_header = $this_robot->robot_name.'&#39;s '.$this_ability->ability_name;
             $temp_console_content = 'The '.$this_ability->print_name().' attached itself to '.$target_robot->print_name().'!<br />';
             if ($target_player->player_token != 'player'){ $temp_console_content .= $target_player->print_name().'&#39;s robot started ticking&hellip;'; }
@@ -157,6 +159,7 @@ $functions = array(
                 $target_robot->update_session();
 
                 // Create the attachment event manually as no damage/recovery occurs
+                $this_battle->queue_sound_effect('no-effect');
                 $temp_console_header = $this_robot->robot_name.'&#39;s '.$this_ability->ability_name;
                 $temp_console_content = $target_robot->print_name().'&#39;s immunity kicked in!<br />';
                 $temp_console_content .= 'The '.$this_ability->print_name().' fizzled and faded away&hellip;';
@@ -180,6 +183,7 @@ $functions = array(
         else {
 
             // Target the opposing robot
+            $this_battle->queue_sound_effect('beeping-sound');
             $this_ability->target_options_update(array(
                 'frame' => 'summon',
                 'success' => array(0, 0, -9999, 0, $this_robot->print_name().' triggered the '.$this_ability->print_name().' early!')
@@ -201,6 +205,7 @@ $functions = array(
             $energy_damage_amount = round($this_attachment_info['attachment_energy'] * 0.5);
 
             // Now that we have the new amount, we can trigger the reduced damage
+            $this_battle->queue_sound_effect('explode-sound');
             $damage_trigger_options = $this_attachment_info['attachment_destroy']['options'];
             unset($damage_trigger_options['referred_damage'], $damage_trigger_options['referred_damage_id']);
             $target_robot->trigger_damage($this_robot, $this_ability, $energy_damage_amount, true, $damage_trigger_options);
