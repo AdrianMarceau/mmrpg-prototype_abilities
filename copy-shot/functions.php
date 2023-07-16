@@ -23,6 +23,7 @@ $functions = array(
             );
 
         // Update the ability's target options and trigger
+        $this_battle->queue_sound_effect('vector-sound');
         $this_ability->target_options_update(array(
             'frame' => 'shoot',
             'success' => array($temp_ability_frames['target'], 105, 0, 10, $this_robot->print_name().' fires a '.$this_ability->print_name().'!')
@@ -63,6 +64,7 @@ $functions = array(
                     $this_robot->update_session();
 
                     // Copy the current ability to this robot's list, and update
+                    $this_battle->queue_sound_effect('get-big-item');
                     $this_robot->robot_frame = 'taunt';
                     $this_robot->robot_abilities[$this_ability_key] = $new_ability_token;
                     $this_robot->update_session();
@@ -136,6 +138,7 @@ $functions = array(
         if (!$copy_shot_success){
 
             // Update the ability's target options and trigger
+            $this_battle->queue_sound_effect('no-effect');
             $this_ability->target_options_update(array(
                 'frame' => 'defend',
                 'success' => array(9, 0, 0, 10, 'The target\'s ability could not be copied...')
