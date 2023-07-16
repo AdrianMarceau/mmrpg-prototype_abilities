@@ -49,6 +49,7 @@ $functions = array(
             }
 
             // Update the ability's target options and trigger
+            $this_battle->queue_sound_effect('get-item');
             $temp_rotate_amount = 45;
             //$old_item->set_name('Unequip Item');
             $old_item->set_frame_styles('opacity: 0.5; transform: rotate('.$temp_rotate_amount.'deg); -webkit-transform: rotate('.$temp_rotate_amount.'deg); -moz-transform: rotate('.$temp_rotate_amount.'deg); ');

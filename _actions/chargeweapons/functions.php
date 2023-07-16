@@ -10,6 +10,8 @@ $functions = array(
         $base_attachment_multiplier = 1.25;
 
         // Define this ability's attachment token
+        $this_battle->queue_sound_effect(array('name' => 'charge-sound', 'volume' => 0.5));
+        $this_battle->queue_sound_effect(array('name' => 'charge-sound', 'volume' => 1.0, 'delay' => 200));
         $this_attachment_token = 'ability_'.$this_ability->ability_token;
         $this_attachment_info = array(
             'class' => 'ability',
