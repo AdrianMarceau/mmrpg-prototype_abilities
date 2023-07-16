@@ -74,6 +74,7 @@ $functions = array(
             $this_robot->update_session();
 
             // Target the opposing robot
+            $this_battle->queue_sound_effect('whirlwind-sound');
             $this_ability->target_options_update(array(
                 'frame' => 'summon',
                 'success' => array(2, 90, 0, 20,
@@ -101,6 +102,7 @@ $functions = array(
                 $clone_attachment = rpg_game::get_ability($this_battle, $this_player, $this_robot, $clone_attachment_info);
 
                 // Trigger the summon animation a second time and then attach the duplicate ball
+                $this_battle->queue_sound_effect('whirlwind-sound');
                 $this_robot->unset_flag('robot_is_using_ability');
                 $this_robot->set_flag('gemini-clone_is_using_ability', true);
                 $this_robot->set_attachment($clone_attachment_token, $clone_attachment_info);
@@ -155,6 +157,7 @@ $functions = array(
             $this_robot->unset_attachment($this_attachment_token);
 
             // Target the opposing robot
+            $this_battle->queue_sound_effect('zephyr-sound');
             $this_ability->target_options_update(array(
                 'frame' => 'throw',
                 'success' => array(0, 180, 5, 10, $this_robot->print_name().' releases the '.$this_ability->print_name().'!')
@@ -194,6 +197,7 @@ $functions = array(
                     $this_robot->set_flag('gemini-clone_is_using_ability', true);
 
                     // Target the opposing robot
+                    $this_battle->queue_sound_effect('zephyr-sound');
                     $this_ability->target_options_update(array(
                         'frame' => 'throw',
                         'success' => array(0, 180, 5, 10, $this_robot->print_name().' releases the second '.$this_ability->print_name().'!')
