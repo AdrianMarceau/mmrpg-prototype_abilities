@@ -5,6 +5,9 @@ $functions = array(
         // Extract all objects into the current scope
         extract($objects);
 
+        // Define a variable to hold the number of blocks
+        $number_of_blocks = 0;
+
         // Count the number of active robots on the target's side of the  field
         $target_robot_ids = array();
         $target_robots_active = $target_player->values['robots_active'];
@@ -39,6 +42,7 @@ $functions = array(
         // The first attachment always exists (though it's part of the attack itself)
         $this_attachment_info1 = $this_attachment_info;
         $target_robot_1 = $get_next_target_robot($target_robot->robot_id);
+        $number_of_blocks++;
 
         // Only add an additional attachments if there are enough targets
         if ($target_robots_active_count >= 2){
@@ -49,6 +53,7 @@ $functions = array(
             $this_attachment_info2['ability_frame_animate'] = array(4);
             $this_robot->set_attachment($this_attachment_token.'_2', $this_attachment_info2);
             $target_robot_2 = $get_next_target_robot();
+            $number_of_blocks++;
         }
 
         // Only add an additional attachments if there are enough targets
@@ -60,6 +65,7 @@ $functions = array(
             $this_attachment_info3['ability_frame_animate'] = array(3);
             $this_robot->set_attachment($this_attachment_token.'_3', $this_attachment_info3);
             $target_robot_3 = $get_next_target_robot();
+            $number_of_blocks++;
         }
 
         // Only add an additional attachments if there are enough targets
@@ -71,6 +77,15 @@ $functions = array(
             $this_attachment_info4['ability_frame_animate'] = array(5);
             $this_robot->set_attachment($this_attachment_token.'_4', $this_attachment_info4);
             $target_robot_4 = $get_next_target_robot();
+            $number_of_blocks++;
+        }
+
+        // Queue sound effects for each block being generated
+        for ($i = 0; $i < $number_of_blocks; $i++){
+            $this_battle->queue_sound_effect(array(
+                'name' => 'summon-sound',
+                'delay' => 0 + ($i * 200)
+                ));
         }
 
         // Target the opposing robot
