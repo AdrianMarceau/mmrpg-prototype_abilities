@@ -11,6 +11,7 @@ $functions = array(
     elseif (preg_match('/_alt2$/', $this_robot->robot_image)){ $this_frames = array('target' => 4, 'impact' => 5); }
 
     // Update the ability's target options and trigger
+    $this_battle->queue_sound_effect('explode-sound');
     $this_ability->target_options_update(array(
       'frame' => 'slide',
       'kickback' => array(40, 0, 0),
