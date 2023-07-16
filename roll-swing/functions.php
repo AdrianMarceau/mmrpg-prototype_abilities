@@ -39,13 +39,11 @@ $functions = array(
         // Target the opposing robot
         $trigger_options = array();
         $trigger_options['prevent_default_text'] = true;
-        $trigger_options['event_flag_sound_effects'] = array();
         for ($i = 0; $i < $this_swing_stage; $i++){
-            $trigger_options['event_flag_sound_effects'][] = array(
+            $this_battle->queue_sound_effect(array(
                 'name' => 'get-weird-item',
-                'volume' => 1.5,
                 'delay' => 0 + (50 * $i)
-                );
+                ));
         }
 
         $this_ability->target_options_update(array(
