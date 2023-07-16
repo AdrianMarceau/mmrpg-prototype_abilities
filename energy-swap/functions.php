@@ -22,6 +22,7 @@ $functions = array(
         $has_target_self = $this_robot->robot_id == $target_robot->robot_id ? true : false;
 
         // Target this robot's self
+        $this_battle->queue_sound_effect('summon-sound');
         $this_ability->target_options_update(array(
             'frame' => 'summon',
             'success' => array(0, 0, 10, -10, $this_robot->print_name().' triggered an '.$this_ability->print_name().' with '.$target_robot->print_name().'!')
@@ -42,6 +43,7 @@ $functions = array(
             || $this_current_life_energy === $target_current_life_energy){
 
             // Update the ability's target options and trigger
+            $this_battle->queue_sound_effect('no-effect');
             $this_ability->target_options_update(array('frame' => 'defend', 'success' => array(0, 0, 0, 10, '...but nothing happened.')));
             $this_robot->trigger_target($target_robot, $this_ability, array('prevent_default_text' => true));
             return;
@@ -52,6 +54,7 @@ $functions = array(
         if ($target_robot->robot_item == 'guard-module'){
 
             // Create a temp item object so we can show it resisting stat swaps
+            $this_battle->queue_sound_effect('no-effect');
             $temp_item = rpg_game::get_item($this_battle, $target_player, $target_robot, array('item_token' => $target_robot->robot_item));
             $temp_message = '&hellip;but the held '.$temp_item->print_name().' kicked in! ';
             $temp_message .= '<br /> '.$target_robot->print_name().'\'s item protects '.$target_robot->get_pronoun('object').' from stat changes!';
@@ -62,6 +65,7 @@ $functions = array(
         }
 
         // Apply the target's life energy to the user, keep track of change, crop if too high
+
         $this_new_life_energy = $target_current_life_energy;
         if ($this_new_life_energy > $this_robot->robot_base_energy){ $this_new_life_energy = $this_robot->robot_base_energy;  }
         $this_energy_change = 'stayed the same';
@@ -82,10 +86,12 @@ $functions = array(
         $target_robot_event_text .= '<br /> '.$target_robot->get_pronoun('possessive2').' energy is now at '.$target_robot->print_energy().' / '.$target_robot->print_robot_base_energy().'!';
 
         // Print out this robot's new energy amounts
+        $this_battle->queue_sound_effect(strsrt($this_energy_change, 'increased') ? 'small-buff-received' : 'small-debuff-received');
         $this_ability->target_options_update(array('frame' => 'defend', 'success' => array(9, 0, 10, -10, $this_robot_event_text)));
         $this_robot->trigger_target($this_robot, $this_ability, array('prevent_default_text' => true));
 
         // Print out this robot's new energy amounts
+        $this_battle->queue_sound_effect(strsrt($target_energy_change, 'increased') ? 'small-buff-received' : 'small-debuff-received');
         $this_ability->target_options_update(array('frame' => 'defend', 'success' => array(9, 0, 10, -10, $target_robot_event_text)));
         $target_robot->trigger_target($target_robot, $this_ability, array('prevent_default_text' => true));
 
