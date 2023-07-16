@@ -79,6 +79,7 @@ $functions = array(
         if (!$is_summoned){
 
             // Target this robot's self
+            $this_battle->queue_sound_effect('bubble-sound');
             $this_ability->target_options_update(array(
                 'frame' => 'summon',
                 'success' => array(0, -6, 0, -10, $this_robot->print_name().' raises a '.$this_ability->print_name().'!')
@@ -104,6 +105,7 @@ $functions = array(
             $this_robot->update_session();
 
             // Target the opposing robot
+            $this_battle->queue_sound_effect('bubble-sound');
             $this_ability->target_options_update(array(
                 'frame' => 'summon',
                 'success' => array(9, 24, 30, 18, $this_robot->print_name().' refreshed '.$this_robot->get_pronoun('possessive2').' '.$this_ability->print_name().'!<br /> The duration of '.$this_robot->print_name().'&#39;s protection was extended!')
