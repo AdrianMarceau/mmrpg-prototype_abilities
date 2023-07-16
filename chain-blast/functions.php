@@ -124,6 +124,8 @@ $functions = array(
         if (!isset($target_robot->robot_attachments[$this_attachment_token])){
 
             // Target this robot's self
+            $this_battle->queue_sound_effect('throw-sound');
+            $this_battle->queue_sound_effect('beeping-sound');
             $this_ability->target_options_update(array(
                 'frame' => 'throw',
                 'success' => array(0, 100, $attachment_y_offset, 10, $this_robot->print_name().' throws a '.$this_ability->print_name().'!')
@@ -180,6 +182,7 @@ $functions = array(
         else {
 
             // Target the opposing robot
+            $this_battle->queue_sound_effect('explode-sound');
             $this_ability->target_options_update(array(
                 'frame' => 'summon',
                 'success' => array(0, -9999, -9999, 0, $this_robot->print_name().' detonated the '.$this_ability->print_name().' early!')
