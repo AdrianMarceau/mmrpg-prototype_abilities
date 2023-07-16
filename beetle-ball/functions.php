@@ -11,6 +11,7 @@ $functions = array(
     //elseif (preg_match('/_alt2$/', $this_robot->robot_image)){ $this_frames = array('target' => 4, 'impact' => 5); }
 
     // Update the ability's target options and trigger
+    $this_battle->queue_sound_effect('throw-sound');
     $this_ability->target_options_update(array(
       'frame' => 'shoot',
       'success' => array($this_frames['target'], 100, 30, 10, $this_robot->print_name().' generates a '.$this_ability->print_name().'!')
