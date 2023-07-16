@@ -15,7 +15,7 @@ $functions = array(
         $this_robot->trigger_target($target_robot, $this_ability);
 
         // Inflict damage on the opposing robot
-        $this_battle->queue_sound_effect('fireball-sound');
+        $this_battle->queue_sound_effect(array('name' => 'fireball-sound', 'volume' => 0.5));
         $this_ability->damage_options_update(array(
             'kind' => 'energy',
             'kickback' => array(15, 0, 0),
