@@ -31,6 +31,7 @@ $functions = array(
         $this_attachment_token = $this_attachment_info['attachment_token'];
 
         // Target the opposing robot
+        $this_battle->queue_sound_effect('wobble-sound');
         $this_ability->target_options_update(array(
             'frame' => 'shoot',
             'success' => array(0, 125, -5, 10, $this_robot->print_name().' fires an '.$this_ability->print_name().'!')
