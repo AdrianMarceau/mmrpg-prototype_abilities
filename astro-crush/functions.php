@@ -63,18 +63,16 @@ $functions = array(
             );
 
         // Target the opposing robot amd trigger the ability summon
-        $trigger_options = array();
-        $trigger_options['prevent_default_text'] = true;
-        $trigger_options['prevent_stats_text'] = true;
-        $trigger_options['event_flag_sound_effects'] = array(
-            array('name' => 'cosmic-sound', 'volume' => 1.0),
-        );
+        $this_battle->queue_sound_effect('cosmic-sound');
         $this_ability->ability_image = $image_index['base'];
         $this_ability->update_session();
         $this_ability->target_options_update(array(
             'frame' => 'summon',
             'success' => array(9, 0, 0, -999, $this_robot->print_name().' summons an '.$this_ability->print_name().'!')
             ));
+        $trigger_options = array();
+        $trigger_options['prevent_default_text'] = true;
+        $trigger_options['prevent_stats_text'] = true;
         $this_robot->trigger_target($target_robot, $this_ability, $trigger_options);
 
         // Loop through the target's benched robots, inflicting damage to each
@@ -113,6 +111,7 @@ $functions = array(
             }
 
             // Reset the main ability and inflict damage on this target robot
+            $this_battle->queue_sound_effect('smack-sound');
             $this_ability->ability_results_reset();
             $temp_positive_word = rpg_battle::random_positive_word();
             $temp_negative_word = rpg_battle::random_negative_word();
