@@ -41,6 +41,7 @@ $functions = array(
         if (!empty($second_shield_type)){ $this_robot->set_attachment($shield2_attachment_token.'_temp', $shield2_attachment_info); }
 
         // Show the summoning event for the one or two shields right now
+        $this_battle->queue_sound_effect('charge-sound');
         $this_ability->target_options_update(array(
             'frame' => 'summon',
             'success' => array(0, -9999, -9999, -9999,
@@ -59,6 +60,7 @@ $functions = array(
         if (!empty($second_shield_type)){ $current_target_robot->set_attachment($shield2_attachment_token, $shield2_attachment_info); }
 
         // Show the summoning event for the one or two shields right now
+        $this_battle->queue_sound_effect('small-buff-received');
         $secondary_text = (preg_match('/^(a|e|i|o|u)/i', $first_shield_type) ? 'an' : 'a').' '.rpg_type::print_span($first_shield_type).'-type shield';
         if (!empty($second_shield_type)){ $secondary_text = rpg_type::print_span($first_shield_type).' and '.rpg_type::print_span($second_shield_type).'-type shields'; }
         $this_ability->target_options_update(array(
