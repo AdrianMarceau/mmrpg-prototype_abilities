@@ -78,6 +78,7 @@ $functions = array(
         $this_robot->update_session();
 
         // Update the ability's target options and trigger
+        $this_battle->queue_sound_effect('fireball-sound');
         $this_ability->target_options_update(array(
             'frame' => 'shoot',
             'success' => array($shot_power_frame, 100 + (30 * $shot_power), 0, 10, $this_robot->print_name().' throws an '.$this_ability->print_name().'!') // [shot_power='.$shot_power.'|attachment_defense='.$this_attachment_info['attachment_defense'].']
@@ -85,6 +86,7 @@ $functions = array(
         $this_robot->trigger_target($target_robot, $this_ability);
 
         // Inflict damage on the opposing robot
+        $this_battle->queue_sound_effect(array('name' => 'fireball-sound', 'volume' => 0.5));
         $this_ability->damage_options_update(array(
             'kind' => 'energy',
             'kickback' => array(($shot_power * 10), 0, 0),
