@@ -19,6 +19,7 @@ $functions = array(
          */
 
         // Target this robot's self
+        $this_battle->queue_sound_effect('get-weird-item');
         $this_ability->target_options_update(array(
             'frame' => 'summon',
             'success' => array(9, 0, 10, -10, $this_robot->print_name().' triggered a '.$this_ability->print_name().'!')
