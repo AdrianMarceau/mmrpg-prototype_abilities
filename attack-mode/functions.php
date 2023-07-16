@@ -6,6 +6,7 @@ $functions = array(
         extract($objects);
 
         // Target this robot's self and init ability
+        $this_battle->queue_sound_effect('intense-growing-sound');
         $this_ability->target_options_update(array('frame' => 'summon','success' => array(9, 0, 0, -10, $this_robot->print_name().' enters '.$this_ability->print_name().'!')));
         $this_robot->trigger_target($this_robot, $this_ability);
 
@@ -24,6 +25,7 @@ $functions = array(
         if (!$allow_move){
 
             // Target this robot's self to show the failure message
+            $this_battle->queue_sound_effect('no-effect');
             $this_ability->target_options_update(array('frame' => 'defend', 'success' => array(9, -2, 0, -10, 'But '.$this_robot->print_name().'&#39;s '.$stats_wont_go.'!')));
             $this_robot->trigger_target($this_robot, $this_ability);
             return;
