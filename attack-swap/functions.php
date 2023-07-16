@@ -22,6 +22,7 @@ $functions = array(
         $has_target_self = $this_robot->robot_id == $target_robot->robot_id ? true : false;
 
         // Target this robot's self to initiate ability
+        $this_battle->queue_sound_effect('summon-sound');
         $target_name_text = $has_target_self ? 'itself' : $target_robot->print_name();
         $this_ability->target_options_update(array('frame' => 'summon', 'success' => array(0, 0, 10, -10, $this_robot->print_name().' triggered an '.$this_ability->print_name().' with '.$target_name_text.'!')));
         $this_robot->trigger_target($this_robot, $this_ability);
@@ -39,6 +40,7 @@ $functions = array(
         if ($has_target_self || $this_stat_mods === $target_stat_mods || $target_robot->robot_status != 'active'){
 
             // Update the ability's target options and trigger
+            $this_battle->queue_sound_effect('no-effect');
             $this_ability->target_options_update(array('frame' => 'defend', 'success' => array(0, 0, 0, 10, '&hellip;but nothing happened.')));
             $this_robot->trigger_target($target_robot, $this_ability, array('prevent_default_text' => true));
             return;
@@ -49,6 +51,7 @@ $functions = array(
         if ($target_robot->robot_item == 'guard-module'){
 
             // Create a temp item object so we can show it resisting stat swaps
+            $this_battle->queue_sound_effect('no-effect');
             $temp_item = rpg_game::get_item($this_battle, $target_player, $target_robot, array('item_token' => $target_robot->robot_item));
             $temp_message = '&hellip;but the held '.$temp_item->print_name().' kicked in! ';
             $temp_message .= '<br /> '.$target_robot->print_name().'\'s item protects '.$target_robot->get_pronoun('object').' from stat changes!';
@@ -88,7 +91,10 @@ $functions = array(
         }
 
         // Generate an event showing the stat swap was successful
-        $this_ability->target_options_update(array('frame' => $effect_frame, 'success' => array(9, 0, 10, -10, $target_name_text.'&#39;s '.$stat_token.' stat '.$effect_text.'!')));
+        if ($effect_frame === 'taunt'){ $this_battle->queue_sound_effect('small-buff-received'); }
+        elseif ($effect_frame === 'defend'){ $this_battle->queue_sound_effect('small-debuff-received'); }
+        else { $this_battle->queue_sound_effect('no-effect'); }
+        $this_ability->target_options_update(array('frame' => $effect_frame, 'success' => array(9, 0, 10, -10, $target_name_text.'\'s '.$stat_token.' stat '.$effect_text.'!')));
         $target_robot->trigger_target($target_robot, $this_ability, array('prevent_default_text' => true));
 
         // Return true on success
