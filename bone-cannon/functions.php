@@ -6,6 +6,7 @@ $functions = array(
         extract($objects);
 
         // Target the opposing robot
+        $this_battle->queue_sound_effect('cannon-sound');
         $this_ability->target_options_update(array(
             'frame' => 'shoot',
             'success' => array(0, 300, 0, 10, $this_robot->print_name().' fires the '.$this_ability->print_name().'!')
