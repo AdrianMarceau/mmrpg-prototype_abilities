@@ -11,14 +11,12 @@ $functions = array(
         elseif (preg_match('/_alt2$/', $this_robot->robot_image)){ $this_frames = array('target' => 0, 'impact' => 1); }
 
         // Update the ability's target options and trigger
-        $trigger_options = array();
-        $trigger_options['event_flag_sound_effects'] = array(
-            array('name' => 'suck-sound', 'volume' => 1.5),
-            );
+        $this_battle->queue_sound_effect('suck-sound');
         $this_ability->target_options_update(array(
             'frame' => 'summon',
             'success' => array($this_frames['target'], 0, 5, -10, $this_robot->print_name().' uses '.$this_ability->print_name().'!')
-        ));
+            ));
+        $trigger_options = array();
         $this_robot->trigger_target($target_robot, $this_ability, $trigger_options);
 
         // Inflict damage on the opposing robot
