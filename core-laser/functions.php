@@ -6,17 +6,16 @@ $functions = array(
         extract($objects);
 
         // Update the ability's target options and trigger
-        if ($this_robot->robot_gender == 'female'){ $pronoun = 'her'; }
-        elseif ($this_robot->robot_gender == 'male'){ $pronoun = 'his'; }
-        else { $pronoun = 'its'; }
+        $this_battle->queue_sound_effect('charge-sound');
         $this_ability->target_options_update(array(
             'frame' => 'summon',
-            'success' => array(1, -10, 0, -1, $this_robot->print_name().' taps into '.$pronoun.' core power...', 1)
+            'success' => array(1, -10, 0, -1, $this_robot->print_name().' taps into '.$this_robot->get_pronoun('possessive2').' core power...', 1)
             ));
         $target_options = array('prevent_default_text' => true);
         $this_robot->trigger_target($target_robot, $this_ability, $target_options);
 
         // Update the ability's target options and trigger
+        $this_battle->queue_sound_effect('laser-sound');
         $this_ability->target_options_update(array(
             'frame' => 'shoot',
             'success' => array(2, 120, -20, 10, $this_robot->print_name().' fires the '.$this_ability->print_name().'!', 2)
@@ -25,6 +24,7 @@ $functions = array(
         $this_robot->trigger_target($target_robot, $this_ability, $target_options);
 
         // Update ability options and trigger damage on the target
+        $this_battle->queue_sound_effect(array('name' => 'laser-sound', 'volume' => 0.6));
         $this_ability->damage_options_update(array(
             'kind' => 'energy',
             'kickback' => array(15, 0, 0),
