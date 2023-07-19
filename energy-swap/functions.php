@@ -44,7 +44,7 @@ $functions = array(
 
             // Update the ability's target options and trigger
             $this_battle->queue_sound_effect('no-effect');
-            $this_ability->target_options_update(array('frame' => 'defend', 'success' => array(0, 0, 0, 10, '...but nothing happened.')));
+            $this_ability->target_options_update(array('frame' => 'defend', 'success' => array(-1, 0, 0, 10, '...but nothing happened.')));
             $this_robot->trigger_target($target_robot, $this_ability, array('prevent_default_text' => true));
             return;
 
@@ -58,8 +58,19 @@ $functions = array(
             $temp_item = rpg_game::get_item($this_battle, $target_player, $target_robot, array('item_token' => $target_robot->robot_item));
             $temp_message = '&hellip;but the held '.$temp_item->print_name().' kicked in! ';
             $temp_message .= '<br /> '.$target_robot->print_name().'\'s item protects '.$target_robot->get_pronoun('object').' from stat changes!';
-            $temp_item->target_options_update(array( 'frame' => 'defend', 'success' => array(9, 0, 0, 10, $temp_message)));
+            $temp_item->target_options_update(array( 'frame' => 'defend', 'success' => array(-1, 0, 0, 10, $temp_message)));
             $target_robot->trigger_target($this_robot, $temp_item, array('prevent_default_text' => true));
+            return;
+
+        }
+
+        // If the target is a boss, they are simply too strong for this to work on
+        if ($target_robot->robot_class == 'boss'){
+
+            // Update the ability's target options and trigger
+            $this_battle->queue_sound_effect('no-effect');
+            $this_ability->target_options_update(array('frame' => 'taunt', 'success' => array(-1, 0, 0, 10, '...but '.$target_robot->print_name().' shrugged it off!')));
+            $target_robot->trigger_target($this_robot, $this_ability, array('prevent_default_text' => true));
             return;
 
         }
