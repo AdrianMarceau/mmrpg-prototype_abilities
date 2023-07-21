@@ -23,10 +23,8 @@ $functions = array(
         if ($this_robot->robot_token == 'aqua-man'){ $y_offset = -10; }
 
         // Target the opposing robot
+        $this_battle->queue_sound_effect('splash-sound');
         $target_options = array();
-        $target_options['event_flag_sound_effects'] = array(
-            array('name' => 'splash-sound', 'volume' => 1.0)
-            );
         $this_ability->target_options_update(array(
             'frame' => 'shoot',
             'success' => array(0, $x_offset, $y_offset, 10, $this_robot->print_name().' shoots a '.$this_ability->print_name().'!'),
@@ -38,6 +36,7 @@ $functions = array(
         $target_robot->update_session();
 
         // Inflict damage on the opposing robot
+        $this_battle->queue_sound_effect(array('name' => 'splash-sound', 'volume' => 0.6));
         $this_ability->damage_options_update(array(
             'kind' => 'energy',
             'kickback' => array(20, 0, 0),
@@ -72,6 +71,7 @@ $functions = array(
             $this_robot->update_session();
 
             // Target the opposing robot
+            $this_battle->queue_sound_effect('splash-sound');
             $this_ability->target_options_update(array(
                 'frame' => 'shoot',
                 'success' => array(0, $x_offset, $y_offset, 10, $this_robot->print_name().' shoots another '.$this_ability->print_name().'!'),
@@ -83,6 +83,7 @@ $functions = array(
             $target_robot->update_session();
 
             // Inflict damage on the opposing robot
+            $this_battle->queue_sound_effect(array('name' => 'splash-sound', 'volume' => 0.6));
             $this_ability->damage_options_update(array(
                 'kind' => 'energy',
                 'kickback' => array(20, 0, 0),
