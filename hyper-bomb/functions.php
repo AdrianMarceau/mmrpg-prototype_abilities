@@ -15,6 +15,7 @@ $functions = array(
         }
 
         // Target the opposing robot
+        $this_battle->queue_sound_effect('throw-sound');
         $this_ability->target_options_update(array(
             'frame' => 'throw',
             'kickback' => array(0, 0, 0),
@@ -23,6 +24,7 @@ $functions = array(
         $this_robot->trigger_target($target_robot, $this_ability);
 
         // Inflict damage on the opposing robot
+        $this_battle->queue_sound_effect('explode-sound');
         $this_ability->damage_options_update(array(
             'kind' => 'energy',
             'frame' => 'damage',
@@ -73,16 +75,8 @@ $functions = array(
             $this_robot->update_session();
         }
 
-        // Loop through all robots on the target side and disable any that need it
-        $target_robots_active = $target_player->get_robots();
-        foreach ($target_robots_active AS $key => $robot){
-            if ($robot->robot_id == $target_robot->robot_id){ $temp_target_robot = $target_robot; }
-            else { $temp_target_robot = $robot; }
-            if (($temp_target_robot->robot_energy < 1 || $temp_target_robot->robot_status == 'disabled')
-                && empty($temp_target_robot->flags['apply_disabled_state'])){
-                $temp_target_robot->trigger_disabled($this_robot);
-            }
-        }
+        // Now that all the damage has been dealt, allow the player to check for disabled
+        $target_player->check_robots_disabled($this_player, $this_robot);
 
         // Return true on success
         return true;
