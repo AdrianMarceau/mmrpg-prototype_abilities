@@ -20,6 +20,7 @@ $functions = array(
         $this_attachment_token = $this_attachment_info['attachment_token'];
 
         // Target the opposing robot
+        $this_battle->queue_sound_effect('blowing-sound');
         $this_ability->target_options_update(array(
             'frame' => $this_robot->robot_token == 'ice-man' ? 'taunt' : 'shoot',
             'success' => array(0, 110, 0, 10, $this_robot->print_name().' uses the '.$this_ability->print_name().'!')
@@ -27,6 +28,7 @@ $functions = array(
         $this_robot->trigger_target($target_robot, $this_ability);
 
         // Inflict damage on the opposing robot
+        $this_battle->queue_sound_effect('ice-sound');
         $this_ability->damage_options_update(array(
             'kind' => 'energy',
             'kickback' => array(5, 0, 0),
@@ -45,6 +47,7 @@ $functions = array(
 
         // Attach the ability to the target if not disabled
         if ($this_ability->ability_results['this_result'] != 'failure'){
+            $this_battle->queue_sound_effect('ice-sound');
 
             // If the ability flag was not set, attach the hazard to the target position
             if (!isset($this_battle->battle_attachments[$static_attachment_key][$this_attachment_token])){
