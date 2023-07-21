@@ -352,9 +352,9 @@
         "group_child_tokens": [
             "blazing-torch",
             "pile-driver",
-            "bounce-ball",
             "block-dropper",
-            "acid-glob"
+            "acid-glob",
+            "bounce-ball"
         ]
     },
     "MM11\/Weapons\/081T2": {
