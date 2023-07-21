@@ -22,6 +22,7 @@ $functions = array(
         $target_robots_active = $target_player->counters['robots_active'];
 
         // Target the opposing robot
+        $this_battle->queue_sound_effect('timer-sound');
         $this_ability->target_options_update(array(
             'kickback' => array(-5, 0, 0),
             'frame' => 'summon',
@@ -34,6 +35,7 @@ $functions = array(
         $target_robot->update_session();
 
         // Inflict damage on the opposing robot
+        $this_battle->queue_sound_effect('timer-sound');
         $this_ability->damage_options_update(array(
             'kind' => 'energy',
             'kickback' => array(5, 0, 0),
@@ -59,6 +61,7 @@ $functions = array(
         $backup_robots_active = $target_player->values['robots_active'];
         foreach ($backup_robots_active AS $key => $info){
             if ($info['robot_id'] == $target_robot->robot_id){ continue; }
+            $this_battle->queue_sound_effect('timer-sound');
             $this_ability->ability_results_reset();
             $temp_target_robot = rpg_game::get_robot($this_battle, $target_player, $info);
             $temp_target_robot->robot_attachments[$this_attachment_token] = $this_attachment_info;
