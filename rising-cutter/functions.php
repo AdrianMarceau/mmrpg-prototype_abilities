@@ -6,13 +6,16 @@ $functions = array(
         extract($objects);
 
         // Target the opposing robot
+        $this_battle->queue_sound_effect('blade-sound');
+        $this_battle->queue_sound_effect('digging-sound');
         $this_ability->target_options_update(array(
             'frame' => 'defend',
-            'success' => array(0, 300, 0, 10, $this_robot->print_name().' summons the '.$this_ability->print_name().'!')
+            'success' => array(0, 280, 0, 10, $this_robot->print_name().' summons the '.$this_ability->print_name().'!')
             ));
         $this_robot->trigger_target($target_robot, $this_ability);
 
         // Inflict damage on the opposing robot
+        $this_battle->queue_sound_effect('blade-sound');
         $this_ability->damage_options_update(array(
             'kind' => 'energy',
             'kickback' => array(0, 15, 0),
