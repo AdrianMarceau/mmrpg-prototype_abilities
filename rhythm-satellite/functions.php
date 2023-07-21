@@ -57,11 +57,9 @@ $functions = array(
         $this_attachment = rpg_game::get_ability($this_battle, $this_player, $temp_ally_robot, $this_attachment_info);
 
         // Target this robot's self
+        $this_battle->queue_sound_effect('get-weird-item');
         $trigger_options = array();
         $trigger_options['prevent_default_text'] = true;
-        $trigger_options['event_flag_sound_effects'] = array(
-            array('name' => 'get-weird-item', 'volume' => 1.5)
-            );
         $already_has_satellite = isset($temp_ally_robot->robot_attachments[$this_attachment_token]) ? true : false;
         $this_ability->target_options_update(array(
             'frame' => 'summon',
@@ -77,11 +75,9 @@ $functions = array(
         $this_robot->trigger_target($this_robot, $this_ability, $trigger_options);
 
         // If the ability flag was not set, attach the ability to the target
+        $this_battle->queue_sound_effect('buff-received');
         $trigger_options = array();
         $trigger_options['prevent_default_text'] = true;
-        $trigger_options['event_flag_sound_effects'] = array(
-            array('name' => 'buff-received', 'volume' => 1.5)
-            );
         if (!$already_has_satellite){
 
             // If this robot is targetting itself
