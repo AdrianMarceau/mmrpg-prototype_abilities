@@ -28,6 +28,7 @@ $functions = array(
             );
 
         // Target the opposing robot
+        $this_battle->queue_sound_effect('throw-sound');
         $this_ability->target_options_update(array(
             'frame' => 'throw',
             'kickback' => array(0, 0, 0),
@@ -36,6 +37,7 @@ $functions = array(
         $this_robot->trigger_target($target_robot, $this_ability);
 
         // Inflict damage on the opposing robot
+        $this_battle->queue_sound_effect('explode-sound');
         $target_robot->robot_attachments[$this_attachment_token_one] = $this_attachment_info_one;
         $target_robot->robot_attachments[$this_attachment_token_two] = $this_attachment_info_two;
         $target_robot->update_session();
