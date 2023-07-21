@@ -37,6 +37,7 @@ $functions = array(
         }
 
         // Target the opposing robot
+        $this_battle->queue_sound_effect('timer-sound');
         $this_ability->target_options_update(array(
             'frame' => 'summon',
             'success' => array(1, 120, 0, 10, $this_robot->print_name().' generates a '.$this_ability->print_name().'!')
@@ -47,8 +48,12 @@ $functions = array(
         if (!empty($benched_robot)){
 
             // Swap positions of the two robots
+            $old_this_key = $this_robot->robot_key;
+            $old_benched_key = $benched_robot->robot_key;
             $this_robot->set_position('bench');
+            $this_robot->set_key($old_benched_key);
             $benched_robot->set_position('active');
+            $benched_robot->set_key($old_this_key);
 
             // Set both robots to their react frame
             $this_robot->set_frame('taunt');
@@ -56,6 +61,7 @@ $functions = array(
         }
 
         // Inflict damage on the opposing robot
+        $this_battle->queue_sound_effect('timer-sound');
         $this_ability->damage_options_update(array(
             'kind' => 'energy',
             'kickback' => array(15, 0, 0),
@@ -86,7 +92,7 @@ $functions = array(
             // Set both robots to their next frame
             $this_robot->set_frame('defend');
             $benched_robot->set_frame('taunt');
-
+            $this_battle->queue_sound_effect('switch-in');
             $this_ability->target_options_update(array(
                 'frame' => 'defend',
                 'success' => array(9, 0, 0, -99, $this_robot->print_name().' swapped places with '.$benched_robot->print_name().'!')
@@ -99,11 +105,8 @@ $functions = array(
 
         }
 
-        // Check to see if the target was disabled and apply the status if so
-        if (($actual_target_robot->robot_energy < 1 || $actual_target_robot->robot_status == 'disabled')
-            && empty($actual_target_robot->flags['apply_disabled_state'])){
-            $actual_target_robot->trigger_disabled($this_robot);
-        }
+        // Now that all the damage has been dealt, allow the player to check for disabled
+        $target_player->check_robots_disabled($this_player, $this_robot);
 
         // Return true on success
         return true;
