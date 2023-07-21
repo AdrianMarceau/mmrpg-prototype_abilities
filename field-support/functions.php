@@ -190,6 +190,7 @@ $functions = array(
                     if ($this_robot->robot_core === 'copy'){ $effect_text = '<span class="ability_name ability_type ability_type_'.$type_token.'">'.$type_name.' Effects</span> were '.$temp_change_text2.'!<br />'; }
                     elseif (!empty($this_robot->robot_core)){ $effect_text = '<span class="ability_name ability_type ability_type_'.$type_token.'">'.$type_name.' Effects</span> were '.$temp_change_text.' by '.$temp_change_percent.'%!<br />'; }
                     else { $effect_text = '<span class="ability_name ability_type ability_type_'.$type_token.'">'.$type_name.' Effects</span> returned to normal!<br />'; }
+                    $this_battle->queue_sound_effect(array('name' => 'field-'.$temp_change_kind, 'volume' => 1.5));
                     $this_battle->events_create($this_robot, false, $this_field->field_name.' Multipliers',
                         //$temp_change_alert.' '.$effect_text.
                         $effect_text.
@@ -199,10 +200,7 @@ $functions = array(
                             'event_flag_camera_action' => true,
                             'event_flag_camera_side' => $this_robot->player->player_side,
                             'event_flag_camera_focus' => $this_robot->robot_position,
-                            'event_flag_camera_depth' => $this_robot->robot_key,
-                            'event_flag_sound_effects' => array(
-                                array('name' => 'field-'.$temp_change_kind, 'volume' => 1.5)
-                                )
+                            'event_flag_camera_depth' => $this_robot->robot_key
                             )
                         );
 
