@@ -17,6 +17,7 @@ $functions = array(
         }
 
         // Target the opposing robot
+        $this_battle->queue_sound_effect('flame-sound');
         $this_ability->target_options_update(array(
             'frame' => 'shoot',
             'success' => array(0, 100, 0, 10, $this_robot->print_name().' unleashes a '.$this_ability->print_name().'!'),
@@ -24,6 +25,7 @@ $functions = array(
         $this_robot->trigger_target($target_robot, $this_ability);
 
         // Inflict damage on the opposing robot
+        $this_battle->queue_sound_effect('flame-sound');
         $this_ability->damage_options_update(array(
             'kind' => 'energy',
             'kickback' => array(15, 0, 0),
