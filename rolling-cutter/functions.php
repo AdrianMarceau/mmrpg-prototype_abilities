@@ -7,6 +7,8 @@ $functions = array(
      
 
         // Target the opposing robot
+        $this_battle->queue_sound_effect('blade-sound');
+        $this_battle->queue_sound_effect(array('name' => 'blade-sound', 'delay' => 100));
         $this_ability->target_options_update(array(
             'frame' => 'throw',
             'success' => array(1, 100, 0, 10, $this_robot->print_name().' throws a '.$this_ability->print_name().'!')
@@ -14,6 +16,7 @@ $functions = array(
         $this_robot->trigger_target($target_robot, $this_ability);
 
         // Inflict damage on the opposing robot
+        $this_battle->queue_sound_effect('blade-sound');
         $this_ability->damage_options_update(array(
             'kind' => 'energy',
             'kickback' => array(10, 0, 0),
@@ -36,6 +39,7 @@ $functions = array(
             && $this_battle->critical_chance($this_ability->ability_accuracy)){
 
             // Inflict damage on the opposing robot
+            $this_battle->queue_sound_effect('blade-sound');
             $this_ability->damage_options_update(array(
                 'kind' => 'energy',
                 'kickback' => array(20, 0, 0),
@@ -58,6 +62,7 @@ $functions = array(
                 && $this_battle->critical_chance($this_ability->ability_accuracy)){
 
                 // Inflict damage on the opposing robot
+                $this_battle->queue_sound_effect('blade-sound');
                 $this_ability->damage_options_update(array(
                     'kind' => 'energy',
                     'kickback' => array(30, 0, 0),
