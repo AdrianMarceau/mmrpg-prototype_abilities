@@ -57,11 +57,9 @@ $functions = array(
             $this_battle->update_session();
 
             // Target this robot's self
+            $this_battle->queue_sound_effect('spawn-sound');
             $trigger_options = array();
             $trigger_options['prevent_default_text'] = true;
-            $trigger_options['event_flag_sound_effects'] = array(
-                array('name' => 'spawn-sound', 'volume' => 1.0),
-                );
             $this_ability->target_options_update(array(
                 'frame' => 'summon',
                 'success' => array($this_target_frame, -9999, -9999, 0, $this_robot->print_name().' uses the '.$this_ability->print_name().' technique! ')
@@ -74,11 +72,9 @@ $functions = array(
             $this_battle->update_session();
 
             // Target this robot's self
+            $this_battle->queue_sound_effect('smack-sound');
             $trigger_options = array();
             $trigger_options['prevent_default_text'] = true;
-            $trigger_options['event_flag_sound_effects'] = array(
-                array('name' => 'smack-sound', 'volume' => 1.0),
-                );
             $this_ability->target_options_update(array(
                 'frame' => 'defend',
                 'success' => array($this_target_frame, -9999, -9999, 0, 'The '.$this_ability->print_name().' created '.
@@ -99,10 +95,8 @@ $functions = array(
             $this_battle->update_session();
 
             // Target the opposing robot
+            $this_battle->queue_sound_effect('swing-sound');
             $trigger_options = array();
-            $trigger_options['event_flag_sound_effects'] = array(
-                array('name' => 'swing-sound', 'volume' => 1.0),
-                );
             $this_ability->target_options_update(array(
                 'frame' => 'throw',
                 'success' => array($this_impact_frame, 175, 15, 10, $this_ability->print_name().' throws the '.$this_object_name_span.'!')
