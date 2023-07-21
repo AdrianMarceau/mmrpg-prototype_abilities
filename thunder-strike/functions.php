@@ -17,6 +17,7 @@ $functions = array(
             );
 
         // Target the opposing robot
+        $this_battle->queue_sound_effect('thunder-sound');
         $this_ability->target_options_update(array(
             'frame' => 'summon',
             'success' => array(3, 0, 60, -10, $this_robot->print_name().' summons a '.$this_ability->print_name().'!')
@@ -30,6 +31,7 @@ $functions = array(
         $target_robot->update_session();
 
         // Inflict damage on the opposing robot
+        $this_battle->queue_sound_effect('electric-sound');
         $this_ability->damage_options_update(array(
             'kind' => 'energy',
             'kickback' => array(15, 0, 0),
