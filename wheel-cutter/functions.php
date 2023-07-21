@@ -31,7 +31,7 @@ $functions = array(
             if ($num_shot === 1){
                 $target_text = $this_robot->print_name().' launches the '.$this_ability->print_name().' to attack!';
             } else {
-                $target_text = $this_robot->print_name().' sets another '.$this_ability->print_name().'to chase the opponent!';
+                $target_text = $this_robot->print_name().' sets another '.$this_ability->print_name().' to chase the opponent!';
                 $target_options['prevent_default_text'] = true;
             }
             $this_ability->target_options_update(array(
