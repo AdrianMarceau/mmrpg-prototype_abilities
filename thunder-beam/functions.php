@@ -6,6 +6,7 @@ $functions = array(
         extract($objects);
 
         // Target the opposing robot
+        $this_battle->queue_sound_effect('electric-laser-sound');
         $target_options = array();
         $target_options['event_flag_sound_effects'] = array(
             array('name' => 'thunder-beam', 'volume' => 1.5)
@@ -17,6 +18,7 @@ $functions = array(
         $this_robot->trigger_target($target_robot, $this_ability, $target_options);
 
         // Inflict damage on the opposing robot
+        $this_battle->queue_sound_effect('electric-sound');
         $this_ability->damage_options_update(array(
             'kind' => 'energy',
             'kickback' => array(15, 0, 0),
