@@ -58,10 +58,12 @@ $functions = array(
         else {
 
             // Hide the attachment before we remove it (so the effect still applies)
-            $this_robot->robot_attachments[$this_attachment_token]['ability_frame'] = 9;
-            $this_robot->robot_attachments[$this_attachment_token]['ability_frame_animate'] = array(9);
-            $this_robot->robot_attachments[$this_attachment_token]['ability_frame_offset']['z'] = -9999;
-            $this_robot->update_session();
+            if (isset($this_robot->robot_attachments[$this_attachment_token])){
+                $this_robot->robot_attachments[$this_attachment_token]['ability_frame'] = 9;
+                $this_robot->robot_attachments[$this_attachment_token]['ability_frame_animate'] = array(9);
+                $this_robot->robot_attachments[$this_attachment_token]['ability_frame_offset']['z'] = -9999;
+                $this_robot->update_session();
+            }
 
             // Update this ability's target options and trigger
             $this_ability->target_options_update(array(
