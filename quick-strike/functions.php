@@ -9,6 +9,7 @@ $functions = array(
         $session_token = rpg_game::session_token();
 
         // Target the opposing robot
+        $this_battle->queue_sound_effect('zephyr-sound');
         $this_ability->target_options_update(array(
             'frame' => 'slide',
             'kickback' => array(180, 0, 0),
@@ -21,7 +22,8 @@ $functions = array(
         $this_robot->set_frame_offset('x', 100);
         $this_robot->set_frame_styles('transform: scaleX(-1); -moz-transform: scaleX(-1); -webkit-transform: scaleX(-1); ');
 
-        // Inflict damage on the opposing robot with a broom
+        // Inflict damage on the opposing robot with their whole body
+        $this_battle->queue_sound_effect('ambush-sound');
         $this_ability->damage_options_update(array(
             'kind' => 'energy',
             'kickback' => array(20, 0, 0),
@@ -107,16 +109,8 @@ $functions = array(
         $this_robot->set_frame_offset('x', 0);
         $this_robot->set_frame_styles('');
 
-        // Loop through all robots on the target side and disable any that need it
-        $target_robots_active = $target_player->get_robots();
-        foreach ($target_robots_active AS $key => $robot){
-            if ($robot->robot_id == $target_robot->robot_id){ $temp_target_robot = $target_robot; }
-            else { $temp_target_robot = $robot; }
-            if (($temp_target_robot->robot_energy < 1 || $temp_target_robot->robot_status == 'disabled')
-                && empty($temp_target_robot->flags['apply_disabled_state'])){
-                $temp_target_robot->trigger_disabled($this_robot);
-            }
-        }
+        // Now that all the damage has been dealt, allow the player to check for disabled
+        $target_player->check_robots_disabled($this_player, $this_robot);
 
         // Return true on success
         return true;
