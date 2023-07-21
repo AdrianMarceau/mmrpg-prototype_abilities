@@ -6,12 +6,10 @@ $functions = array(
         extract($objects);
 
         // Target the opposing robot
+        $this_battle->queue_sound_effect(array('name' => 'spinning-sound', 'volume' => 0.8));
+        $this_battle->queue_sound_effect(array('name' => 'spinning-sound', 'volume' => 0.9, 'delay' => 200));
+        $this_battle->queue_sound_effect(array('name' => 'spinning-sound', 'volume' => 1.0, 'delay' => 300));
         $target_options = array();
-        $target_options['event_flag_sound_effects'] = array(
-            array('name' => 'spinning-sound', 'volume' => 0.8),
-            array('name' => 'spinning-sound', 'volume' => 0.9, 'delay' => 200),
-            array('name' => 'spinning-sound', 'volume' => 1.0, 'delay' => 300)
-            );
         $this_ability->target_options_update(array(
             'frame' => 'throw',
             'success' => array(0, 100, 0, 10, $this_robot->print_name().' throws a '.$this_ability->print_name().'!')
@@ -19,6 +17,7 @@ $functions = array(
         $this_robot->trigger_target($target_robot, $this_ability, $target_options);
 
         // Inflict damage on the opposing robot
+        $this_battle->queue_sound_effect(array('name' => 'spinning-sound', 'volume' => 0.5));
         $this_ability->damage_options_update(array(
             'kind' => 'energy',
             'kickback' => array(mt_rand(5, 10), 0, 0),
@@ -59,6 +58,7 @@ $functions = array(
             $target_player->set_frame_styles($temp_doctor_flip ? 'transform: scaleX(-1); ' : '');
 
             // Inflict damage on the opposing robot
+            $this_battle->queue_sound_effect(array('name' => 'spinning-sound', 'volume' => 0.5));
             $this_ability->damage_options_update(array(
                 'kind' => 'energy',
                 'kickback' => array(mt_rand(0, 20), 0, 0),
