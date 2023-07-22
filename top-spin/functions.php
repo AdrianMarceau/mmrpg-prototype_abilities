@@ -52,7 +52,14 @@ $functions = array(
             $this_ability->ability_accuracy = $temp_accuracy;
             $this_ability->update_session();
 
-            // Check to see if the doctor's sprite should 'flip' visually
+            // Check to see if the user's sprite should change to a different pose
+            $temp_robot_frame = 'base';
+            if ($temp_hit_counter % 7 === 0){ $temp_robot_frame = 'base2'; }
+            elseif ($temp_hit_counter % 3 === 0){ $temp_robot_frame = 'taunt'; }
+            elseif ($temp_hit_counter % 2 === 0){ $temp_robot_frame = 'defend'; }
+            $this_robot->set_frame($temp_robot_frame);
+
+            // Check to see if the target doctor's sprite should 'flip' visually
             $temp_doctor_flip = $temp_hit_counter % 2 === 0 ? true : false;
             if ($temp_hit_counter >= 10){ $temp_doctor_flip = mt_rand(0, 1) === 0 ? true : false; }
             $target_player->set_frame_styles($temp_doctor_flip ? 'transform: scaleX(-1); ' : '');
@@ -84,7 +91,8 @@ $functions = array(
         $this_ability->ability_accuracy = $this_ability->ability_base_accuracy;
         $this_ability->update_session();
 
-        // Reset the doctor back to base styles
+        // Reset the user and target doctor back to base styles
+        $this_robot->reset_frame_styles();
         $target_player->reset_frame_styles();
 
         // Return true on success
