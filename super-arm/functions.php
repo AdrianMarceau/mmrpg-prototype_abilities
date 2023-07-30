@@ -325,6 +325,9 @@ $functions = array(
             $this_sprite_index['light-laboratory'] = array(8, 6, 7, 'heavy metal block');
             $this_sprite_index['cossack-citadel'] = array(8, 8, 9, 'heavy metal block');
 
+            // Sheet NINE
+            $this_sprite_index['prototype-subspace'] = array(9, 0, 1, 'glitched platform');
+
         }
 
         // Return the populated sprite index for the ability
