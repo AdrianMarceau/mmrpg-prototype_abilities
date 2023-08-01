@@ -12,14 +12,14 @@ $functions = array(
         $this_battle->queue_sound_effect('zephyr-sound');
         $this_ability->target_options_update(array(
             'frame' => 'slide',
-            'kickback' => array(180, 0, 0),
+            'kickback' => array(170, 0, 0),
             'success' => array(0, -40, 0, -10, $this_robot->print_name().' uses the '.$this_ability->print_name().'!')
             ));
         $this_robot->trigger_target($target_robot, $this_ability);
 
         // Move the user forward so it looks like their swining the weapon
         $this_robot->set_frame('defend');
-        $this_robot->set_frame_offset('x', 100);
+        $this_robot->set_frame_offset('x', 120);
         $this_robot->set_frame_styles('transform: scaleX(-1); -moz-transform: scaleX(-1); -webkit-transform: scaleX(-1); ');
 
         // Inflict damage on the opposing robot with their whole body
@@ -31,10 +31,11 @@ $functions = array(
             'failure' => array(1, 130, 0, -10, 'The '.$this_ability->print_name().' missed&hellip;')
             ));
         $energy_damage_amount = $this_ability->ability_damage;
-        $target_robot->trigger_damage($this_robot, $this_ability, $energy_damage_amount);
+        $target_robot->trigger_damage($this_robot, $this_ability, $energy_damage_amount, false);
 
         // If this attack was successful, remove the target's held item from use (not permanently)
         if ($this_ability->ability_results['this_result'] != 'failure'
+            && $target_robot->robot_energy > 0
             && $target_robot->robot_status != 'disabled'
             && !empty($target_robot->robot_item)){
 
@@ -57,9 +58,8 @@ $functions = array(
             // Remove the item from the target robot and update w/ attachment info
             $old_item_token = $target_robot->robot_item;
             $old_item = rpg_game::get_item($this_battle, $target_player, $target_robot, array('item_token' => $old_item_token));
-            $target_robot->robot_attachments[$this_attachment_token] = $this_attachment_info;
-            $target_robot->robot_item = '';
-            $target_robot->update_session();
+            $target_robot->set_attachment($this_attachment_token, $this_attachment_info);
+            $target_robot->set_counter('item_disabled', 1);
 
             // Update the ability's target options and trigger
             $temp_rotate_amount = 45;
@@ -68,7 +68,7 @@ $functions = array(
                 'frame' => 'defend',
                 'success' => array(0, -90, 0, 20,
                     $target_robot->print_name().' dropped '.$target_robot->get_pronoun('possessive2').' held item!'.
-                    '<br /> The '.$old_item->print_name().' was lost!'
+                    '<br /> The '.$old_item->print_name().' was temporarily disabled!'
                     )
                 ));
             $target_robot->trigger_target($target_robot, $old_item, array('prevent_default_text' => true));
@@ -76,31 +76,6 @@ $functions = array(
             // Remove the visual icon attachment from the target
             unset($target_robot->robot_attachments[$this_attachment_token]);
             $target_robot->update_session();
-
-            // Add this item to the robot's list of dropped items
-            $dropped_items = $this_robot->get_value('dropped_items');
-            if (empty($dropped_items)){ $dropped_items = array(); }
-            $dropped_items[] = $old_item_token;
-            $this_robot->set_value('dropped_items', $dropped_items);
-            if ($target_player->player_side == 'left'){
-                $ptoken = $target_player->player_token;
-                $rtoken = $target_robot->robot_token;
-                if (!isset($_SESSION['ITEMS_DROPPED'])){ $_SESSION['ITEMS_DROPPED'] = array(); }
-                $_SESSION['ITEMS_DROPPED'][] = array('player' => $ptoken, 'robot' => $rtoken, 'item' => $old_item_token);
-            }
-
-            // If the target robot was the player, we gotta update the session
-            if ($target_player->player_side == 'left'
-                && empty($this_battle->flags['player_battle'])
-                && empty($this_battle->flags['challenge_battle'])){
-                $ptoken = $target_player->player_token;
-                $rtoken = $target_robot->robot_token;
-                if (!empty($_SESSION[$session_token]['values']['battle_settings'][$ptoken]['player_robots'][$rtoken]['robot_item'])){
-                    $_SESSION[$session_token]['values']['battle_settings'][$ptoken]['player_robots'][$rtoken]['robot_item'] = '';
-                    if (!isset($_SESSION[$session_token]['values']['battle_items'][$old_item_token])){ $_SESSION[$session_token]['values']['battle_items'][$old_item_token] = 0; }
-                    $_SESSION[$session_token]['values']['battle_items'][$old_item_token] += 1;
-                }
-            }
 
         }
 
