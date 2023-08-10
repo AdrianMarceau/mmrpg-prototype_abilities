@@ -48,9 +48,9 @@ $functions = array(
                 'success' => array(1, -20, -5, -10,  $this_destroy_text),
                 'failure' => array(1, -20, -5, -10, $this_destroy_text)
                 ),
-            'ability_frame' => 0,
+            'ability_frame' => 2,
             'ability_frame_animate' => array(2, 3),
-            'ability_frame_offset' => array('x' => 0, 'y' => -5, 'z' => -10)
+            'ability_frame_offset' => array('x' => 0, 'y' => 0, 'z' => -10)
             );
 
         // Target the opposing robot
