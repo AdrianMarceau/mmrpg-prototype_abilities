@@ -27,6 +27,9 @@ $functions = array(
         $this_robot->set_attachment($this_attachment_token.'_2', $this_attachment_info2);
 
         // Target the opposing robot
+        $this_battle->queue_sound_effect(array('name' => 'shot-sound-alt'));
+        $this_battle->queue_sound_effect(array('name' => 'shot-sound-alt', 'delay' => 200));
+        $this_battle->queue_sound_effect(array('name' => 'shot-sound-alt', 'delay' => 400));
         $this_ability->target_options_update(array(
             'frame' => 'shoot',
             'success' => array(0, 135, 0, 10, $this_robot->print_name().' fires a series of '.$this_ability->print_name(true).'!')
