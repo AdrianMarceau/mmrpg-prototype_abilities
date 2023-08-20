@@ -129,7 +129,7 @@ $functions = array(
             $this_ability->target_options_update(array(
                 'frame' => 'slide',
                 'kickback' => array(60, 0, 0),
-                'success' => array(8, 120, 100, 28, $this_robot->print_name().' kicks the '.$this_ability->print_name().' at the target!'),
+                'success' => array(8, 40, 0, 28, $this_robot->print_name().' kicks the '.$this_ability->print_name().' at the target!'),
                 ));
             $this_robot->trigger_target($target_robot, $this_ability);
 
@@ -160,10 +160,11 @@ $functions = array(
                             $target_robot->robot_attachments[$temp_attachment_token] = $temp_attachment_info;
                             $target_robot->update_session();
                             // Show a message about the attachment being removed
+                            $target_robot->set_counter('item_disabled', 2);
                             $temp_ability_info = rpg_ability::get_index_info('core-shield');
                             $temp_ability_object = rpg_game::get_ability($this_battle, $target_player, $target_robot, $temp_ability_info);
                             $temp_remove_frame = $temp_shields_removed % 2 == 0 ? 'taunt' : 'defend';
-                            $temp_remove_text = $this_robot->print_name().' removed '.($temp_shields_removed >= 1 ? 'another' : 'a').' field hazard!<br /> ';
+                            $temp_remove_text = 'The attack disabled '.($temp_shields_removed >= 1 ? 'another' : 'their').' protective shield!<br /> ';
                             $temp_remove_text .= 'The '.rpg_type::print_span($core_type, $temp_ability_object->ability_name).' around '.$target_robot->print_name().' faded away!';
                             $temp_ability_object->target_options_update(array( 'frame' => $temp_remove_frame, 'success' => array(0, -9999, -9999, -9999, $temp_remove_text)));
                             $target_robot->trigger_target($target_robot, $temp_ability_object, array('prevent_default_text' => true, 'canvas_show_this_ability' => false));
