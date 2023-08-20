@@ -156,6 +156,34 @@ $functions = array(
 
             }
 
+            // If we're going to be switching, put this robot on the bench now
+            if (!empty($temp_ally_robot)){
+
+                // Swap positions of the two robots
+                $old_this_key = $this_robot->robot_key;
+                $old_ally_key = $temp_ally_robot->robot_key;
+                $this_robot->set_position('bench');
+                $this_robot->set_key($old_ally_key);
+                $temp_ally_robot->set_position('active');
+                $temp_ally_robot->set_key($old_this_key);
+
+                // Set both robots to their next frame
+                $this_robot->set_frame('taunt');
+                $temp_ally_robot->set_frame('summon');
+                $this_battle->queue_sound_effect('switch-in');
+                $this_battle->queue_sound_effect(array('name' => 'master-taunt-sound', 'delay' => 200));
+                $this_ability->target_options_update(array(
+                    'frame' => 'defend',
+                    'success' => array(9, 0, 0, -99, $this_robot->print_name().' swapped places with '.$temp_ally_robot->print_name().'!')
+                    ));
+                $temp_ally_robot->trigger_target($this_robot, $this_ability, array('prevent_default_text' => true));
+
+                // Reset robots their base position
+                $this_robot->set_frame('base');
+                $temp_ally_robot->set_frame('base');
+
+            }
+
         }
 
         // Return true on success
