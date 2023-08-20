@@ -202,7 +202,8 @@ $functions = array(
 
         // Generate the static attachment info using provided config
         $existing_attachments = isset($this_battle->battle_attachments[$static_attachment_key]) ? count($this_battle->battle_attachments[$static_attachment_key]) : 0;
-        $show_block_behind = strstr($static_attachment_key, 'active') && strstr($static_attachment_key, 'right') ? true : false;
+        $show_field_position = strstr($static_attachment_key, 'active') ? 'active' : 'bench';
+        $show_block_behind = $show_field_position === 'active' && strstr($static_attachment_key, 'left') ? true : false;
         $this_ability_token = $this_ability->ability_token;
         $this_attachment_token = 'ability_'.$this_ability_token.'_'.$this_attachment->attachment_token.'_'.$static_attachment_key;
         $this_attachment_image = $this_ability_token.($this_sprite_sheet > 1 ? '-'.$this_sprite_sheet : '');
@@ -232,7 +233,7 @@ $functions = array(
             'ability_frame' => $this_target_frame,
             'ability_frame_animate' => array($this_target_frame),
             'ability_frame_offset' => array(
-                'x' => (55 + ($existing_attachments * 8)),
+                'x' => (($show_field_position === 'active' ? 55 : 45) + ($existing_attachments * 8)),
                 'y' => ($show_block_behind ? 2 : -2),
                 'z' => ($show_block_behind ? -20 : (2 + $existing_attachments))
                 )
