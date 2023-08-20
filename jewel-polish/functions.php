@@ -42,6 +42,7 @@ $functions = array(
         $temp_ally_robot->set_frame_styles('-moz-filter: brightness(120%); -webkit-filter: brightness(120%); filter: brightness(120%); ');
 
         // Update the ability's target options and trigger
+        $this_battle->queue_sound_effect('shining-sound');
         $this_ability->target_options_update(array(
             'frame' => 'summon',
             'success' => array(0, -9999, -9999, -9999,
@@ -88,7 +89,7 @@ $functions = array(
         if ($temp_ally_robot->robot_position == 'active'){ $static_key = $this_player->player_side.'-active'; }
         else { $static_key = $this_player->player_side.'-bench-'.$temp_ally_robot->robot_key; }
         $static_field_hazards_index = array();
-        foreach ($negative_field_hazards AS $key => $info){ $static_field_hazards_index['ability_'.$info['source'].'_'.$static_key] = $info; }
+        foreach ($negative_field_hazards AS $key => $info){ $static_field_hazards_index['ability_'.$info['source'].'_'.$info['object'].'_'.$static_key] = $info; }
         if (!empty($this_battle->battle_attachments[$static_key])){
             $hazards_removed = 0;
             foreach ($this_battle->battle_attachments[$static_key] AS $static_attachment_token => $static_attachment_info){
@@ -106,6 +107,7 @@ $functions = array(
                     $this_battle->battle_attachments[$static_key][$static_attachment_token] = $static_attachment_info;
                     $this_battle->update_session();
                     // Show a message about the attachment being removed
+                    $this_battle->queue_sound_effect('buff-received');
                     $static_ability_info = rpg_ability::get_index_info($static_ability_token);
                     $static_ability_object = rpg_game::get_ability($this_battle, $this_player, $temp_ally_robot, $static_ability_info);
                     $static_remove_frame = $hazards_removed % 2 == 0 ? 'taunt' : 'defend';
@@ -113,7 +115,7 @@ $functions = array(
                     $static_ability_object->set_name(ucwords($hazard_info['noun']));
                     $static_remove_text .= 'The '.$static_ability_object->print_name().' '.$hazard_info['where'].' '.$temp_ally_robot->print_name().' faded away!';
                     $this_ability->target_options_update(array( 'frame' => $static_remove_frame, 'success' => array(0, -9999, -9999, -9999, $static_remove_text)));
-                    $this_robot->trigger_target($temp_ally_robot, $this_ability, array('prevent_default_text' => true, 'canvas_show_this_ability' => false));
+                    $temp_ally_robot->trigger_target($this_robot, $this_ability, array('prevent_default_text' => true, 'canvas_show_this_ability' => false));
                     $static_ability_object->reset_name();
                     $something_happened = true;
                     $hazards_removed += 1;
