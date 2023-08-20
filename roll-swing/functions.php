@@ -45,7 +45,6 @@ $functions = array(
                 'delay' => 0 + (50 * $i)
                 ));
         }
-
         $this_ability->target_options_update(array(
             'frame' => 'summon',
             'kickback' => array(15, 0, 0),
