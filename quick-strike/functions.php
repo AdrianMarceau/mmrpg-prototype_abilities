@@ -59,7 +59,7 @@ $functions = array(
             $old_item_token = $target_robot->robot_item;
             $old_item = rpg_game::get_item($this_battle, $target_player, $target_robot, array('item_token' => $old_item_token));
             $target_robot->set_attachment($this_attachment_token, $this_attachment_info);
-            $target_robot->set_counter('item_disabled', 1);
+            $target_robot->set_counter('item_disabled', 2);
 
             // Update the ability's target options and trigger
             $temp_rotate_amount = 45;
