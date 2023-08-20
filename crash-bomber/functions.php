@@ -70,7 +70,7 @@ $functions = array(
         if ($this_robot->has_attribute('quick-charge')){ $attachment_duration = 1; }
 
         // Define this ability's attachment token
-        $this_attachment_token = 'ability_'.$this_ability->ability_token;
+        $this_attachment_token = 'ability_'.$this_ability->ability_token.'_crash-bomb';
         $this_attachment_info = array(
             'class' => 'ability',
             'sticky' => false,
