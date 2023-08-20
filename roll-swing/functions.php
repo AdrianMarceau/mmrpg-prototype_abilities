@@ -61,17 +61,21 @@ $functions = array(
         $this_robot->set_frame_offset('x', 310);
 
         // Check to see if there's a Super Block at this position
+        $static_attachment_info = array();
         $static_ability_token = 'super-arm';
+        $static_ability_object_token = 'super-block';
         if ($target_robot->robot_position == 'active'){ $static_key = $target_player->player_side.'-active'; }
         else { $static_key = $target_player->player_side.'-bench-'.$target_robot->robot_key; }
-        $static_attachment_token = 'ability_'.$static_ability_token.'_'.$static_key;
+        $static_attachment_token = 'ability_'.$static_ability_token.'_'.$static_ability_object_token.'_'.$static_key;
+        //error_log('Checking for super block at '.$static_key.' with token '.$static_attachment_token);
+        //error_log('$this_battle->battle_attachments = '.print_r($this_battle->battle_attachments, true));
         if (!empty($this_battle->battle_attachments[$static_key][$static_attachment_token])){
             $static_attachment_info = $this_battle->battle_attachments[$static_key][$static_attachment_token];
             if (!isset($static_attachment_info['ability_frame_styles'])){ $static_attachment_info['ability_frame_styles'] = ''; }
+            $static_attachment_info['attachment_weaknesses'][] = '*';
             $static_attachment_info['ability_frame_styles'] .= 'opacity: 0.5; ';
             $static_attachment_info['ability_frame_styles'] .= 'transform: translate('.($target_player->player_side == 'left' ? '-30%' : '30%').', 0); ';
-            $this_battle->battle_attachments[$static_key][$static_attachment_token] = $static_attachment_info;
-            $this_battle->update_session();
+            $this_battle->set_attachment($static_key, $static_attachment_token, $static_attachment_info);
         }
 
         // Inflict damage on the opposing robot with a broom
@@ -84,17 +88,12 @@ $functions = array(
         $energy_damage_amount = $this_ability->ability_damage;
         $target_robot->trigger_damage($this_robot, $this_ability, $energy_damage_amount, false);
 
-        // Check to see if there's a Super Block at this position
-        $static_ability_token = 'super-arm';
-        if ($target_robot->robot_position == 'active'){ $static_key = $target_player->player_side.'-active'; }
-        else { $static_key = $target_player->player_side.'-bench-'.$target_robot->robot_key; }
-        $static_attachment_token = 'ability_'.$static_ability_token.'_'.$static_key;
+        // Check to see if there's still a Super Block at this position
         if (!empty($this_battle->battle_attachments[$static_key][$static_attachment_token])){
             $static_attachment_info = $this_battle->battle_attachments[$static_key][$static_attachment_token];
             if ($this_ability->ability_results['this_result'] != 'failure'){ $static_attachment_info['attachment_duration'] = 0; }
             else { $static_attachment_info['ability_frame_styles'] = ''; }
-            $this_battle->battle_attachments[$static_key][$static_attachment_token] = $static_attachment_info;
-            $this_battle->update_session();
+            $this_battle->set_attachment($static_key, $static_attachment_token, $static_attachment_info);
         }
 
         // Reset the offset and move the user back to their position
