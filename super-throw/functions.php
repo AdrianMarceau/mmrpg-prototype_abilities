@@ -62,7 +62,7 @@ $functions = array(
             ));
         $this_robot->trigger_target($target_robot, $this_ability);
 
-        // If the ability was successful, we should show the other robot being lifted
+        // If we lifted the other robot, we should reset their display variables now
         if (!empty($fx_attachment_token)){
             $target_robot->set_frame('');
             $target_robot->set_frame_offset('y', 0);
@@ -127,7 +127,6 @@ $functions = array(
                 if ($target_player->player_autopilot == true){
 
                     // If the target robot was not destroyed by the hit, append a switch
-                    //if ($target_robot->robot_energy > 0 && $target_robot->robot_status != 'disabled'){
                     if (true){
 
                         // Default the switch target to the existing robot
@@ -180,10 +179,8 @@ $functions = array(
 
                 }
 
-                // Trigger the disabled function if necessary
-                if ($target_robot->robot_energy == 0 || $target_robot->robot_status == 'disabled'){
-                    $target_robot->trigger_disabled($this_robot);
-                }
+                // Now that all the damage has been dealt, allow the player to check for disabled
+                $target_player->check_robots_disabled($this_player, $this_robot);
 
 
             }
