@@ -13,6 +13,7 @@ $functions = array(
         $this_robot->trigger_target($target_robot, $this_ability);
 
         // Inflict damage on the opposing robot
+        $num_hits_counter = 0;
         $this_ability->damage_options_update(array(
             'kind' => 'energy',
             'kickback' => array(10, 0, 0),
@@ -28,6 +29,7 @@ $functions = array(
             ));
         $energy_damage_amount = $this_ability->ability_damage;
         $target_robot->trigger_damage($this_robot, $this_ability, $energy_damage_amount, false);
+        if ($this_ability->ability_results['this_result'] != 'failure'){ $num_hits_counter++; }
 
         // Check to see if we're there are MULTI BENCHED robots to target
         if ($target_player->counters['robots_positions']['bench'] >= 2){
