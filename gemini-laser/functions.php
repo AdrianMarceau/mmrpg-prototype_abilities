@@ -6,6 +6,7 @@ $functions = array(
         extract($objects);
 
         // Target the opposing robot
+        $this_battle->queue_sound_effect('laser-sound');
         $this_ability->target_options_update(array(
             'frame' => 'shoot',
             'success' => array(0, 150, 0, 10, $this_robot->print_name().' fires the '.$this_ability->print_name().'!'),
@@ -13,6 +14,7 @@ $functions = array(
         $this_robot->trigger_target($target_robot, $this_ability);
 
         // Inflict damage on the opposing robot
+        $this_battle->queue_sound_effect(array('name' => 'laser-sound', 'volume' => 0.9));
         $temp_offset = $target_player->counters['robots_active'] > 1 ? -250 : -150;
         $this_ability->damage_options_update(array(
             'kind' => 'energy',
@@ -46,6 +48,7 @@ $functions = array(
             foreach ($backup_robots_active AS $key => $info){
                 if ($info['robot_id'] == $target_robot->robot_id){ continue; }
                 if (!$this_battle->critical_chance($this_ability->ability_accuracy)){ continue; }
+                $this_battle->queue_sound_effect(array('name' => 'laser-sound', 'volume' => (0.9 - ($key * 0.1))));
                 $this_ability->ability_results_reset();
                 $temp_target_robot = rpg_game::get_robot($this_battle, $target_player, $info);
                 // Update the ability options text
@@ -71,17 +74,8 @@ $functions = array(
 
         }
 
-        // Trigger the disabled event on the targets now if necessary
-        if ($target_robot->robot_status == 'disabled'){
-            $target_robot->trigger_disabled($this_robot);
-        }
-        foreach ($backup_robots_active AS $key => $info){
-            if ($info['robot_id'] == $target_robot->robot_id){ continue; }
-            $temp_target_robot = rpg_game::get_robot($this_battle, $target_player, $info);
-            if ($temp_target_robot->robot_energy <= 0 || $temp_target_robot->robot_status == 'disabled'){
-                $temp_target_robot->trigger_disabled($this_robot);
-            }
-        }
+        // Now that all the damage has been dealt, allow the player to check for disabled
+        $target_player->check_robots_disabled($this_player, $this_robot);
 
         // Return true on success
         return true;
