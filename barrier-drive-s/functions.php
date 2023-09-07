@@ -14,26 +14,26 @@ $functions = array(
         // Define a function to "pull" core shields forward a bit (for visual presentation)
         $pull_core_shields = function($battle, $player, $robots) use ($this_robot, $core_shield_info){
             if (empty($robots)){ return; }
-            error_log('$pull_core_shields($player '.gettype($player).', $robots '.gettype($robots).')');
+            //error_log('$pull_core_shields($player '.gettype($player).', $robots '.gettype($robots).')');
             foreach ($robots AS $robot_key => $robot_info){
                 //error_log('checking $robots['.$robot_key.'] = $robot_info = '.print_r($robot_info, true));
-                error_log('checking $robots['.$robot_key.'] = '.print_r(array('token' => $robot_info['robot_token'], 'name' => $robot_info['robot_name']), true));
+                //error_log('checking $robots['.$robot_key.'] = '.print_r(array('token' => $robot_info['robot_token'], 'name' => $robot_info['robot_name']), true));
                 $robot = rpg_game::get_robot($battle, $player, $robot_info);
                 //error_log('$robot->robot_attachments = '.print_r($robot->robot_attachments, true));
                 if (!empty($robot->robot_attachments)){
                     $attachment_tokens = array_keys($robot->robot_attachments);
-                    error_log('found $attachment_tokens = '.print_r($attachment_tokens, true));
+                    //error_log('found $attachment_tokens = '.print_r($attachment_tokens, true));
                     foreach ($attachment_tokens AS $token_key => $attachment_token){
-                        error_log('checking $attachment_tokens['.$token_key.'] = '.$attachment_token);
+                        //error_log('checking $attachment_tokens['.$token_key.'] = '.$attachment_token);
                         $attachment_info = $robot->robot_attachments[$attachment_token];
                         //error_log('$attachment_info = '.print_r($attachment_info, true));
                         if (strstr($attachment_token, 'ability_core-shield_')){
-                            error_log('found a core shield! tugging on the '.$attachment_token.' ...');
+                            //error_log('found a core shield! tugging on the '.$attachment_token.' ...');
                             // Collect the type for this core shield we're removing
                             list($ab, $at, $core_type) = explode('_', $attachment_token);
                             // Update this field attachment with an an offset tweak
                             if (!isset($attachment_info['ability_frame_offset']['x'])){ continue; }
-                            error_log('increasing offset x for the '.$attachment_token.' ...');
+                            //error_log('increasing offset x for the '.$attachment_token.' ...');
                             $attachment_info['ability_frame_offset']['x'] += 40;
                             if ($robot->player->player_side !== $this_robot->player->player_side){ $attachment_info['ability_frame_offset']['x'] += 40; }
                             $robot->set_attachment($attachment_token, $attachment_info);
@@ -48,28 +48,28 @@ $functions = array(
         $extracted_core_shields = array();
         $extract_core_shields = function($battle, $player, $robots) use (&$extracted_core_shields, $core_shield_info){
             if (empty($robots)){ return; }
-            error_log('$extract_core_shields($player '.gettype($player).', $robots '.gettype($robots).')');
+            //error_log('$extract_core_shields($player '.gettype($player).', $robots '.gettype($robots).')');
             foreach ($robots AS $robot_key => $robot_info){
                 //error_log('checking $robots['.$robot_key.'] = $robot_info = '.print_r($robot_info, true));
-                error_log('checking $robots['.$robot_key.'] = '.print_r(array('token' => $robot_info['robot_token'], 'name' => $robot_info['robot_name']), true));
+                //error_log('checking $robots['.$robot_key.'] = '.print_r(array('token' => $robot_info['robot_token'], 'name' => $robot_info['robot_name']), true));
                 $robot = rpg_game::get_robot($battle, $player, $robot_info);
                 //error_log('$robot->robot_attachments = '.print_r($robot->robot_attachments, true));
                 if (!empty($robot->robot_attachments)){
                     $attachment_tokens = array_keys($robot->robot_attachments);
-                    error_log('found $attachment_tokens = '.print_r($attachment_tokens, true));
+                    //error_log('found $attachment_tokens = '.print_r($attachment_tokens, true));
                     foreach ($attachment_tokens AS $token_key => $attachment_token){
-                        error_log('checking $attachment_tokens['.$token_key.'] = '.$attachment_token);
+                        //error_log('checking $attachment_tokens['.$token_key.'] = '.$attachment_token);
                         $attachment_info = $robot->robot_attachments[$attachment_token];
                         //error_log('$attachment_info = '.print_r($attachment_info, true));
                         if (strstr($attachment_token, 'ability_core-shield_')){
-                            error_log('found a core shield! adding to existing '.count($extracted_core_shields).' shields');
+                            //error_log('found a core shield! adding to existing '.count($extracted_core_shields).' shields');
                             // Collect the type for this core shield we're removing
                             list($ab, $at, $core_type) = explode('_', $attachment_token);
                             // Add a copy of this core shield to the extracted array
                             $extracted_core_shields[$attachment_token] = $attachment_info;
-                            error_log('$extracted_core_shields['.$attachment_token.'] = $attachment_info;');
+                            //error_log('$extracted_core_shields['.$attachment_token.'] = $attachment_info;');
                             //error_log('$extracted_core_shields = '.print_r($extracted_core_shields, true));
-                            error_log('$extracted_core_shields.length = '.count($extracted_core_shields));
+                            //error_log('$extracted_core_shields.length = '.count($extracted_core_shields));
                             // Update this field attachment with an opacity tweak before removing
                             if (!isset($attachment_info['ability_frame_styles'])){ $attachment_info['ability_frame_styles'] = ''; }
                             $attachment_info['ability_frame_styles'] .= ' opacity: 0.5; ';
@@ -110,7 +110,7 @@ $functions = array(
         // Loop through all of this and the target player's robots to check for core shields
         $extract_core_shields($this_battle, $this_player, $this_player->values['robots_active']);
         $extract_core_shields($this_battle, $target_player, $target_player->values['robots_active']);
-        error_log('$extracted_core_shields = '.print_r($extracted_core_shields, true));
+        //error_log('$extracted_core_shields = '.print_r($extracted_core_shields, true));
 
         // If there weren't any core shields collected, show the failure message and return now
         if (empty($extract_core_shields)){
@@ -164,7 +164,7 @@ $functions = array(
 
             // Attach this core shield to the target robot
             $this_robot->unset_attachment($attachment_token);
-            error_log('Now throwing a the core-shield '.print_r($attachment_token, true));
+            //error_log('Now throwing a the core-shield '.print_r($attachment_token, true));
 
             // Create a temporary ability object for the core shield w/ these attachment details
             $shield_type1 = !empty($attachment_info['ability_type']) ? $attachment_info['ability_type'] : $core_shield_info['ability_type'];
@@ -176,13 +176,13 @@ $functions = array(
             $core_shield_ability->set_type($shield_type1);
             $core_shield_ability->set_type2($shield_type2);
             $core_shield_ability->set_image($shield_image);
-            error_log('$this_ability->ability_damage = '.print_r($this_ability->ability_damage, true));
-            error_log('$this_ability->ability_type = '.print_r($this_ability->ability_type, true));
-            error_log('$this_ability->ability_type2 = '.print_r($this_ability->ability_type2, true));
-            error_log('$core_shield_ability->ability_damage = '.print_r($core_shield_ability->ability_damage, true));
-            error_log('$core_shield_ability->ability_type = '.print_r($core_shield_ability->ability_type, true));
-            error_log('$core_shield_ability->ability_type2 = '.print_r($core_shield_ability->ability_type2, true));
-            error_log('$core_shield_ability->export_array() = '.print_r($core_shield_ability->export_array(), true));
+            //error_log('$this_ability->ability_damage = '.print_r($this_ability->ability_damage, true));
+            //error_log('$this_ability->ability_type = '.print_r($this_ability->ability_type, true));
+            //error_log('$this_ability->ability_type2 = '.print_r($this_ability->ability_type2, true));
+            //error_log('$core_shield_ability->ability_damage = '.print_r($core_shield_ability->ability_damage, true));
+            //error_log('$core_shield_ability->ability_type = '.print_r($core_shield_ability->ability_type, true));
+            //error_log('$core_shield_ability->ability_type2 = '.print_r($core_shield_ability->ability_type2, true));
+            //error_log('$core_shield_ability->export_array() = '.print_r($core_shield_ability->export_array(), true));
 
             // Update the ability's target options and trigger
             $this_battle->queue_sound_effect('hyper-slide-sound');
