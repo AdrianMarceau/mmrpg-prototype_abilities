@@ -25,8 +25,8 @@
     "ability_damage2_percent": 0,
     "ability_recovery": 0,
     "ability_recovery_percent": 0,
-    "ability_recovery2": 0,
-    "ability_recovery2_percent": 0,
+    "ability_recovery2": 100,
+    "ability_recovery2_percent": 1,
     "ability_accuracy": 100,
     "ability_price": 0,
     "ability_value": 0,
@@ -36,5 +36,5 @@
     "ability_flag_hidden": 0,
     "ability_flag_complete": 1,
     "ability_flag_published": 1,
-    "ability_flag_unlockable": 0
+    "ability_flag_unlockable": 1
 }
