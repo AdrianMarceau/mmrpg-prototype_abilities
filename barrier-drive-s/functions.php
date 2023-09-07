@@ -10,6 +10,7 @@ $functions = array(
         $core_shield_ability = rpg_game::get_ability($this_battle, $this_player, $this_robot, $core_shield_info);
         $core_shield_ability->set_name($this_ability->ability_name);
         $core_shield_ability->set_damage($this_ability->ability_damage);
+        $core_shield_ability->set_recovery($this_ability->ability_recovery);
 
         // Define a function to "pull" core shields forward a bit (for visual presentation)
         $pull_core_shields = function($battle, $player, $robots) use ($this_robot, $core_shield_info){
@@ -19,6 +20,7 @@ $functions = array(
                 //error_log('checking $robots['.$robot_key.'] = $robot_info = '.print_r($robot_info, true));
                 //error_log('checking $robots['.$robot_key.'] = '.print_r(array('token' => $robot_info['robot_token'], 'name' => $robot_info['robot_name']), true));
                 $robot = rpg_game::get_robot($battle, $player, $robot_info);
+                if ($robot->robot_id === $this_robot->robot_id){ continue; }
                 //error_log('$robot->robot_attachments = '.print_r($robot->robot_attachments, true));
                 if (!empty($robot->robot_attachments)){
                     $attachment_tokens = array_keys($robot->robot_attachments);
@@ -46,7 +48,7 @@ $functions = array(
 
         // Create an array to hold extracted core shields and a function to extra
         $extracted_core_shields = array();
-        $extract_core_shields = function($battle, $player, $robots) use (&$extracted_core_shields, $core_shield_info){
+        $extract_core_shields = function($battle, $player, $robots) use ($this_robot, &$extracted_core_shields, $core_shield_info){
             if (empty($robots)){ return; }
             //error_log('$extract_core_shields($player '.gettype($player).', $robots '.gettype($robots).')');
             foreach ($robots AS $robot_key => $robot_info){
@@ -79,7 +81,7 @@ $functions = array(
                             $robot->set_flag('item_disabled_not_dropped', true);
                             $robot->set_counter('core-shield_cooldown_timer', 1);
                             $robot->unset_attachment($attachment_token);
-                            $robot->set_frame('defend');
+                            if ($robot->robot_id !== $this_robot->robot_id){ $robot->set_frame('defend'); }
                             }
                         }
                     }
