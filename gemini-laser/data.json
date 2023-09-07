@@ -13,7 +13,7 @@
     "ability_image_editor2": "",
     "ability_type": "crystal",
     "ability_type2": "laser",
-    "ability_description": "The user fires a powerful laser that bounces back and forth across the battlefield, damaging all target robots until it runs out of power!",
+    "ability_description": "The user fires a powerful laser that bounces back and forth across the battlefield, damaging all target robots until it runs out of power!  To add insult to injury, any targets damaged by this ability will also find their speed lowered!",
     "ability_description2": "",
     "ability_speed": 1,
     "ability_speed2": 1,
