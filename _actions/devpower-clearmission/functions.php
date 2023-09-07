@@ -44,6 +44,7 @@ $functions = array(
         $trigger_options['apply_modifiers'] = true;
         $trigger_options['apply_position_modifiers'] = false;
         $trigger_options['apply_stat_modifiers'] = false;
+        $trigger_options['apply_attachment_modifiers'] = false;
         $target_robot->trigger_damage($this_robot, $this_ability, $energy_damage_amount, false, $trigger_options);
 
         // Loop through the target's benched robots, inflicting damage to each
