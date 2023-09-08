@@ -8,7 +8,7 @@ $functions = array(
         // Target the opposing robot
         $this_ability->target_options_update(array(
             'frame' => 'throw',
-            'success' => array(1, 150, 0, 10, $this_robot->print_name().' throws '.$this_ability->print_name().'!')
+            'success' => array(1, 110, 0, 10, $this_robot->print_name().' throws '.$this_ability->print_name().'!')
             ));
         $this_robot->trigger_target($target_robot, $this_ability);
 
