@@ -127,12 +127,14 @@ $functions = array(
 
         // Otherwise, we can attach all of the collected core shields to the user now
         $temp_existing_shields = 0;
+        $static_attachment_key = $this_robot->get_static_attachment_key();
+        if ($this_battle->has_attachment($static_attachment_key, 'ability_lunar-memory_lunar-memory_'.$static_attachment_key)){ $temp_existing_shields += 3; }
         foreach ($extracted_core_shields AS $attachment_token => $attachment_info){
             // Adjust the offsets of the sprite so they don't overlap too much
             $attachment_info['ability_frame_offset'] = array(
                 'x' => (10 + ($temp_existing_shields * 10)),
                 'y' => (0),
-                'z' => -1 * (10 + $temp_existing_shields)
+                'z' => 2 * (10 + $temp_existing_shields)
                 );
             // Attach this core shield to the user now
             $this_robot->set_attachment($attachment_token, $attachment_info);
@@ -219,6 +221,24 @@ $functions = array(
         // Regardless of what happens, make sure we remove any shields that we were not able to throw
         foreach ($extracted_core_shields AS $attachment_token => $attachment_info){
             $this_robot->unset_attachment($attachment_token);
+        }
+
+        // Return true on success
+        return true;
+
+    },
+    'ability_function_onload' => function($objects){
+
+        // Extract all objects into the current scope
+        extract($objects);
+
+        // Update this ability if it's being used by its owner
+        if ($this_robot->robot_token == 'ra-thor'){
+            $this_ability->set_name($this_ability->ability_base_name.' S');
+            $this_ability->set_damage($this_ability->ability_base_damage * 2);
+        } else {
+            $this_ability->reset_name();
+            $this_ability->reset_damage();
         }
 
         // Return true on success
