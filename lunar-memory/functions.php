@@ -26,6 +26,11 @@ $functions = array(
         $this_attachment_info = rpg_ability::get_static_attachment($this_ability, 'lunar-memory', $static_attachment_key);
         $this_attachment_token = $this_attachment_info['attachment_token'];
 
+        // Check to see which image this attachment should be using then update it
+        $this_attachment_image = $this_attachment_info['ability_image'];
+        if ($this_robot->robot_token !== 'ra-thor'){ $this_attachment_image = $this_ability->ability_token.'-2'; }
+        $this_attachment_info['ability_image'] = $this_attachment_image;
+
         // Create the attachment object for this ability
         $this_attachment = rpg_game::get_ability($this_battle, $this_player, $this_robot, $this_attachment_info);
 
@@ -40,6 +45,7 @@ $functions = array(
             $this_battle->set_attachment($static_attachment_key, $this_attachment_token, $this_attachment_info);
 
             // Target this robot's self and trigger the appropriate text
+            $this_battle->queue_sound_effect('cosmic-sound');
             $this_ability->target_options_update(array('frame' => 'summon', 'success' => array(0, -9999, -9999, -9999, $this_create_text)));
             $this_robot->trigger_target($this_robot, $this_ability);
 
@@ -120,12 +126,32 @@ $functions = array(
                 'failure' => array(5, 40, -4, 15, $this_attachment_destroy_text)
                 ),
             'ability_frame' => 0,
-            'ability_frame_animate' => array(0,1,2,3,0,1,2,3,0,1,2,3,0,1,2,3,4),
+            'ability_frame_animate' => array(0,1,2,3,2,1,0,1,2,3,2,1,0,1,2,3,2,1,0,1,2,3,4),
             'ability_frame_offset' => array('x' => 45, 'y' => -4, 'z' => 15)
             );
 
         // Return true on success
         return $this_attachment_info;
+
+    },
+    'ability_function_onload' => function($objects){
+
+        // Extract all objects into the current scope
+        extract($objects);
+
+        // Update this ability if it's being used by its owner
+        if ($this_robot->robot_token == 'ra-thor'){
+            $this_ability->set_name($this_ability->ability_base_name.' A');
+            $this_ability->set_image($this_ability->ability_token);
+            $this_ability->set_speed($this_ability->ability_base_speed * 2);
+        } else {
+            $this_ability->reset_name();
+            $this_ability->set_image($this_ability->ability_token.'-2');
+            $this_ability->reset_speed();
+        }
+
+        // Return true on success
+        return true;
 
     }
 );
