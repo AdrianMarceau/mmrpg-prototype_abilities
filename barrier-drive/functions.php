@@ -13,7 +13,9 @@ $functions = array(
         $core_shield_ability->set_recovery($this_ability->ability_recovery);
 
         // Define a function to "pull" core shields forward a bit (for visual presentation)
-        $pull_core_shields = function($battle, $player, $robots) use ($this_robot, $core_shield_info){
+        $pulled_core_shields = array();
+        $pulled_core_shields_by_side = array('left' => array(), 'right' => array());
+        $pull_core_shields = function($battle, $player, $robots) use ($this_robot, $core_shield_info, &$pulled_core_shields, &$pulled_core_shields_by_side){
             if (empty($robots)){ return; }
             //error_log('$pull_core_shields($player '.gettype($player).', $robots '.gettype($robots).')');
             foreach ($robots AS $robot_key => $robot_info){
@@ -33,11 +35,15 @@ $functions = array(
                             //error_log('found a core shield! tugging on the '.$attachment_token.' ...');
                             // Collect the type for this core shield we're removing
                             list($ab, $at, $core_type) = explode('_', $attachment_token);
+                            // Add a copy of this core shield to the pulled array
+                            $pulled_core_shields[$attachment_token] = $attachment_info;
+                            $pulled_core_shields_by_side[$robot->player->player_side][] = $attachment_token;
                             // Update this field attachment with an an offset tweak
                             if (!isset($attachment_info['ability_frame_offset']['x'])){ continue; }
                             //error_log('increasing offset x for the '.$attachment_token.' ...');
                             $attachment_info['ability_frame_offset']['x'] += 40;
                             if ($robot->player->player_side !== $this_robot->player->player_side){ $attachment_info['ability_frame_offset']['x'] += 40; }
+                            if ($robot->robot_position === 'bench'){ $attachment_info['ability_frame_offset']['x'] += 80; }
                             $robot->set_attachment($attachment_token, $attachment_info);
                             $robot->set_frame('damage');
                             }
@@ -48,7 +54,7 @@ $functions = array(
 
         // Create an array to hold extracted core shields and a function to extra
         $extracted_core_shields = array();
-        $extract_core_shields = function($battle, $player, $robots) use ($this_robot, &$extracted_core_shields, $core_shield_info){
+        $extract_core_shields = function($battle, $player, $robots) use ($this_robot, $core_shield_info, &$extracted_core_shields){
             if (empty($robots)){ return; }
             //error_log('$extract_core_shields($player '.gettype($player).', $robots '.gettype($robots).')');
             foreach ($robots AS $robot_key => $robot_info){
@@ -102,11 +108,13 @@ $functions = array(
         // Loop through all of this and the target player's robots to check for core shields
         $pull_core_shields($this_battle, $this_player, $this_player->values['robots_active']);
         $pull_core_shields($this_battle, $target_player, $target_player->values['robots_active']);
+        //error_log('$pulled_core_shields = '.print_r($pulled_core_shields, true));
+        //error_log('$pulled_core_shields_by_side = '.print_r($pulled_core_shields_by_side, true));
 
         // Show a zoomed-out frame where the user is pulling away their team's shields
         $this_battle->queue_sound_effect('intense-growing-sound');
         $this_robot->set_frame('taunt');
-        $this_robot->set_frame_styles('transform: scaleX(-1); ');
+        if (!empty($pulled_core_shields_by_side[$this_player->player_side])){ $this_robot->set_frame_styles('transform: scaleX(-1); '); }
         $this_battle->events_create(false, false, '', '');
 
         // Loop through all of this and the target player's robots to check for core shields
@@ -115,11 +123,11 @@ $functions = array(
         //error_log('$extracted_core_shields = '.print_r($extracted_core_shields, true));
 
         // If there weren't any core shields collected, show the failure message and return now
-        if (empty($extract_core_shields)){
+        if (empty($extracted_core_shields)){
 
             // Update the ability's target options and trigger
             $this_battle->queue_sound_effect('no-effect');
-            $this_ability->target_options_update(array('frame' => 'defend', 'success' => array(0, 0, 0, 10, '&hellip;but nothing happened.')));
+            $this_ability->target_options_update(array('frame' => 'defend', 'success' => array(0, 0, 0, 10, '...but nothing happened.')));
             $this_robot->trigger_target($target_robot, $this_ability, array('prevent_default_text' => true));
             return;
 
@@ -204,13 +212,13 @@ $functions = array(
                 'kind' => 'energy',
                 'kickback' => array(10, 0, 0),
                 'success' => array(2, 20, 0, 99, 'The '.$shield_name_span.' crashes into the target!'),
-                'failure' => array(2, 30, 0, -10, 'The '.$shield_name_span.' had no effect&hellip;')
+                'failure' => array(2, 30, 0, -10, 'The '.$shield_name_span.' rolled past the target...')
                 ));
             $core_shield_ability->recovery_options_update(array(
                 'kind' => 'energy',
                 'kickback' => array(10, 0, 0),
                 'success' => array(2, 20, 0, 99, 'The '.$shield_name_span.' phases through the target!'),
-                'failure' => array(2, 30, 0, -10, 'The '.$shield_name_span.' had no effect&hellip;')
+                'failure' => array(2, 30, 0, -10, 'The '.$shield_name_span.' had no effect...')
                 ));
             $energy_damage_amount = $core_shield_ability->ability_damage;
             $target_robot->trigger_damage($this_robot, $core_shield_ability, $energy_damage_amount);
