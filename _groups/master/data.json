@@ -632,10 +632,20 @@
             "core-laser"
         ]
     },
-    "MM00\/Weapons\/Omega": {
+    "BOSS\/RaThor\/Weapons": {
         "group_class": "master",
-        "group_token": "MM00\/Weapons\/Omega",
+        "group_token": "BOSS\/RaThor\/Weapons",
         "group_order": 59,
+        "group_child_tokens": [
+            "barrier-drive",
+            "lunar-memory",
+            "shield-eater"
+        ]
+    },
+    "BOSS\/Omega\/Weapons": {
+        "group_class": "master",
+        "group_token": "BOSS\/Omega\/Weapons",
+        "group_order": 60,
         "group_child_tokens": [
             "omega-pulse",
             "omega-wave"
@@ -644,7 +654,7 @@
     "MMRPG\/Support\/Energy": {
         "group_class": "master",
         "group_token": "MMRPG\/Support\/Energy",
-        "group_order": 60,
+        "group_order": 61,
         "group_child_tokens": [
             "energy-boost",
             "energy-break",
@@ -654,7 +664,7 @@
     "MMRPG\/Support\/Energy2": {
         "group_class": "master",
         "group_token": "MMRPG\/Support\/Energy2",
-        "group_order": 61,
+        "group_order": 62,
         "group_child_tokens": [
             "energy-support",
             "energy-assault",
@@ -664,7 +674,7 @@
     "MMRPG\/Support\/Attack": {
         "group_class": "master",
         "group_token": "MMRPG\/Support\/Attack",
-        "group_order": 62,
+        "group_order": 63,
         "group_child_tokens": [
             "attack-boost",
             "attack-break",
@@ -674,7 +684,7 @@
     "MMRPG\/Support\/Attack2": {
         "group_class": "master",
         "group_token": "MMRPG\/Support\/Attack2",
-        "group_order": 63,
+        "group_order": 64,
         "group_child_tokens": [
             "attack-support",
             "attack-assault",
@@ -684,7 +694,7 @@
     "MMRPG\/Support\/Defense": {
         "group_class": "master",
         "group_token": "MMRPG\/Support\/Defense",
-        "group_order": 64,
+        "group_order": 65,
         "group_child_tokens": [
             "defense-boost",
             "defense-break",
@@ -694,7 +704,7 @@
     "MMRPG\/Support\/Defense2": {
         "group_class": "master",
         "group_token": "MMRPG\/Support\/Defense2",
-        "group_order": 65,
+        "group_order": 66,
         "group_child_tokens": [
             "defense-support",
             "defense-assault",
@@ -704,7 +714,7 @@
     "MMRPG\/Support\/Speed": {
         "group_class": "master",
         "group_token": "MMRPG\/Support\/Speed",
-        "group_order": 66,
+        "group_order": 67,
         "group_child_tokens": [
             "speed-boost",
             "speed-break",
@@ -714,7 +724,7 @@
     "MMRPG\/Support\/Speed2": {
         "group_class": "master",
         "group_token": "MMRPG\/Support\/Speed2",
-        "group_order": 67,
+        "group_order": 68,
         "group_child_tokens": [
             "speed-support",
             "speed-assault",
@@ -724,7 +734,7 @@
     "MMRPG\/Support\/Item": {
         "group_class": "master",
         "group_token": "MMRPG\/Support\/Item",
-        "group_order": 68,
+        "group_order": 69,
         "group_child_tokens": [
             "item-swap"
         ]
@@ -732,7 +742,7 @@
     "MMRPG\/Support\/Damage": {
         "group_class": "master",
         "group_token": "MMRPG\/Support\/Damage",
-        "group_order": 69,
+        "group_order": 70,
         "group_child_tokens": [
             "damage-booster",
             "damage-breaker"
@@ -741,7 +751,7 @@
     "MMRPG\/Support\/Recovery": {
         "group_class": "master",
         "group_token": "MMRPG\/Support\/Recovery",
-        "group_order": 70,
+        "group_order": 71,
         "group_child_tokens": [
             "recovery-booster",
             "recovery-breaker"
@@ -750,7 +760,7 @@
     "MMRPG\/Support\/Experience": {
         "group_class": "master",
         "group_token": "MMRPG\/Support\/Experience",
-        "group_order": 71,
+        "group_order": 72,
         "group_child_tokens": [
             "experience-booster",
             "experience-breaker"
@@ -759,16 +769,16 @@
     "MMRPG\/Support\/Special": {
         "group_class": "master",
         "group_token": "MMRPG\/Support\/Special",
-        "group_order": 72,
+        "group_order": 73,
         "group_child_tokens": [
             "field-support",
             "mecha-support"
         ]
     },
-    "BOSS\/RaThor\/Weapons": {
+    "Hidden\/Unused\/MaybeLater": {
         "group_class": "master",
-        "group_token": "BOSS\/RaThor\/Weapons",
-        "group_order": 73,
+        "group_token": "Hidden\/Unused\/MaybeLater",
+        "group_order": 74,
         "group_child_tokens": [
             "pharaoh-wave",
             "dive-blitzkrieg",
@@ -781,10 +791,7 @@
             "energy-shuffle",
             "speed-shuffle",
             "thunder-bolt",
-            "repair-mode",
-            "barrier-drive",
-            "lunar-memory",
-            "shield-eater"
+            "repair-mode"
         ]
     }
 }
