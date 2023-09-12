@@ -252,18 +252,6 @@ $functions = array(
         static $this_sprite_index;
         if (empty($this_sprite_index)){
 
-            /*
-            // Define the sprite sheet index for the fields for internal reference
-            Sheet 1 : field, intro-field, wily-castle/light-laboratory/cossack-citadel, final-destination, prototype-complete
-            Sheet 2 : mountain-mines, arctic-jungle, steel-mill, electrical-tower, abandoned-warehouse
-            Sheet 3 : oil-wells, clock-citadel, orb-city, pipe-station, atomic-furnace
-            Sheet 4 : industrial-facility, underground-laboratory, preserved-forest, photon-collider, waterfall-institute
-            Sheet 5 : sky-ridge, mineral-quarry,
-            Sheet 6 :
-            Sheet 7 :
-            Sheet 8 :
-             */
-
             // Redefine the index var then populate
 
             // Sheet ONE
@@ -328,6 +316,7 @@ $functions = array(
 
             // Sheet NINE
             $this_sprite_index['prototype-subspace'] = array(9, 0, 1, 'glitched platform');
+            $this_sprite_index['robot-museum'] = array(9, 2, 3, 'ceratanium pillar');
 
         }
 
