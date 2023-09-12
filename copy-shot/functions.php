@@ -44,14 +44,15 @@ $functions = array(
         if ($this_ability->ability_results['this_result'] != 'failure'){
 
             // Ensure the target robot has an ability history to draw from
-            if (!empty($target_robot->history['triggered_abilities'])){
+            $copy_ability_queue = !empty($target_robot->history['triggered_abilities']) ? $target_robot->history['triggered_abilities'] : array(); //$target_robot->robot_abilities;
+            if (!empty($copy_ability_queue)){
 
                 // Find the position of the current copy-shot ability
                 $this_ability_key = array_search($this_ability->ability_token, $this_robot->robot_abilities);
 
                 // Loop through the opponent's ability history in reverse
-                $num_triggered_abilities = count($target_robot->history['triggered_abilities']);
-                $new_ability_token = $target_robot->history['triggered_abilities'][$num_triggered_abilities - 1];
+                $num_triggered_abilities = count($copy_ability_queue);
+                $new_ability_token = $copy_ability_queue[$num_triggered_abilities - 1];
                 $new_ability_info = rpg_ability::get_index_info($new_ability_token);
 
                 // If the current robot does not already have this ability
@@ -139,9 +140,11 @@ $functions = array(
 
             // Update the ability's target options and trigger
             $this_battle->queue_sound_effect('no-effect');
+            $no_effect_text = 'The target\'s ability could not be copied...';
+            if (empty($copy_ability_queue)){ $no_effect_text = '...but the target hasn\'t used an ability yet!'; }
             $this_ability->target_options_update(array(
                 'frame' => 'defend',
-                'success' => array(9, 0, 0, 10, 'The target\'s ability could not be copied...')
+                'success' => array(9, 0, 0, 10, $no_effect_text)
                 ));
             $this_robot->trigger_target($target_robot, $this_ability, array('prevent_default_text' => true));
             return;
@@ -160,6 +163,10 @@ $functions = array(
         // If the user has Extended Range, allow bench targeting
         if ($this_robot->has_attribute('extended-range')){ $this_ability->set_target('select_target'); }
         else { $this_ability->reset_target(); }
+
+        // If this is the very first turn, let's make the ability go last for usefulness
+        if ($this_battle->counters['battle_turn'] <= 1){ $this_ability->set_speed2(-5); }
+        else { $this_ability->reset_speed2(); }
 
         // Return true on success
         return true;
