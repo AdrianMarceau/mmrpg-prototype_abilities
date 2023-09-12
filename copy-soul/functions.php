@@ -111,12 +111,19 @@ $functions = array(
                             || $core_shield_refreshed){
                             $existing_shields = !empty($this_robot->robot_attachments) ? substr_count(implode('|', array_keys($this_robot->robot_attachments)), 'ability_core-shield_') : 0;
                             $shield_duration = 3;
+                            $shield_exists = false;
                             $shield_kind = 'core';
                             if ($target_robot->robot_class === 'mecha'){ $shield_duration = 1; $shield_kind = 'shard'; }
                             $shield_info = rpg_ability::get_static_core_shield($new_core_type, $shield_duration, $existing_shields, $shield_kind);
                             $shield_token = $shield_info['attachment_token'];
-                            if (!isset($this_robot->robot_attachments[$shield_token])){ $this_robot->robot_attachments[$shield_token] = $shield_info; }
-                            else { $this_robot->robot_attachments[$shield_token]['attachment_duration'] += $shield_duration; }
+                            if (!isset($this_robot->robot_attachments[$shield_token])){
+                                $this_robot->set_attachment($shield_token, $shield_info);
+                            } else {
+                                $shield_exists = true;
+                                $shield_info = array_merge($shield_info, $this_robot->robot_attachments[$shield_token]);
+                                $shield_info['attachment_duration'] += $shield_duration;
+                                $this_robot->set_attachment($shield_token, $shield_info);
+                            }
                         }
 
                         // Create an event displaying the new copied element
@@ -158,8 +165,14 @@ $functions = array(
                         $shield_token = $shield_info['attachment_token'];
                         $shield_duration = $shield_info['attachment_duration'];
                         $shield_exists = false;
-                        if (!isset($this_robot->robot_attachments[$shield_token])){ $this_robot->robot_attachments[$shield_token] = $shield_info; }
-                        else { $this_robot->robot_attachments[$shield_token]['attachment_duration'] += $shield_duration; $shield_exists = true; }
+                        if (!isset($this_robot->robot_attachments[$shield_token])){
+                            $this_robot->set_attachment($shield_token, $shield_info);
+                        } else {
+                            $shield_exists = true;
+                            $shield_info = array_merge($shield_info, $this_robot->robot_attachments[$shield_token]);
+                            $shield_info['attachment_duration'] += $shield_duration;
+                            $this_robot->set_attachment($shield_token, $shield_info);
+                        }
 
                         // Create an event displaying the new copied element
                         $this_new_item->set_name('Core Shield');
@@ -186,15 +199,11 @@ $functions = array(
 
         }
 
-        // Check the target robot and disable if necessary
-        if (($target_robot->robot_energy < 1 || $target_robot->robot_status == 'disabled')
-            && empty($target_robot->flags['apply_disabled_state'])){
-            $target_robot->trigger_disabled($this_robot);
-        }
+        // Now that all the damage has been dealt, allow the player to check for disabled
+        $target_player->check_robots_disabled($this_player, $this_robot);
 
         // Remove the temporary ability attachment from this robot
-        unset($this_robot->robot_attachments[$this_attachment_token]);
-        $this_robot->update_session();
+        $this_robot->unset_attachment($this_attachment_token);
 
         // If the ability was a failure, print out a message saying so
         if (!$copy_soul_success){
