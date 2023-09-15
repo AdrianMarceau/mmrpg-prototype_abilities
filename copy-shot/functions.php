@@ -31,6 +31,10 @@ $functions = array(
         $this_robot->trigger_target($target_robot, $this_ability);
 
         // Inflict damage on the opposing robot
+        $trigger_options = array();
+        $trigger_options['apply_modifiers'] = true;
+        $trigger_options['apply_position_modifiers'] = false;
+        $trigger_options['apply_attachment_modifiers'] = false;
         $this_ability->damage_options_update(array(
             'kind' => 'energy',
             'kickback' => array(10, 0, 0),
