@@ -46,7 +46,7 @@ $functions = array(
 
             // Target this robot's self and trigger the appropriate text
             $this_battle->queue_sound_effect('cosmic-sound');
-            $this_ability->target_options_update(array('frame' => 'summon', 'success' => array(0, -9999, -9999, -9999, $this_create_text)));
+            $this_ability->target_options_update(array('frame' => 'defend', 'success' => array(0, -9999, -9999, -9999, $this_create_text)));
             $this_robot->trigger_target($this_robot, $this_ability);
 
         }
