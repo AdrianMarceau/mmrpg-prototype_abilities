@@ -136,7 +136,7 @@ $functions = array(
             $this_mecha_info['robot_id'] = $this_mecha_id;
             $this_mecha_info['robot_key'] = $temp_summoner_key;
             $this_mecha_info['robot_position'] = 'active';
-            $this_mecha_info['robot_name'] .= ' '.$this_mecha_letter;
+            if ($this_mecha_info['robot_class'] === 'mecha'){ $this_mecha_info['robot_name'] .= ' '.$this_mecha_letter; }
             $this_mecha_info['robot_image'] = $this_mecha_image;
             $this_mecha_info['robot_item'] = '';
             $this_mecha_info['robot_experience'] = 0;
@@ -156,10 +156,12 @@ $functions = array(
             $mecha_ability_list = array();
 
             // This mecha always gets it's signature ability/abilities
+            $mmrpg_index_abilities = rpg_ability::get_index(true);
             if (!empty($this_mecha_info['robot_rewards']['abilities'])){
                 foreach ($this_mecha_info['robot_rewards']['abilities'] AS $key => $ability){
                     if (isset($ability['level']) && $this_robot->robot_level < $ability['level']){ continue; }
                     if (in_array($ability['token'], $mecha_ability_list)){ continue; }
+                    if (!isset($mmrpg_index_abilities[$ability['token']])){ continue; }
                     $mecha_ability_list[] = $ability['token'];
                 }
             }
