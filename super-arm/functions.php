@@ -186,16 +186,26 @@ $functions = array(
         $this_impact_frame = 1;
         $this_object_name = 'boulder';
         $this_sprite_index = rpg_ability::get_static_index($this_ability, 'super-block', 'sprite-index');
-        $this_field_token1 = $this_battle->battle_field->field_background;
-        $this_field_token2 = $this_battle->battle_field->field_foreground;
-        if (isset($this_sprite_index[$this_field_token1])){ $this_sheet_token = $this_field_token1; }
-        elseif (isset($this_sprite_index[$this_field_token2])){ $this_sheet_token = $this_field_token2; }
-        if (isset($this_sheet_token)){
+
+        $this_field_token1A = $this_battle->battle_field->field_background;
+        $this_field_token1B = $this_field_token1A.(!empty($this_battle->battle_field->field_background_variant) ? '_'.$this_battle->battle_field->field_background_variant : '');
+
+        $this_field_token2A = $this_battle->battle_field->field_foreground;
+        $this_field_token2B = $this_field_token2A.(!empty($this_battle->battle_field->field_foreground_variant) ? '_'.$this_battle->battle_field->field_foreground_variant : '');
+
+        if (empty($this_sprite_index)){ $this_sheet_token = false; }
+        elseif (isset($this_sprite_index[$this_field_token1B])){ $this_sheet_token = $this_field_token1B; }
+        elseif (isset($this_sprite_index[$this_field_token1A])){ $this_sheet_token = $this_field_token1A; }
+        elseif (isset($this_sprite_index[$this_field_token2B])){ $this_sheet_token = $this_field_token2B; }
+        elseif (isset($this_sprite_index[$this_field_token2A])){ $this_sheet_token = $this_field_token2A; }
+
+        if (!empty($this_sheet_token)){
             $this_sprite_sheet = $this_sprite_index[$this_sheet_token][0];
             $this_target_frame = $this_sprite_index[$this_sheet_token][1];
             $this_impact_frame = $this_sprite_index[$this_sheet_token][2];
             $this_object_name = $this_sprite_index[$this_sheet_token][3];
         }
+
         $this_object_name = ucwords($this_object_name);
         $this_object_name = str_replace(array(' A ', ' An ', ' Of ', ' The '), array(' a ', ' an ', ' of ', ' the '), $this_object_name);
         $this_object_name_span = rpg_type::print_span('impact_shield', $this_object_name);
@@ -258,9 +268,9 @@ $functions = array(
             $this_sprite_index['field'] = array(1, 0, 1, 'plain block');
             $this_sprite_index['intro-field'] = array(1, 2, 3, 'piece of fence', 'pieces of fence');
                 $this_sprite_index['gentle-countryside'] = array(1, 2, 3, 'piece of fence', 'pieces of fence');
-            $this_sprite_index['final-destination'] = array(1, 6, 7, 'shiny metal block');
-            $this_sprite_index['final-destination-2'] = array(1, 6, 7, 'shiny metal block');
-            $this_sprite_index['final-destination-3'] = array(1, 6, 7, 'shiny metal block');
+            //$this_sprite_index['final-destination'] = array(1, 6, 7, 'shiny metal block');
+            //$this_sprite_index['final-destination-2'] = array(1, 6, 7, 'shiny metal block');
+            //$this_sprite_index['final-destination-3'] = array(1, 6, 7, 'shiny metal block');
             $this_sprite_index['prototype-complete'] = array(1, 8, 9, 'rocky boulder');
 
             // Sheet TWO
@@ -316,7 +326,16 @@ $functions = array(
 
             // Sheet NINE
             $this_sprite_index['prototype-subspace'] = array(9, 0, 1, 'glitched platform');
-            $this_sprite_index['robot-museum'] = array(9, 2, 3, 'ceratanium pillar');
+            $this_sprite_index['robot-museum'] = array(9, 2, 3, 'ceratanium drum');
+            $this_sprite_index['genesis-tower'] = array(9, 4, 5, 'metalic platform');
+            $this_sprite_index['royal-palace'] = array(9, 6, 7, 'byzantium pillar');
+            $this_sprite_index['hunter-compound'] = array(9, 6, 9, 'cobalt barrier');
+
+            // Sheet NINE
+            $this_sprite_index['prototype-subspace_final-destination'] = array(10, 0, 1, 'glitched platform');
+            $this_sprite_index['final-destination'] = array(10, 2, 3, 'shiny metal block');
+            $this_sprite_index['final-destination-2'] = array(10, 4, 5, 'shiny metal block');
+            $this_sprite_index['final-destination-3'] = array(10, 6, 7, 'shiny metal block');
 
         }
 
