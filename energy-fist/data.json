@@ -2,7 +2,7 @@
     "ability_token": "energy-fist",
     "ability_name": "Energy Fist",
     "ability_game": "MM8",
-    "ability_class": "master",
+    "ability_class": "boss",
     "ability_subclass": "",
     "ability_master": "",
     "ability_number": "",
@@ -33,7 +33,7 @@
     "ability_shop_tab": "",
     "ability_shop_level": 0,
     "ability_target": "auto",
-    "ability_flag_hidden": 0,
+    "ability_flag_hidden": 1,
     "ability_flag_complete": 1,
     "ability_flag_published": 1,
     "ability_flag_unlockable": 0
