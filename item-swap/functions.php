@@ -55,6 +55,7 @@ $functions = array(
         $has_target_self = $this_robot->robot_id == $target_robot->robot_id ? true : false;
 
         // Target this robot's self to initiate ability
+        $this_battle->queue_sound_effect('get-weird-item');
         $target_name_text = $has_target_self ? 'itself' : $target_robot->print_name();
         $this_ability->target_options_update(array('frame' => 'summon', 'success' => array(0, 0, 10, -10, $this_robot->print_name().' triggered an '.$this_ability->print_name().' with '.$target_name_text.'!')));
         $this_robot->trigger_target($this_robot, $this_ability);
@@ -161,14 +162,17 @@ $functions = array(
         $target_item_object = !empty($target_robot->robot_item) ? rpg_game::get_item($this_battle, $target_player, $target_robot, array('item_token' => $target_robot->robot_item)) : false;
         $target_item_pronoun = !empty($target_robot->robot_item) && preg_match('/^(a|e|i|o|u)/i', $target_robot->robot_item) ? 'an' : 'a';
         if ($target_robot->robot_item === ''){
+            $this_battle->queue_sound_effect('buff-received');
             $effect_text = $target_name_text.'\'s item was stolen! <br /> ';
             $effect_text .= $this_robot->print_name().' got '.$this_item_pronoun.' '.$this_item_object->print_name().'! ';
             $effect_frame = 'taunt';
         } elseif ($this_robot->robot_item === ''){
+            $this_battle->queue_sound_effect('debuff-received');
             $effect_text = $this_robot->print_name().' gave away '.$this_robot->get_pronoun('possessive2').' item! <br /> ';
             $effect_text .= $target_robot->print_name().' got '.$target_item_pronoun.' '.$target_item_object->print_name().'!';
             $effect_frame = 'damage';
         } else {
+            $this_battle->queue_sound_effect('get-weird-item');
             $effect_text = $this_robot->print_name().' and '.$target_name_text.'\'s items were swapped! <br /> ';
             $effect_text .= $this_robot->print_name().' got '.$this_item_pronoun.' '.$this_item_object->print_name().'! ';
             $effect_text .= $target_robot->print_name().' got '.$target_item_pronoun.' '.$target_item_object->print_name().'!';
