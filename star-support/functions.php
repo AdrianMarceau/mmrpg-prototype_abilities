@@ -220,8 +220,8 @@ $functions = array(
                     //error_log('$next_ability_type = '.$next_ability_type);
                     //error_log('$next_ability_power = '.$next_ability_power);
                     $next_ability_pool = $mmrpg_core_abilities[0];
-                    if ($next_ability_power >= 25){ $next_ability_pool = array_merge($next_ability_pool, $mmrpg_core_abilities[1]); }
-                    if ($next_ability_power >= 50){ $next_ability_pool = array_merge($next_ability_pool, $mmrpg_core_abilities[2]); }
+                    if ($next_ability_power >= 15){ $next_ability_pool = array_merge($next_ability_pool, $mmrpg_core_abilities[1]); }
+                    if ($next_ability_power >= 30){ $next_ability_pool = array_merge($next_ability_pool, $mmrpg_core_abilities[2]); }
                     shuffle($next_ability_pool);
                     foreach ($next_ability_pool AS $next_ability_token){
                         if (in_array($next_ability_token, $master_ability_list)){ continue; }
@@ -231,7 +231,10 @@ $functions = array(
                         $master_ability_list[] = $next_ability_token;
                         break;
                     }
-                    if (empty($player_ability_influence)){ break; }
+                    if (empty($player_ability_influence)){
+                        if (!empty($player_starforce)){ $player_ability_influence = $player_starforce; }
+                        else { break; }
+                    }
                 }
 
                 // Predefine zero value stat mods for this master to start
