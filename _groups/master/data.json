@@ -196,25 +196,18 @@
         "group_token": "MM05\/Weapons\/033T2",
         "group_order": 17,
         "group_child_tokens": [
-            "charge-kick",
             "gravity-hold",
+            "power-stone",
             "gyro-attack",
             "star-crash",
+            "charge-kick",
             "crystal-eye"
-        ]
-    },
-    "MM05\/Weapons\/035": {
-        "group_class": "master",
-        "group_token": "MM05\/Weapons\/035",
-        "group_order": 18,
-        "group_child_tokens": [
-            "power-stone"
         ]
     },
     "MM06\/Weapons\/041T1": {
         "group_class": "master",
         "group_token": "MM06\/Weapons\/041T1",
-        "group_order": 19,
+        "group_order": 18,
         "group_child_tokens": [
             "flame-blast",
             "knight-crush",
@@ -227,7 +220,7 @@
     "MM06\/Weapons\/041T2": {
         "group_class": "master",
         "group_token": "MM06\/Weapons\/041T2",
-        "group_order": 20,
+        "group_order": 19,
         "group_child_tokens": [
             "centaur-flash",
             "silver-tomahawk",
@@ -237,7 +230,7 @@
     "MM07\/Weapons\/049T1": {
         "group_class": "master",
         "group_token": "MM07\/Weapons\/049T1",
-        "group_order": 21,
+        "group_order": 20,
         "group_child_tokens": [
             "storm-bolt",
             "noise-crush",
@@ -247,20 +240,21 @@
     "MM07\/Weapons\/049T2": {
         "group_class": "master",
         "group_token": "MM07\/Weapons\/049T2",
-        "group_order": 22,
+        "group_order": 21,
         "group_child_tokens": [
+            "freeze-cracker",
+            "junk-shield",
             "danger-wrap",
             "wild-coil",
-            "scorch-wheel",
             "slash-beast",
-            "freeze-cracker",
-            "junk-shield"
+            "vamp-crush",
+            "scorch-wheel"
         ]
     },
     "MM08\/Weapons\/057T1": {
         "group_class": "master",
         "group_token": "MM08\/Weapons\/057T1",
-        "group_order": 23,
+        "group_order": 22,
         "group_child_tokens": [
             "tornado-hold",
             "thunder-claw",
@@ -273,7 +267,7 @@
     "MM08\/Weapons\/057T2": {
         "group_class": "master",
         "group_token": "MM08\/Weapons\/057T2",
-        "group_order": 24,
+        "group_order": 23,
         "group_child_tokens": [
             "tengu-blade",
             "flame-sword",
@@ -283,7 +277,7 @@
     "MM085\/Weapons\/001T1": {
         "group_class": "master",
         "group_token": "MM085\/Weapons\/001T1",
-        "group_order": 25,
+        "group_order": 24,
         "group_child_tokens": [
             "remote-mine",
             "wave-burner",
@@ -293,7 +287,7 @@
     "MM085\/Weapons\/001T2": {
         "group_class": "master",
         "group_token": "MM085\/Weapons\/001T2",
-        "group_order": 26,
+        "group_order": 25,
         "group_child_tokens": [
             "ice-wall",
             "spread-drill",
@@ -303,7 +297,7 @@
     "MM09\/Weapons\/065T1": {
         "group_class": "master",
         "group_token": "MM09\/Weapons\/065T1",
-        "group_order": 27,
+        "group_order": 26,
         "group_child_tokens": [
             "concrete-shot",
             "tornado-blow",
@@ -315,7 +309,7 @@
     "MM09\/Weapons\/065T2": {
         "group_class": "master",
         "group_token": "MM09\/Weapons\/065T2",
-        "group_order": 28,
+        "group_order": 27,
         "group_child_tokens": [
             "laser-trident",
             "jewel-satellite",
@@ -326,7 +320,7 @@
     "MM10\/Weapons\/073T1": {
         "group_class": "master",
         "group_token": "MM10\/Weapons\/073T1",
-        "group_order": 29,
+        "group_order": 28,
         "group_child_tokens": [
             "triple-blade",
             "chill-spike"
@@ -335,7 +329,7 @@
     "MM10\/Weapons\/073T2": {
         "group_class": "master",
         "group_token": "MM10\/Weapons\/073T2",
-        "group_order": 30,
+        "group_order": 29,
         "group_child_tokens": [
             "commando-bomb",
             "rebound-striker",
@@ -348,7 +342,7 @@
     "MM11\/Weapons\/081T1": {
         "group_class": "master",
         "group_token": "MM11\/Weapons\/081T1",
-        "group_order": 31,
+        "group_order": 30,
         "group_child_tokens": [
             "blazing-torch",
             "pile-driver",
@@ -360,7 +354,7 @@
     "MM11\/Weapons\/081T2": {
         "group_class": "master",
         "group_token": "MM11\/Weapons\/081T2",
-        "group_order": 32,
+        "group_order": 31,
         "group_child_tokens": [
             "chain-blast",
             "tundra-storm",
@@ -371,7 +365,7 @@
     "MMAZ\/T2\/Weapons\/MM20": {
         "group_class": "master",
         "group_token": "MMAZ\/T2\/Weapons\/MM20",
-        "group_order": 33,
+        "group_order": 32,
         "group_child_tokens": [
             "mirror-buster",
             "screw-crusher",
@@ -382,7 +376,7 @@
     "MMAZ\/T2\/Weapons\/MM21": {
         "group_class": "master",
         "group_token": "MMAZ\/T2\/Weapons\/MM21",
-        "group_order": 34,
+        "group_order": 33,
         "group_child_tokens": [
             "buster-rod",
             "mega-water",
@@ -392,7 +386,7 @@
     "MMAZ\/T2\/Weapons\/MM30": {
         "group_class": "master",
         "group_token": "MMAZ\/T2\/Weapons\/MM30",
-        "group_order": 35,
+        "group_order": 34,
         "group_child_tokens": [
             "spark-chaser",
             "grab-buster",
@@ -409,9 +403,19 @@
     "MMExtra\/Weapons\/Group73": {
         "group_class": "master",
         "group_token": "MMExtra\/Weapons\/Group73",
-        "group_order": 36,
+        "group_order": 35,
         "group_child_tokens": [
             "magnetic-shockwave"
+        ]
+    },
+    "MMRPG": {
+        "group_class": "master",
+        "group_token": "MMRPG",
+        "group_order": 36,
+        "group_child_tokens": [
+            "energy-fist",
+            "comet-attack",
+            "meteor-knuckle"
         ]
     },
     "MM00\/Weapons\/00\/Doctors": {
@@ -765,20 +769,10 @@
             "mecha-support"
         ]
     },
-    "MMRPG\/Hidden\/Duo": {
-        "group_class": "master",
-        "group_token": "MMRPG\/Hidden\/Duo",
-        "group_order": 73,
-        "group_child_tokens": [
-            "energy-fist",
-            "comet-attack",
-            "meteor-knuckle"
-        ]
-    },
     "Hidden\/Unused\/MaybeLater": {
         "group_class": "master",
         "group_token": "Hidden\/Unused\/MaybeLater",
-        "group_order": 74,
+        "group_order": 73,
         "group_child_tokens": [
             "pharaoh-wave",
             "dive-blitzkrieg",
