@@ -97,12 +97,12 @@ $functions = array(
         $target_robot_event_text .= '<br /> '.$target_robot->get_pronoun('possessive2').' energy is now at '.$target_robot->print_energy().' / '.$target_robot->print_robot_base_energy().'!';
 
         // Print out this robot's new energy amounts
-        $this_battle->queue_sound_effect(strsrt($this_energy_change, 'increased') ? 'small-buff-received' : 'small-debuff-received');
+        $this_battle->queue_sound_effect(strstr($this_energy_change, 'increased') ? 'small-buff-received' : 'small-debuff-received');
         $this_ability->target_options_update(array('frame' => 'defend', 'success' => array(9, 0, 10, -10, $this_robot_event_text)));
         $this_robot->trigger_target($this_robot, $this_ability, array('prevent_default_text' => true));
 
         // Print out this robot's new energy amounts
-        $this_battle->queue_sound_effect(strsrt($target_energy_change, 'increased') ? 'small-buff-received' : 'small-debuff-received');
+        $this_battle->queue_sound_effect(strstr($target_energy_change, 'increased') ? 'small-buff-received' : 'small-debuff-received');
         $this_ability->target_options_update(array('frame' => 'defend', 'success' => array(9, 0, 10, -10, $target_robot_event_text)));
         $target_robot->trigger_target($target_robot, $this_ability, array('prevent_default_text' => true));
 
