@@ -9,7 +9,7 @@ $functions = array(
         $this_ability->target_options_update(array(
             'frame' => 'slide',
             'kickback' => array(150, 0, 0),
-            'success' => array(0, 15, -10, -10, $this_robot->print_name().' uses '.$this_ability->print_name().'!')
+            'success' => array(0, 15, -10, 10, $this_robot->print_name().' uses '.$this_ability->print_name().'!')
             ));
         $this_robot->trigger_target($target_robot, $this_ability);
 
