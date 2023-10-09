@@ -73,6 +73,7 @@ $functions = array(
                 'this_ability' => $this_ability,
                 'canvas_show_this_ability_overlay' => false,
                 'canvas_show_this_ability_underlay' => false,
+                'console_show_this_player' => true,
                 'event_flag_camera_action' => true,
                 'event_flag_camera_side' => $this_robot->player->player_side,
                 'event_flag_camera_focus' => $this_robot->robot_position,
