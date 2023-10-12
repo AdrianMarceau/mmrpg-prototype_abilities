@@ -766,14 +766,21 @@
         "group_order": 72,
         "group_child_tokens": [
             "field-support",
-            "mecha-support",
+            "mecha-support"
+        ]
+    },
+    "MMRPG\/Support\/Hidden": {
+        "group_class": "master",
+        "group_token": "MMRPG\/Support\/Hidden",
+        "group_order": 73,
+        "group_child_tokens": [
             "friend-share"
         ]
     },
     "Hidden\/Unused\/MaybeLater": {
         "group_class": "master",
         "group_token": "Hidden\/Unused\/MaybeLater",
-        "group_order": 73,
+        "group_order": 74,
         "group_child_tokens": [
             "pharaoh-wave",
             "dive-blitzkrieg",
