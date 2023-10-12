@@ -28,10 +28,23 @@ $functions = array(
         // As long as this ability is enabled, we should place the crest on the field
         $static_attachment_key = $this_robot->get_static_attachment_key();
         $static_attachment_token = $static_attachment_key.'_ability_'.$this_ability->ability_token;
+        $static_overlay_attachment_token = $static_attachment_token.'_overlay';
+        $static_crest_attachment_token = $static_attachment_token.'_crest';
         if ($star_support_enabled){
 
             // Define this ability's attachment token
-            $static_attachment_info = array(
+            $static_overlay_attachment_info = array(
+                'class' => 'ability',
+                'sticky' => true,
+                'ability_id' => $this_ability->ability_id,
+                'ability_token' => $this_ability->ability_token,
+                'ability_image' => '_effects/black-overlay',
+                'ability_frame' => 0,
+                'ability_frame_animate' => array(0, 1),
+                'ability_frame_offset' => array('x' => 0, 'y' => 0, 'z' => -12),
+                'ability_frame_classes' => 'sprite_fullscreen '
+                );
+            $static_crest_attachment_info = array(
                 'class' => 'ability',
                 'sticky' => true,
                 'ability_id' => $this_ability->ability_id,
@@ -46,7 +59,8 @@ $functions = array(
 
             // Add the ability crest attachment
             $this_robot->set_frame('summon');
-            $this_battle->set_attachment($static_attachment_key, $static_attachment_token, $static_attachment_info);
+            $this_battle->set_attachment($static_attachment_key, $static_overlay_attachment_token, $static_overlay_attachment_info);
+            $this_battle->set_attachment($static_attachment_key, $static_crest_attachment_token, $static_crest_attachment_info);
 
         }
 
@@ -85,10 +99,24 @@ $functions = array(
             $this_battle->queue_sound_effect('cosmic-sound');
             $this_battle->queue_sound_effect(array('name' => 'cosmic-sound', 'delay' => 200));
             $this_battle->queue_sound_effect(array('name' => 'cosmic-sound', 'delay' => 600));
-            $this_battle->events_create($this_robot, false, $this_player->player_name.'\'s '.$this_ability->ability_name,
-                $this_player->print_name().' senses something coming...',
-                $event_trigger_options
-                );
+            if ($this_player->player_visible){
+                // If the player is actually visible, they will sense something coming
+                $event_trigger_options['console_show_this_player'] = true;
+                $event_trigger_options['console_show_this_robot'] = false;
+                $this_battle->events_create($this_robot, false, $this_player->player_name.'\'s '.$this_ability->ability_name,
+                    $this_player->print_name().' senses something coming...',
+                    $event_trigger_options
+                    );
+            } else {
+                // Otherwise it's the robot that senses something coming
+                $this_robot->set_frame('defend');
+                $event_trigger_options['console_show_this_player'] = false;
+                $event_trigger_options['console_show_this_robot'] = true;
+                $this_battle->events_create($this_robot, false, $this_robot->robot_name.'\'s '.$this_ability->ability_name,
+                    $this_robot->print_name().' senses something coming...',
+                    $event_trigger_options
+                    );
+            }
             $this_player->set_frame('base');
             $this_robot->set_frame('defend');
             $event_trigger_options['event_flag_camera_offset'] += 1;
@@ -275,12 +303,15 @@ $functions = array(
             $this_player->update_session();
 
             // Remove the attachment from the field to show it has done its job summoning
-            $this_battle->unset_attachment($static_attachment_key, $static_attachment_token);
+            $this_battle->unset_attachment($static_attachment_key, $static_crest_attachment_token);
 
             // Automatically trigger a switch action to the new star support robot
             $this_robot->set_key($temp_next_key);
             $this_battle->actions_trigger($this_player, $this_robot, $target_player, $target_robot, 'switch', $this_master_id_token);
             $this_robot->set_frame('base');
+
+            // Remove the attachment from the field to show it has done its job summoning
+            $this_battle->unset_attachment($static_attachment_key, $static_overlay_attachment_token);
 
             // Collect reference to the new robot so we can use it
             $this_new_robot->robot_reload();
@@ -358,7 +389,8 @@ $functions = array(
 
             // Add the ability crest attachment
             $this_robot->reset_frame();
-            $this_battle->unset_attachment($static_attachment_key, $static_attachment_token);
+            $this_battle->unset_attachment($static_attachment_key, $static_overlay_attachment_token);
+            $this_battle->unset_attachment($static_attachment_key, $static_crest_attachment_token);
 
         }
 
