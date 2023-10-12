@@ -13,7 +13,24 @@ $functions = array(
         $this_robot->trigger_target($target_robot, $this_ability, array('prevent_default_text' => true));
 
         // Only continue with the ability if player has less than 8 robots
-        if (count($this_player->player_robots) < MMRPG_SETTINGS_BATTLEROBOTS_PERSIDE_MAX){
+        if ($this_robot->robot_class !== 'mecha'
+            && (count($this_player->player_robots) < MMRPG_SETTINGS_BATTLEROBOTS_PERSIDE_MAX)
+            ){
+
+
+            // Collect session token for saving and refs to this player/robot tokens
+            $session_token = rpg_game::session_token();
+            $ptoken = $this_player->player_token;
+            $rtoken = $this_robot->robot_token;
+
+            // Check to see if this robot already has a saved support token in the session we can use
+            //error_log('Check if this robot ('.$this_robot->robot_token.') has a recruited support mecha');
+            $existing_support_token = !empty($_SESSION[$session_token]['values']['battle_settings'][$ptoken]['player_robots'][$rtoken]['robot_support']) ? $_SESSION[$session_token]['values']['battle_settings'][$ptoken]['player_robots'][$rtoken]['robot_support'] : '';
+            $existing_support_image_token = !empty($_SESSION[$session_token]['values']['battle_settings'][$ptoken]['player_robots'][$rtoken]['robot_support_image']) ? $_SESSION[$session_token]['values']['battle_settings'][$ptoken]['player_robots'][$rtoken]['robot_support_image'] : '';
+            //error_log('Existing support token: '.$existing_support_token);
+            //error_log('Existing support image token: '.$existing_support_image_token);
+            //error_log('$this_robot->robot_support: '.$this_robot->robot_support);
+            //error_log('$this_robot->robot_support_image: '.$this_robot->robot_support_image);
 
             // Check to see what the next available key is
             $temp_next_key = 8;
@@ -34,6 +51,8 @@ $functions = array(
             // Collect the current robot level for this field
             $this_robot_level = !empty($this_robot->robot_level) ? $this_robot->robot_level : 1;
             $this_field_level = !empty($this_battle->battle_level) ? $this_battle->battle_level : 1;
+            $this_mecha_token = 'met';
+            $this_mecha_image_token = '';
 
             // Check to see if this robot has summoned a mecha during this battle already
             if (!isset($this_robot->counters['ability_mecha_support'])){ $this_robot->set_counter('ability_mecha_support', 0); }
@@ -43,7 +62,7 @@ $functions = array(
 
                 // Collect the mecha token from the support field directly
                 $this_mecha_token = $this_robot->robot_support;
-                $this_mecha_name_token = preg_replace('/-([1-3]+)$/i', '', $this_mecha_token);
+                $this_mecha_image_token = $this_robot->robot_support_image;
 
             }
             // Otherwise we need to auto-generate based on core and environment
@@ -81,7 +100,6 @@ $functions = array(
                 }
                 $temp_summon_key = $temp_summon_pos - 1;
                 $this_mecha_token = $this_field_mechas[$temp_summon_key];
-                $this_mecha_name_token = preg_replace('/-([1-3]+)$/i', '', $this_mecha_token);
 
             }
 
@@ -104,13 +122,13 @@ $functions = array(
 
             // Update or create the counter for num mechas summoned by this player then use it to determine the letter
             $this_letter_options = array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H');
-            if (!isset($this_player->counters['player_mechas'][$this_mecha_name_token])){ $this_player->set_counter('player_mechas', $this_mecha_name_token, 0); }
-            else { $this_player->inc_counter('player_mechas', $this_mecha_name_token); }
-            $this_mecha_letter = $this_letter_options[$this_player->counters['player_mechas'][$this_mecha_name_token]];
+            if (!isset($this_player->counters['player_mechas'][$this_mecha_token])){ $this_player->set_counter('player_mechas', $this_mecha_token, 0); }
+            else { $this_player->inc_counter('player_mechas', $this_mecha_token); }
+            $this_mecha_letter = $this_letter_options[$this_player->counters['player_mechas'][$this_mecha_token]];
 
             // If this mecha has alt images, make sure we select the next in line
-            $this_mecha_image = $this_mecha_token;
-            if (!empty($this_mecha_info['robot_image_alts'])){
+            $this_mecha_image = !empty($this_mecha_image_token) ? $this_mecha_image_token : $this_mecha_token;
+            /* if (!empty($this_mecha_info['robot_image_alts'])){
                 $alt_images = array();
                 $alt_images[] = array('token' => '', 'name' => $this_mecha_info['robot_name'], 'summons' => 0);
                 $alt_images = array_merge($alt_images, $this_mecha_info['robot_image_alts']);
@@ -119,7 +137,7 @@ $functions = array(
                 if ($alt_key > $max_alt_key){ $alt_key = (($alt_key + 1) % ($max_alt_key + 1)) - 1; }
                 $alt_token = $alt_images[$alt_key]['token'];
                 $this_mecha_image = $this_mecha_token.( !empty($alt_token) ? '_'.$alt_token : '' );
-            }
+            } */
 
             // Generate the new robot and add it to this player's team
             $this_mecha_key = $temp_summoner_key; //$this_player->counters['robots_active'] + $this_player->counters['robots_disabled'] + 1;
@@ -136,7 +154,7 @@ $functions = array(
             $this_mecha_info['robot_id'] = $this_mecha_id;
             $this_mecha_info['robot_key'] = $temp_summoner_key;
             $this_mecha_info['robot_position'] = 'active';
-            if ($this_mecha_info['robot_class'] === 'mecha'){ $this_mecha_info['robot_name'] .= ' '.$this_mecha_letter; }
+            if ($this_mecha_letter !== 'A'){ $this_mecha_info['robot_name'] .= ' '.$this_mecha_letter; }
             $this_mecha_info['robot_image'] = $this_mecha_image;
             $this_mecha_info['robot_item'] = '';
             $this_mecha_info['robot_experience'] = 0;
@@ -258,7 +276,7 @@ $functions = array(
             // Update the ability's target options and trigger
             $this_ability->target_options_update(array(
                 'frame' => 'defend',
-                'success' => array(0, 0, 0, 10, '&hellip;but nothing happened.')
+                'success' => array(0, 0, 0, 10, '...but nothing happened.')
                 ));
             $this_robot->trigger_target($target_robot, $this_ability, array('prevent_default_text' => true));
 
