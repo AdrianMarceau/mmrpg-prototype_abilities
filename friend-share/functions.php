@@ -256,7 +256,6 @@ $functions = array(
 
             }
 
-
         } elseif (!$stat_boosts_available){
 
             // Generate an event to show nothing happened

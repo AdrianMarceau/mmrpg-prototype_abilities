@@ -1,6 +1,6 @@
 {
     "ability_token": "friend-share",
-    "ability_name": "Friend Share [WIP]",
+    "ability_name": "Friend Share",
     "ability_game": "MMRPG",
     "ability_class": "master",
     "ability_subclass": "",
@@ -13,7 +13,7 @@
     "ability_image_editor2": "",
     "ability_type": "",
     "ability_type2": "",
-    "ability_description": "The user kindly shares their stats boosts with the target.  The more stat boosts shared this way, the more friendly the target will become towards the user (sometimes causing unpredictable side-effects).",
+    "ability_description": "The user kindly shares their stats boosts with the target hoping to make a friend.  The more stat boosts shared this way, the more friendly the target robot will become towards the user.",
     "ability_description2": "",
     "ability_speed": 0,
     "ability_speed2": 0,
@@ -33,7 +33,7 @@
     "ability_shop_tab": "reggae\/abilities",
     "ability_shop_level": 60,
     "ability_target": "auto",
-    "ability_flag_hidden": 0,
+    "ability_flag_hidden": 1,
     "ability_flag_complete": 1,
     "ability_flag_published": 1,
     "ability_flag_unlockable": 1
