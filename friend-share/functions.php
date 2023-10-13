@@ -29,7 +29,56 @@ $functions = array(
 
         }
 
-        // Target this robot's self
+        // Collect this side's attachment tokens and info for the later animations
+        $this_static_attachment_key = $this_robot->get_static_attachment_key();
+        $this_static_attachment_token = $this_static_attachment_key.'_ability_'.$this_ability->ability_token;
+        $this_static_relay_attachment_token = $this_static_attachment_token.'_relay';
+        $this_static_heart_attachment_token = $this_static_attachment_token.'_heart';
+
+        // Collect the other side's attachment tokens and info for the later animations
+        $target_static_attachment_key = $target_robot->get_static_attachment_key();
+        $target_static_attachment_token = $target_static_attachment_key.'_ability_'.$this_ability->ability_token;
+        $target_static_relay_attachment_token = $target_static_attachment_token.'_relay';
+        $target_static_heart_attachment_token = $target_static_attachment_token.'_heart';
+
+        // Define this ability's attachment token
+        $static_relay_attachment_info = array(
+            'class' => 'ability',
+            'sticky' => true,
+            'ability_id' => $this_ability->ability_id,
+            'ability_token' => $this_ability->ability_token,
+            'ability_image' => $this_ability->ability_token,
+            'ability_frame' => 0,
+            'ability_frame_animate' => array(0,1),
+            'ability_frame_offset' => array('x' => -5, 'y' => 0, 'z' => -10),
+            'ability_frame_classes' => ' ',
+            'ability_frame_styles' => ' '
+            );
+        $static_heart_attachment_info = array(
+            'class' => 'ability',
+            'sticky' => true,
+            'ability_id' => $this_ability->ability_id,
+            'ability_token' => $this_ability->ability_token,
+            'ability_image' => $this_ability->ability_token,
+            'ability_frame' => 2,
+            'ability_frame_animate' => array(2,3,4,5,6,7),
+            'ability_frame_offset' => array('x' => -5, 'y' => 40, 'z' => 10),
+            'ability_frame_classes' => ' ',
+            'ability_frame_styles' => ' '
+            );
+        $static_heart_animation_frames = array(
+            'attack' => array(2, 3),
+            'defense' => array(4, 5),
+            'speed' => array(6, 7)
+            );
+
+        // Add the static RELAY attachments to the opposite sides of the field
+        if (true){
+            $this_battle->set_attachment($this_static_attachment_key, $this_static_relay_attachment_token, $static_relay_attachment_info);
+            $this_battle->set_attachment($target_static_attachment_key, $target_static_relay_attachment_token, $static_relay_attachment_info);
+        }
+
+        // Target this robot's self and show the display text
         $summon_text = $this_robot->robot_name.' uses the '.$this_ability->print_name().' ability!';
         if ($this_robot->robot_class === 'mecha'){ $summon_text = 'The '.$this_robot->print_name().' '.$this_ability->print_name().'!'; }
         $this_battle->queue_sound_effect('summon-positive');
@@ -64,6 +113,13 @@ $functions = array(
             // Otherwise, we can give these boosts to the target robot/mecha/whatever instead
             foreach ($stat_boost_values AS $stat => $stat_value){
 
+                // Add the static HEART attachments to the opposite sides of the field
+                if (true){
+                    $static_heart_attachment_info['ability_frame'] = $static_heart_animation_frames[$stat][0];
+                    $this_battle->set_attachment($this_static_attachment_key, $this_static_heart_attachment_token, $static_heart_attachment_info);
+                    $this_battle->set_attachment($target_static_attachment_key, $target_static_heart_attachment_token, $static_heart_attachment_info);
+                }
+
                 // Boost the target's robot's stat by the calculated amount
                 rpg_ability::ability_function_stat_boost($target_robot, $stat, $stat_value, $this_ability);
 
@@ -71,6 +127,12 @@ $functions = array(
                 if (!isset($target_robot->counters['affection'])){ $target_robot->counters['affection'] = array(); }
                 if (!isset($target_robot->counters['affection'][$this_robot->robot_token])){ $target_robot->counters['affection'][$this_robot->robot_token] = 0; }
                 $target_robot->counters['affection'][$this_robot->robot_token] += $stat_value;
+
+                // Remove the static HEART attachments from both sides of the field
+                if (true){
+                    $this_battle->unset_attachment($this_static_attachment_key, $this_static_heart_attachment_token);
+                    $this_battle->unset_attachment($target_static_attachment_key, $target_static_heart_attachment_token);
+                }
 
             }
 
@@ -229,6 +291,12 @@ $functions = array(
                 ));
             $target_robot->reset_frame();
 
+        }
+
+        // Remove the static RELAY attachments from both sides of the field
+        if (true){
+            $this_battle->unset_attachment($this_static_attachment_key, $this_static_relay_attachment_token);
+            $this_battle->unset_attachment($target_static_attachment_key, $target_static_relay_attachment_token);
         }
 
         // Return true on success
