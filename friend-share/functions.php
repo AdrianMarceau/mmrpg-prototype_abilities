@@ -50,7 +50,7 @@ $functions = array(
             'ability_image' => $this_ability->ability_token,
             'ability_frame' => 0,
             'ability_frame_animate' => array(0,1),
-            'ability_frame_offset' => array('x' => -5, 'y' => 0, 'z' => -10),
+            'ability_frame_offset' => array('x' => 0, 'y' => 10, 'z' => -10),
             'ability_frame_classes' => ' ',
             'ability_frame_styles' => ' '
             );
@@ -62,7 +62,7 @@ $functions = array(
             'ability_image' => $this_ability->ability_token,
             'ability_frame' => 2,
             'ability_frame_animate' => array(2,3,4,5,6,7),
-            'ability_frame_offset' => array('x' => -5, 'y' => 40, 'z' => 10),
+            'ability_frame_offset' => array('x' => 0, 'y' => 40, 'z' => 10),
             'ability_frame_classes' => ' ',
             'ability_frame_styles' => ' '
             );
