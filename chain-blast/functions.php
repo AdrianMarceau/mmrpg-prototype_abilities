@@ -15,7 +15,7 @@ $functions = array(
         // Define this ability's attachment token and info
         $attachment_x_offset = 20;
         $attachment_y_offset = -15;
-        $this_attachment_token = 'ability_'.$this_ability->ability_token;
+        $this_attachment_token = 'ability_'.$this_ability->ability_token.'_chain-bomb';
         $this_attachment_info = array(
             'class' => 'ability',
             'sticky' => false,
