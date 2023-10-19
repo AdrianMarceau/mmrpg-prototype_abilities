@@ -8,8 +8,8 @@ $functions = array(
         // Target the opposing robot
         $this_ability->target_options_update(array(
             'frame' => 'slide',
-            'kickback' => array(150, 0, 0),
-            'success' => array(0, 15, -10, 10, $this_robot->print_name().' uses '.$this_ability->print_name().'!')
+            'kickback' => array(80, 0, 0),
+            'success' => array(0, 80, 0, 10, $this_robot->print_name().' uses '.$this_ability->print_name().'!')
             ));
         $this_robot->trigger_target($target_robot, $this_ability);
 
@@ -18,7 +18,7 @@ $functions = array(
             'kind' => 'energy',
             'kickback' => array(15, 0, 0),
             'success' => array(1, -65, -10, 10, 'The '.$this_ability->print_name().' crashes into the target!'),
-            'failure' => array(0, -85, -5, -10, 'The '.$this_ability->print_name().' continued past the target&hellip;')
+            'failure' => array(1, -85, -5, -10, 'The '.$this_ability->print_name().' continued past the target&hellip;')
             ));
         $this_ability->recovery_options_update(array(
             'kind' => 'energy',
