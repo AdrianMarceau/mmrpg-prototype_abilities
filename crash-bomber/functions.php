@@ -5,59 +5,66 @@ $functions = array(
         // Extract all objects into the current scope
         extract($objects);
 
-        // Define the attachment Y offset based on the target
+        // Manually define offsets for each potential target
+        // (to ensure it attaches to their heads)
+        $temp_robot_offsets = [
+            'met' => [0, -25, 0],
+            'mega-man' => [0, 9, 0],
+            'proto-man' => [0, 14, 0],
+            'bass' => [0, 12, 0],
+            'roll' => [0, 14, 0],
+            'disco' => [0, 18, 0],
+            'rhythm' => [0, 12, 0],
+            'duo' => [0, 12, 0],
+            'cut-man' => [0, 14, 0],
+            'guts-man' => [0, 24, 0],
+            'ice-man' => [0, 10, 0],
+            'bomb-man' => [0, 10, 0],
+            'fire-man' => [0, 12, 0],
+            'elec-man' => [0, 12, 0],
+            'time-man' => [0, 12, 0],
+            'oil-man' => [0, 12, 0],
+            'metal-man' => [0, 12, 0],
+            'air-man' => [0, 32, 0],
+            'bubble-man' => [0, 14, 0],
+            'quick-man' => [0, 16, 0],
+            'crash-man' => [0, 14, 0],
+            'flash-man' => [0, 14, 0],
+            'heat-man' => [0, 10, 0],
+            'wood-man' => [0, 26, 0],
+            'needle-man' => [0, 30, 0],
+            'magnet-man' => [0, 10, 0],
+            'gemini-man' => [0, 10, 0],
+            'hard-man' => [0, 45, 0],
+            'top-man' => [0, 14, 0],
+            'snake-man' => [0, 30, 0],
+            'spark-man' => [0, 20, 0],
+            'shadow-man' => [0, 18, 0],
+            'bright-man' => [0, 45, 0],
+            'toad-man' => [0, 35, 0],
+            'drill-man' => [0, 25, 0],
+            'pharaoh-man' => [0, 15, 0],
+            'ring-man' => [0, 15, 0],
+            'dust-man' => [0, 30, 0],
+            'dive-man' => [0, 45, 0],
+            'skull-man' => [0, 15, 0],
+            'gravity-man' => [0, 30, 0],
+            'stone-man' => [0, 50, 0],
+            'wave-man' => [0, 10, 0],
+            'gyro-man' => [0, 20, 0],
+            'star-man' => [0, 15, 0],
+            'charge-man' => [0, 10, 0],
+            'napalm-man' => [0, 16, 0],
+            'crystal-man' => [0, 25, 0],
+            'blizzard-man' => [0, 45, 0]
+            ];
+
+        // Set the default offset, but collect the proper one if it exists
         $temp_y_offset = 5;
-        $temp_attach_frames = array(1,2);
-        if ($target_robot->robot_token == 'met'){ $temp_attach_frames = array(1,2); $temp_y_offset = -25; }
-        elseif ($target_robot->robot_token == 'mega-man'){ $temp_attach_frames = array(1,2); $temp_y_offset = 9; }
-        elseif ($target_robot->robot_token == 'proto-man'){ $temp_attach_frames = array(1,2); $temp_y_offset = 14; }
-        elseif ($target_robot->robot_token == 'bass'){ $temp_attach_frames = array(1,2); $temp_y_offset = 12; }
-        elseif ($target_robot->robot_token == 'roll'){ $temp_attach_frames = array(1,2); $temp_y_offset = 14; }
-        elseif ($target_robot->robot_token == 'disco'){ $temp_attach_frames = array(1,2); $temp_y_offset = 18; }
-        elseif ($target_robot->robot_token == 'rhythm'){ $temp_attach_frames = array(1,2); $temp_y_offset = 12; }
-        elseif ($target_robot->robot_token == 'duo'){ $temp_attach_frames = array(1,2); $temp_y_offset = 12; }
-        elseif ($target_robot->robot_token == 'cut-man'){ $temp_attach_frames = array(1,2); $temp_y_offset = 14; }
-        elseif ($target_robot->robot_token == 'guts-man'){ $temp_attach_frames = array(1,2); $temp_y_offset = 24; }
-        elseif ($target_robot->robot_token == 'ice-man'){ $temp_attach_frames = array(1,2); $temp_y_offset = 10; }
-        elseif ($target_robot->robot_token == 'bomb-man'){ $temp_attach_frames = array(1,2); $temp_y_offset = 10; }
-        elseif ($target_robot->robot_token == 'fire-man'){ $temp_attach_frames = array(1,2); $temp_y_offset = 12; }
-        elseif ($target_robot->robot_token == 'elec-man'){ $temp_attach_frames = array(1,2); $temp_y_offset = 12; }
-        elseif ($target_robot->robot_token == 'time-man'){ $temp_attach_frames = array(1,2); $temp_y_offset = 12; }
-        elseif ($target_robot->robot_token == 'oil-man'){ $temp_attach_frames = array(1,2); $temp_y_offset = 12; }
-        elseif ($target_robot->robot_token == 'metal-man'){ $temp_attach_frames = array(1,2); $temp_y_offset = 12; }
-        elseif ($target_robot->robot_token == 'air-man'){ $temp_attach_frames = array(1,2); $temp_y_offset = 32; }
-        elseif ($target_robot->robot_token == 'bubble-man'){ $temp_attach_frames = array(1,2); $temp_y_offset = 14; }
-        elseif ($target_robot->robot_token == 'quick-man'){ $temp_attach_frames = array(1,2); $temp_y_offset = 16; }
-        elseif ($target_robot->robot_token == 'crash-man'){ $temp_attach_frames = array(1,2); $temp_y_offset = 14; }
-        elseif ($target_robot->robot_token == 'flash-man'){ $temp_attach_frames = array(1,2); $temp_y_offset = 14; }
-        elseif ($target_robot->robot_token == 'heat-man'){ $temp_attach_frames = array(1,2); $temp_y_offset = 10; }
-        elseif ($target_robot->robot_token == 'wood-man'){ $temp_attach_frames = array(1,2); $temp_y_offset = 26; }
-        elseif ($target_robot->robot_token == 'needle-man'){ $temp_attach_frames = array(1,2); $temp_y_offset = 30; }
-        elseif ($target_robot->robot_token == 'magnet-man'){ $temp_attach_frames = array(1,2); $temp_y_offset = 10; }
-        elseif ($target_robot->robot_token == 'gemini-man'){ $temp_attach_frames = array(1,2); $temp_y_offset = 10; }
-        elseif ($target_robot->robot_token == 'hard-man'){ $temp_attach_frames = array(1,2); $temp_y_offset = 45; }
-        elseif ($target_robot->robot_token == 'top-man'){ $temp_attach_frames = array(1,2); $temp_y_offset = 14; }
-        elseif ($target_robot->robot_token == 'snake-man'){ $temp_attach_frames = array(1,2); $temp_y_offset = 30; }
-        elseif ($target_robot->robot_token == 'spark-man'){ $temp_attach_frames = array(1,2); $temp_y_offset = 20; }
-        elseif ($target_robot->robot_token == 'shadow-man'){ $temp_attach_frames = array(1,2); $temp_y_offset = 18; }
-        elseif ($target_robot->robot_token == 'bright-man'){ $temp_attach_frames = array(1,2); $temp_y_offset = 45; }
-        elseif ($target_robot->robot_token == 'toad-man'){ $temp_attach_frames = array(1,2); $temp_y_offset = 35; }
-        elseif ($target_robot->robot_token == 'drill-man'){ $temp_attach_frames = array(1,2); $temp_y_offset = 25; }
-        elseif ($target_robot->robot_token == 'pharaoh-man'){ $temp_attach_frames = array(1,2); $temp_y_offset = 15; }
-        elseif ($target_robot->robot_token == 'ring-man'){ $temp_attach_frames = array(1,2); $temp_y_offset = 15; }
-        elseif ($target_robot->robot_token == 'dust-man'){ $temp_attach_frames = array(1,2); $temp_y_offset = 30; }
-        elseif ($target_robot->robot_token == 'dive-man'){ $temp_attach_frames = array(1,2); $temp_y_offset = 45; }
-        elseif ($target_robot->robot_token == 'skull-man'){ $temp_attach_frames = array(1,2); $temp_y_offset = 15; }
-        elseif ($target_robot->robot_token == 'gravity-man'){ $temp_attach_frames = array(1,2); $temp_y_offset = 30; }
-        elseif ($target_robot->robot_token == 'stone-man'){ $temp_attach_frames = array(1,2); $temp_y_offset = 50; }
-        elseif ($target_robot->robot_token == 'wave-man'){ $temp_attach_frames = array(1,2); $temp_y_offset = 10; }
-        elseif ($target_robot->robot_token == 'gyro-man'){ $temp_attach_frames = array(1,2); $temp_y_offset = 20; }
-        elseif ($target_robot->robot_token == 'star-man'){ $temp_attach_frames = array(1,2); $temp_y_offset = 15; }
-        elseif ($target_robot->robot_token == 'charge-man'){ $temp_attach_frames = array(1,2); $temp_y_offset = 10; }
-        elseif ($target_robot->robot_token == 'napalm-man'){ $temp_attach_frames = array(1,2); $temp_y_offset = 16; }
-        elseif ($target_robot->robot_token == 'crystal-man'){ $temp_attach_frames = array(1,2); $temp_y_offset = 25; }
-        elseif ($target_robot->robot_token == 'blizzard-man'){ $temp_attach_frames = array(1,2); $temp_y_offset = 45; }
-        else { $temp_y_offset = 5; }
+        $temp_attach_frames = [1, 2];
+        if (isset($temp_robot_offsets[$target_robot->robot_token])) {
+            $temp_y_offset = $temp_robot_offsets[$target_robot->robot_token][1];
+        }
 
         // Update this ability's attachment frame offset
         $this_ability->ability_frame_offset['y'] = $temp_y_offset;
@@ -124,7 +131,7 @@ $functions = array(
             $this_battle->queue_sound_effect('throw-sound');
             $this_ability->target_options_update(array(
                 'frame' => 'shoot',
-                'success' => array(0, 95, 0, 10, $this_robot->print_name().' fires a '.$this_ability->print_name().'!')
+                'success' => array(0, 45, 0, 10, $this_robot->print_name().' fires a '.$this_ability->print_name().'!')
                 ));
             $this_robot->trigger_target($target_robot, $this_ability);
 
@@ -146,7 +153,13 @@ $functions = array(
             $temp_console_content = 'The '.$this_ability->print_name().' attached itself to '.$target_robot->print_name().'!<br />';
             if ($target_player->player_token != 'player'){ $temp_console_content .= $target_player->print_name().'&#39;s robot started ticking&hellip;'; }
             else { $temp_console_content .= 'The target robot started ticking&hellip;'; }
-            $this_battle->events_create($target_robot, false, $temp_console_header, $temp_console_content, array('console_show_target' => false));
+            $this_battle->events_create($target_robot, false, $temp_console_header, $temp_console_content, array(
+                'console_show_target' => false,
+                'event_flag_camera_action' => true,
+                'event_flag_camera_side' => $target_robot->player->player_side,
+                'event_flag_camera_focus' => $target_robot->robot_position,
+                'event_flag_camera_depth' => $target_robot->robot_key
+                ));
             $target_robot->robot_frame = 'base';
             $target_robot->update_session();
 
@@ -163,7 +176,13 @@ $functions = array(
                 $temp_console_header = $this_robot->robot_name.'&#39;s '.$this_ability->ability_name;
                 $temp_console_content = $target_robot->print_name().'&#39;s immunity kicked in!<br />';
                 $temp_console_content .= 'The '.$this_ability->print_name().' fizzled and faded away&hellip;';
-                $this_battle->events_create($target_robot, false, $temp_console_header, $temp_console_content, array('console_show_target' => false));
+                $this_battle->events_create($target_robot, false, $temp_console_header, $temp_console_content, array(
+                    'console_show_target' => false,
+                    'event_flag_camera_action' => true,
+                    'event_flag_camera_side' => $target_robot->player->player_side,
+                    'event_flag_camera_focus' => $target_robot->robot_position,
+                    'event_flag_camera_depth' => $target_robot->robot_key
+                    ));
                 $target_robot->robot_frame = 'base';
                 $target_robot->update_session();
 
