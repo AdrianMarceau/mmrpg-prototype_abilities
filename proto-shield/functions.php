@@ -14,7 +14,7 @@ $functions = array(
         $base_attachment_multiplier = 0.5;
 
         // Define this ability's attachment token
-        $this_attachment_token = 'ability_'.$this_ability->ability_token.'_'.$temp_ally_robot->robot_id;
+        $this_attachment_token = 'ability_'.$this_ability->ability_token.'_proto-shield';
         $this_attachment_info = array(
             'class' => 'ability',
             //'ability_id' => $this_ability->ability_id.'_'.$temp_ally_robot->robot_id,

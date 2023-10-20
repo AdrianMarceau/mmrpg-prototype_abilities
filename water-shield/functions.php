@@ -10,7 +10,7 @@ $functions = array(
 
         // Define this ability's attachment token
         $this_effect_multiplier = 1 - ($this_ability->ability_recovery2 / 100);
-        $this_attachment_token = 'ability_'.$this_ability->ability_token;
+        $this_attachment_token = 'ability_'.$this_ability->ability_token.'_water-shield';
         $this_attachment_info = array(
             'class' => 'ability',
             'ability_token' => $this_ability->ability_token,
@@ -203,7 +203,7 @@ $functions = array(
         $num_shield_pieces = 8;
 
         // Define this ability's attachment token
-        $this_attachment_token = 'ability_'.$this_ability->ability_token;
+        $this_attachment_token = 'ability_'.$this_ability->ability_token.'_water-shield';
 
         // Check if this ability is already summoned
         $is_summoned = isset($this_robot->robot_attachments[$this_attachment_token]) ? true : false;
