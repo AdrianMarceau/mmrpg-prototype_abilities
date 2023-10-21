@@ -1,6 +1,6 @@
 {
     "ability_token": "vamp-crush",
-    "ability_name": "Vamp Crush [WIP]",
+    "ability_name": "Vamp Crush",
     "ability_game": "MM7",
     "ability_class": "master",
     "ability_subclass": "",
@@ -34,7 +34,7 @@
     "ability_shop_level": 6,
     "ability_target": "auto",
     "ability_flag_hidden": 0,
-    "ability_flag_complete": 1,
+    "ability_flag_complete": 0,
     "ability_flag_published": 1,
-    "ability_flag_unlockable": 1
+    "ability_flag_unlockable": 0
 }

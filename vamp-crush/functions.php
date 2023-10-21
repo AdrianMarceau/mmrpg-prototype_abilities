@@ -6,6 +6,7 @@ $functions = array(
         extract($objects);
 
         // Target the opposing robot
+        $this_battle->queue_sound_effect('shields-down');
         $this_ability->target_options_update(array(
             'frame' => 'slide',
             'kickback' => array(80, 0, 0),
@@ -17,15 +18,15 @@ $functions = array(
         $this_ability->damage_options_update(array(
             'kind' => 'energy',
             'kickback' => array(15, 0, 0),
-            'success' => array(1, -65, -10, 10, 'The '.$this_ability->print_name().' crashes into the target!'),
-            'failure' => array(1, -85, -5, -10, 'The '.$this_ability->print_name().' continued past the target&hellip;')
+            'success' => array(1, -65, -10, 10, 'The '.$this_ability->print_name().' shook the very soul of the target!'),
+            'failure' => array(1, -85, -5, -10, 'The '.$this_ability->print_name().' didn\'t faze the target at all&hellip;')
             ));
         $this_ability->recovery_options_update(array(
             'kind' => 'energy',
             'frame' => 'taunt',
             'kickback' => array(5, 0, 0),
-            'success' => array(1, -35, -10, 10, 'The '.$this_ability->print_name().' was absorbed by the target!'),
-            'failure' => array(1, -65, -5, -10, 'The '.$this_ability->print_name().' continued past the target&hellip;')
+            'success' => array(1, -35, -10, 10, 'The '.$this_ability->print_name().' just made the target stronger! Drats!'),
+            'failure' => array(1, -65, -5, -10, 'The '.$this_ability->print_name().' didn\'t faze the target at all&hellip;')
             ));
         $energy_damage_amount = $this_ability->ability_damage;
         $target_robot->trigger_damage($this_robot, $this_ability, $energy_damage_amount);
