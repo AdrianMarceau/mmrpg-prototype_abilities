@@ -37,6 +37,7 @@ $functions = array(
             $old_item_token = $this_robot->robot_item;
             $old_item = rpg_game::get_item($this_battle, $this_player, $this_robot, array('item_token' => $old_item_token));
             $this_robot->set_item('');
+            $this_robot->set_base_item('');
 
             // If the old item happened to be a robot core, we may need to destroy a core shield
             if (strstr($old_item_token, '-core')){
