@@ -24,11 +24,11 @@ $functions = array(
 
         // Target the opposing robot
         $this_battle->queue_sound_effect('ice-sound');
-        $this_battle->queue_sound_effect(array('name' => 'ice-sound', 'delay' => 200));
-        $this_battle->queue_sound_effect(array('name' => 'ice-sound', 'delay' => 400));
+        $this_battle->queue_sound_effect(array('name' => 'blowing-sound', 'delay' => 200));
+        $this_battle->queue_sound_effect(array('name' => 'blowing-sound', 'delay' => 400));
         $this_ability->target_options_update(array(
             'frame' => 'summon',
-            'success' => array(0, 0, 100, 10, $this_robot->print_name().' summons a '.$this_ability->print_name().'!')
+            'success' => array(0, 0, 100, 10, $this_robot->print_name().' summons the full force of the '.$this_ability->print_name().'!')
             ));
         $this_robot->trigger_target($target_robot, $this_ability, array('prevent_default_text' => true, 'prevent_stats_text' => true));
 
@@ -40,7 +40,7 @@ $functions = array(
         // -- DAMAGE TARGETS -- //
 
         // Inflict damage on the opposing robot
-        $this_battle->queue_sound_effect(array('name' => 'ice-sound', 'volume' => 0.3));
+        $this_battle->queue_sound_effect(array('name' => 'whirlwind-sound', 'volume' => 0.3));
         $num_hits_counter = 0;
         $this_robot->set_frame('throw');
         $target_robot->set_attachment($this_attachment_token.'_fx', $this_attachment_info);
@@ -48,15 +48,15 @@ $functions = array(
             'kind' => 'energy',
             'modifiers' => true,
             'kickback' => array(5, 0, 0),
-            'success' => array(0, -5, 0, 99, 'The hailstorm battered the target with ice!'),
-            'failure' => array(0, -5, 0, -10,'The '. $this_ability->print_name().' missed the first target&hellip;')
+            'success' => array(0, -5, 0, 99, 'Hold on tight! The '. $this_ability->print_name().' rocked the target!'),
+            'failure' => array(0, -5, 0, -10,'The '. $this_ability->print_name().' blew right past them&hellip;')
             ));
         $this_ability->recovery_options_update(array(
             'kind' => 'energy',
             'modifiers' => true,
             'frame' => 'taunt',
             'kickback' => array(5, 0, 0),
-            'success' => array(0, -5, 0, 9, 'The hailstorm was absorbed by the target!'),
+            'success' => array(0, -5, 0, 9, 'The winds were absorbed by the target!'),
             'failure' => array(0, -5, 0, 9, 'The '.$this_ability->print_name().' had no effect on the first target&hellip;')
             ));
         $energy_damage_amount = $this_ability->ability_damage;
@@ -93,7 +93,7 @@ $functions = array(
                 'kind' => 'energy',
                 'modifiers' => true,
                 'kickback' => array(5, 0, 0),
-                'success' => array(($key % 2), -5, 0, 99, ($target_player->player_side === 'right' ? $temp_positive_word : $temp_negative_word).' The attack hit another robot!'),
+                'success' => array(($key % 2), -5, 0, 99, ($target_player->player_side === 'right' ? $temp_positive_word : $temp_negative_word).' The gusts struck another robot!'),
                 'failure' => array(($key % 2), -5, 0, 99, 'The attack had no effect on '.$temp_target_robot->print_name().'&hellip;')
                 ));
             $this_ability->recovery_options_update(array(
