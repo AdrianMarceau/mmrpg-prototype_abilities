@@ -9,6 +9,7 @@ $functions = array(
         $will_hit_multiple = $target_robot->robot_position === 'bench' ? true : false;
 
         // Target the opposing robot
+        $this_battle->queue_sound_effect('cannon-sound');
         $this_ability->target_options_update(array(
             'frame' => 'shoot',
             'success' => array(0, 95, -10, 10, $this_robot->print_name().' fires the '.$this_ability->print_name().'!')
@@ -19,7 +20,7 @@ $functions = array(
         $this_ability->damage_options_update(array(
             'kind' => 'energy',
             'kickback' => array(10, 0, 0),
-            'success' => array(1, -10, 0, 10, 'The '.$this_ability->print_name().' hit the target!'),
+            'success' => array(1, -10, 0, 10, 'The '.$this_ability->print_name().' detonated - the target couldn\'t avoid it!'),
             'failure' => array(0, -75, 0, -10, 'The '.$this_ability->print_name().' missed the target&hellip;')
             ));
         $this_ability->recovery_options_update(array(
@@ -57,7 +58,7 @@ $functions = array(
                     'kind' => 'energy',
                     'modifiers' => true,
                     'kickback' => array(5, 0, 0),
-                    'success' => array(2, -5, 0, 99, ($target_player->player_side === 'right' ? $temp_positive_word : $temp_negative_word).' Another robot was hit by the ice shards!'),
+                    'success' => array(2, -5, 0, 99, ($target_player->player_side === 'right' ? $temp_positive_word : $temp_negative_word).' Another robot was struck by the shockwave!'),
                     'failure' => array(2, -5, 0, 99, 'The attack had no effect on '.$temp_target_robot->print_name().'&hellip;')
                     ));
                 $this_ability->recovery_options_update(array(
@@ -65,7 +66,7 @@ $functions = array(
                     'modifiers' => true,
                     'frame' => 'taunt',
                     'kickback' => array(5, 0, 0),
-                    'success' => array(2, -5, 0, 9, ($target_player->player_side === 'right' ? $temp_negative_word : $temp_positive_word).' The ice shards was absorbed by the target!'),
+                    'success' => array(2, -5, 0, 9, ($target_player->player_side === 'right' ? $temp_negative_word : $temp_positive_word).' The recoil of the blast was fully absorbed!'),
                     'failure' => array(2, -5, 0, 9, 'The attack had no effect on '.$temp_target_robot->print_name().'&hellip;')
                     ));
                 $energy_damage_amount = ceil($this_ability->ability_damage2 / 2);
