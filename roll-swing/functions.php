@@ -57,7 +57,7 @@ $functions = array(
 
         // Move the user forward so it looks like their swining the weapon
         $this_robot->set_frame('throw');
-        $this_robot->set_frame_offset('x', 310);
+        $this_robot->set_frame_offset('x', 150);
 
         // Check to see if there's a Super Block at this position
         $static_attachment_info = array();
