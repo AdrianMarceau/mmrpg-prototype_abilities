@@ -98,7 +98,7 @@ $functions = array(
         $this_attachment_token = 'ability_'.$this_ability_token.'_'.$this_attachment->attachment_token.'_'.$static_attachment_key;
         $this_attachment_image = $this_ability_token;
         $this_attachment_destroy_text = 'The crushing <span class="ability_name ability_type ability_type_space_explode">Black Hole</span> behind {this_robot} faded away... ';
-        $this_attachment_repeat_text = 'The <span class="ability_name ability_type ability_type_space_explode">Black Hole</span> behind {this_robot} exherted its power! ';
+        $this_attachment_repeat_text = 'The <span class="ability_name ability_type ability_type_space_explode">Black Hole</span> behind {this_robot} exerted its power! ';
         $this_attachment_info = array(
             'class' => 'ability',
             'sticky' => true,
