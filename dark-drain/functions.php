@@ -22,9 +22,11 @@ $functions = array(
             ));
 
         // Call the global stat break function with customized options
-        rpg_ability::ability_function_stat_boost($this_robot, $worst_stat, 2, $this_ability, array(
-            'initiator_robot' => $this_robot
-            ));
+        if ($this_ability->ability_results['this_result'] == 'success'){
+            rpg_ability::ability_function_stat_boost($this_robot, $worst_stat, 2, $this_ability, array(
+                'initiator_robot' => $this_robot
+                ));
+        }
 
         // Return true on success
         return true;
