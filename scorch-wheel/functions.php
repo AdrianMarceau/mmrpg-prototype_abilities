@@ -8,14 +8,14 @@ $functions = array(
         // Target this robot's self
         $this_ability->target_options_update(array(
             'frame' => 'summon',
-            'success' => array(0, -10, 0, 10, $this_robot->print_name().' raises a shield of stars!')
+            'success' => array(0, -10, 0, 10, $this_robot->print_name().' summons a wheel of fire!')
             ));
         $this_robot->trigger_target($this_robot, $this_ability);
 
         // Target the opposing robot
         $this_ability->target_options_update(array(
             'frame' => 'throw',
-            'success' => array(1, 100, 0, 10, $this_robot->print_name().' throws the '.$this_ability->print_name().'!')
+            'success' => array(1, 100, 0, 10, $this_robot->print_name().' drives the '.$this_ability->print_name().' forward!')
             ));
         $this_robot->trigger_target($target_robot, $this_ability);
 
@@ -23,7 +23,7 @@ $functions = array(
         $this_ability->damage_options_update(array(
             'kind' => 'energy',
             'kickback' => array(10, 0, 0),
-            'success' => array(2, 0, 5, 10, 'The '.$this_ability->print_name().' collided with the target!'),
+            'success' => array(2, 0, 5, 10, 'The '.$this_ability->print_name().' burned through the target!'),
             'failure' => array(0, -50, 5, -10, 'The '.$this_ability->print_name().' missed&hellip;')
             ));
         $this_ability->recovery_options_update(array(
