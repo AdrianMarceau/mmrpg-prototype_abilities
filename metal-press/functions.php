@@ -25,8 +25,7 @@ $functions = array(
             if ($has_gemini_clone){ $this_robot->set_flag($summoned_flag_token.'_include_gemini_clone', true); }
 
             // Set the summoned flag on this robot and save
-            $this_robot->flags[$summoned_flag_token] = true;
-            $this_robot->update_session();
+            $this_robot->set_flag($summoned_flag_token, true);
 
              // Target the opposing robot and show summoning text
             $this_ability->target_options_update(array(
@@ -86,11 +85,9 @@ $functions = array(
                 'failure' => array(1, 0, -30, -10, 'The '.$this_ability->print_name().' somehow missed the target&hellip;')
                 ));
             $energy_damage_amount = $this_ability->ability_damage;
-            $this_robot->robot_frame = 'throw';
-            $this_robot->update_session();
+            $this_robot->set_frame('throw');
             $target_robot->trigger_damage($this_robot, $this_ability, $energy_damage_amount);
-            $this_robot->robot_frame = 'base';
-            $this_robot->update_session();
+            $this_robot->reset_frame();
 
             // Only lower the target's stats of the ability was successful
             if ($target_robot->robot_status != 'disabled'
@@ -138,11 +135,9 @@ $functions = array(
                     'failure' => array(1, 0, -20, -10, 'The second '.$this_ability->print_name().' somehow missed the target'.$failure_again_text.'...')
                     ));
                 $energy_damage_amount = $this_ability->ability_damage;
-                $this_robot->robot_frame = 'throw';
-                $this_robot->update_session();
+                $this_robot->set_frame('throw');
                 $target_robot->trigger_damage($this_robot, $this_ability, $energy_damage_amount);
-                $this_robot->robot_frame = 'base';
-                $this_robot->update_session();
+                $this_robot->reset_frame();
 
                 // Reverse the using ability flags for the robot
                 $this_robot->unset_flag('gemini-clone_is_using_ability');
