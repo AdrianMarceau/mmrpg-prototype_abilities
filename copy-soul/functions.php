@@ -114,7 +114,7 @@ $functions = array(
                             $shield_exists = false;
                             $shield_kind = 'core';
                             if ($target_robot->robot_class === 'mecha'){ $shield_duration = 1; $shield_kind = 'shard'; }
-                            $shield_info = rpg_ability::get_static_core_shield($new_core_type, $shield_duration, $existing_shields, $shield_kind);
+                            $shield_info = rpg_ability::get_static_core_shield($new_core_type, $shield_duration, $existing_shields);
                             $shield_token = $shield_info['attachment_token'];
                             if (!isset($this_robot->robot_attachments[$shield_token])){
                                 $this_robot->set_attachment($shield_token, $shield_info);
