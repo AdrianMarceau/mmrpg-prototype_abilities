@@ -13,7 +13,7 @@ $functions = array(
         $this_swing_stage = 1;
         if ($this_battle_turn % 3 == 0){
             $this_swing_stage = 3;
-            $this_swing_weapon = 'vaccuum';
+            $this_swing_weapon = 'vacuum';
             $this_ability->set_image($this_ability->ability_token.'-3');
             $this_ability->set_damage($this_ability->ability_base_damage * 3);
         }
@@ -57,7 +57,7 @@ $functions = array(
 
         // Move the user forward so it looks like their swining the weapon
         $this_robot->set_frame('throw');
-        $this_robot->set_frame_offset('x', 310);
+        $this_robot->set_frame_offset('x', 150);
 
         // Check to see if there's a Super Block at this position
         $static_attachment_info = array();
