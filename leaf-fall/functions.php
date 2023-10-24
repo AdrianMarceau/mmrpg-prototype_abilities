@@ -23,12 +23,44 @@ $functions = array(
                 }
             };
 
-        // Collect five random targets, with the first always being active (repeats allowed)
-        $target_robot_1 = $get_random_target_robot($target_robot->robot_id);
-        $target_robot_2 = $get_random_target_robot();
-        $target_robot_3 = $get_random_target_robot();
-        $target_robot_4 = $get_random_target_robot();
-        $target_robot_5 = $get_random_target_robot();
+        // Function to handle the repeated logic
+        $this_ability_damage = $this_ability->ability_damage;
+        $handle_strike = function($target_robot, $strike_num) use (&$this_robot, &$this_ability, &$this_ability_damage) {
+            if ($target_robot->robot_status !== 'disabled') {
+                // Pregenerate the success and failure text for this iteration
+                if ($strike_num === 1){
+                    $damage_success_text = 'The '.$this_ability->print_name().'\'s leaves slice through the target!';
+                    $damage_failure_text = 'The '.$this_ability->print_name().'\'s leaves just missed the target&hellip;';
+                    $recovery_success_text = 'The '.$this_ability->print_name().'\'s leaves were absorbed by the target!';
+                    $recovery_failure_text = 'The '.$this_ability->print_name().'\'s leaves just missed the target&hellip;';
+                } else {
+                    $damage_success_text = ($strike_num > 1) ? 'Another one of the leaves hit!' : 'One of the leaves hit!';
+                    $damage_failure_text = ($strike_num > 1) ? 'Another one of the leaves missed!' : 'One of the leaves missed!';
+                    $recovery_success_text = ($strike_num > 1) ? 'Another one of the leaves was absorbed!' : 'One of the leaves was absorbed!';
+                    $recovery_failure_text = ($strike_num > 1) ? 'Another one of the leaves missed!' : 'One of the leaves missed!';
+                }
+                // Update the damage and recovery options for this iteration
+                $this_ability->damage_options_update(array(
+                    'kind' => 'energy',
+                    'kickback' => array((($strike_num % 2) * 2 - 1) * 10, 0, 0),
+                    'success' => array(2 + ($strike_num % 2), 35 * (($strike_num % 2) * 2 - 1), 0, 10, $damage_success_text),
+                    'failure' => array(2 + ($strike_num % 2), 95 * (($strike_num % 2) * 2 - 1), 0, -10, $damage_failure_text)
+                    ));
+                $this_ability->recovery_options_update(array(
+                    'kind' => 'energy',
+                    'frame' => 'taunt',
+                    'kickback' => array((($strike_num % 2) * 2 - 1) * 5, 0, 0),
+                    'success' => array(2 + ($strike_num % 2), 35 * (($strike_num % 2) * 2 - 1), 0, 10, $recovery_success_text),
+                    'failure' => array(2 + ($strike_num % 2), 95 * (($strike_num % 2) * 2 - 1), 0, -10, $recovery_failure_text)
+                    ));
+
+                // Define the amount and attempt to trigger damage to the target robot
+                $energy_damage_amount = $this_ability->ability_damage;
+                $trigger_options = array('apply_modifiers' => true, 'apply_position_modifiers' => false);
+                $target_robot->trigger_damage($this_robot, $this_ability, $energy_damage_amount, false, $trigger_options);
+                if ($this_ability->ability_results['this_result'] != 'failure'){ $this_ability_damage += 1; }
+            }
+        };
 
         // Target the opposing robot
         $this_ability->target_options_update(array(
@@ -40,136 +72,16 @@ $functions = array(
         // Put the user in a throw frame for the duration of the attack
         $this_robot->set_frame('throw');
 
-        // Inflict damage on the first opposing robot
-        $this_ability->damage_options_update(array(
-            'kind' => 'energy',
-            'kickback' => array(10, 0, 0),
-            'success' => array(2, -35, 0, 10, 'The '.$this_ability->print_name().'\'s leaves slice through the target!'),
-            'failure' => array(2, -95, 0, -10, 'The '.$this_ability->print_name().'\'s leaves just missed the target&hellip;')
-            ));
-        $this_ability->recovery_options_update(array(
-            'kind' => 'energy',
-            'frame' => 'taunt',
-            'kickback' => array(5, 0, 0),
-            'success' => array(2, -35, 0, 10, 'The '.$this_ability->print_name().'\'s leaves were absorbed by the target!'),
-            'failure' => array(2, -95, 0, -10, 'The '.$this_ability->print_name().'\'s leaves just missed the target&hellip;')
-            ));
-        $energy_damage_amount = $this_ability->ability_damage;
-        $trigger_options = array('apply_modifiers' => true, 'apply_position_modifiers' => false);
-        $target_robot_1->trigger_damage($this_robot, $this_ability, $energy_damage_amount, false, $trigger_options);
-
-        // Define the success/failure text variables
-        $success_text = '';
-        $failure_text = '';
-
-        // Inflict damage on the second opposing robot if they're not disabled
-        if ($target_robot_2->robot_status !== 'disabled'){
-
-            // Adjust damage/recovery text based on results
-            if ($this_ability->ability_results['total_strikes'] == 1){ $success_text = 'Another leaf hit!'; }
-            if ($this_ability->ability_results['total_misses'] == 1){ $failure_text = 'Another leaf missed!'; }
-
-            // Attempt to trigger damage to the target robot again
-            $this_ability->ability_results_reset();
-            $this_ability->damage_options_update(array(
-                'kind' => 'energy',
-                'kickback' => array(-10, 0, 0),
-                'success' => array(3, 35, 0, 10, $success_text),
-                'failure' => array(3, 95, 0, -10, $failure_text)
-                ));
-            $this_ability->recovery_options_update(array(
-                'kind' => 'energy',
-                'frame' => 'taunt',
-                'kickback' => array(-5, 0, 0),
-                'success' => array(3, 35, 0, 10, $success_text),
-                'failure' => array(3, 95, 0, -10, $failure_text)
-                ));
-            $target_robot_2->trigger_damage($this_robot, $this_ability, $energy_damage_amount, false, $trigger_options);
-
-        }
-
-        // Inflict damage on the third opposing robot if they're not disabled
-        if ($target_robot_3->robot_status !== 'disabled'){
-
-            // Adjust damage/recovery text based on results again
-            if ($this_ability->ability_results['total_strikes'] == 1){ $success_text = 'Another leaf hit!'; }
-            elseif ($this_ability->ability_results['total_strikes'] == 2){ $success_text = 'A third leaf hit!'; }
-            if ($this_ability->ability_results['total_misses'] == 1){ $failure_text = 'Another leaf missed!'; }
-            elseif ($this_ability->ability_results['total_misses'] == 2){ $failure_text = 'A third leaf missed!'; }
-
-            // Attempt to trigger damage to the target robot a third time
-            $this_ability->ability_results_reset();
-            $this_ability->damage_options_update(array(
-                'kind' => 'energy',
-                'kickback' => array(10, 0, 0),
-                'success' => array(2, -35, 0, 10, $success_text),
-                'failure' => array(2, -95, 0, -10, $failure_text)
-                ));
-            $this_ability->recovery_options_update(array(
-                'kind' => 'energy',
-                'frame' => 'taunt',
-                'kickback' => array(5, 0, 0),
-                'success' => array(2, -35, 0, 10, $success_text),
-                'failure' => array(2, -95, 0, -10, $failure_text)
-                ));
-            $target_robot_3->trigger_damage($this_robot, $this_ability, $energy_damage_amount, false);
-
-        }
-
-        // Inflict damage on the fourth opposing robot if they're not disabled
-        if ($target_robot_4->robot_status !== 'disabled'){
-
-            // Adjust damage/recovery text based on results again
-            if ($this_ability->ability_results['total_strikes'] == 1){ $success_text = 'Another leaf hit!'; }
-            elseif ($this_ability->ability_results['total_strikes'] == 2){ $success_text = 'A fourth leaf hit!'; }
-            if ($this_ability->ability_results['total_misses'] == 1){ $failure_text = 'Another leaf missed!'; }
-            elseif ($this_ability->ability_results['total_misses'] == 2){ $failure_text = 'A fourth leaf missed!'; }
-
-            // Attempt to trigger damage to the target robot a third time
-            $this_ability->ability_results_reset();
-            $this_ability->damage_options_update(array(
-                'kind' => 'energy',
-                'kickback' => array(-10, 0, 0),
-                'success' => array(3, 35, 0, 10, $success_text),
-                'failure' => array(3, 95, 0, -10, $failure_text)
-                ));
-            $this_ability->recovery_options_update(array(
-                'kind' => 'energy',
-                'frame' => 'taunt',
-                'kickback' => array(-5, 0, 0),
-                'success' => array(3, 35, 0, 10, $success_text),
-                'failure' => array(3, 95, 0, -10, $failure_text)
-                ));
-            $target_robot_4->trigger_damage($this_robot, $this_ability, $energy_damage_amount, false);
-
-        }
-
-        // Inflict damage on the fifth opposing robot if they're not disabled
-        if ($target_robot_5->robot_status !== 'disabled'){
-
-            // Adjust damage/recovery text based on results again
-            if ($this_ability->ability_results['total_strikes'] == 1){ $success_text = 'Another leaf hit!'; }
-            elseif ($this_ability->ability_results['total_strikes'] == 2){ $success_text = 'A fourth leaf hit!'; }
-            if ($this_ability->ability_results['total_misses'] == 1){ $failure_text = 'Another leaf missed!'; }
-            elseif ($this_ability->ability_results['total_misses'] == 2){ $failure_text = 'A fourth leaf missed!'; }
-
-            // Attempt to trigger damage to the target robot a third time
-            $this_ability->ability_results_reset();
-            $this_ability->damage_options_update(array(
-                'kind' => 'energy',
-                'kickback' => array(10, 0, 0),
-                'success' => array(2, -35, 0, 10, $success_text),
-                'failure' => array(2, -95, 0, -10, $failure_text)
-                ));
-            $this_ability->recovery_options_update(array(
-                'kind' => 'energy',
-                'frame' => 'taunt',
-                'kickback' => array(5, 0, 0),
-                'success' => array(2, -35, 0, 10, $success_text),
-                'failure' => array(2, -95, 0, -10, $failure_text)
-                ));
-            $target_robot_5->trigger_damage($this_robot, $this_ability, $energy_damage_amount, false);
-
+        // Loop through five times and inflict damage on the robots one-by-one
+        for ($i = 0; $i < 5; $i++){
+            $strike_num = $i + 1;
+            if ($i === 0){
+                $handle_strike($target_robot, $strike_num);
+            } else {
+                $temp_target_robot = $get_random_target_robot();
+                if (empty($temp_target_robot)){ break; }
+                $handle_strike($temp_target_robot, $strike_num);
+            }
         }
 
         // Return the user to their base frame now that we're done
