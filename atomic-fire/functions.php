@@ -40,8 +40,7 @@ $functions = array(
         } else {
             $this_attachment_info = $this_robot->robot_attachments[$this_attachment_token];
             $this_attachment_info['attachment_duration'] = 2;
-            $this_robot->robot_attachments[$this_attachment_token] = $this_attachment_info;
-            $this_robot->update_session();
+            $this_robot->set_attachment($this_attachment_token, $this_attachment_info);
         }
 
         // Create the attachment object for this ability
@@ -74,8 +73,7 @@ $functions = array(
         if ($shot_power == 1){ $this_attachment_info['ability_frame_animate'] = array(3, 4); }
         elseif ($shot_power == 2){ $this_attachment_info['ability_frame_animate'] = array(5, 6); }
         elseif ($shot_power >= 3){ $this_attachment_info['ability_frame_animate'] = array(9); }
-        $this_robot->robot_attachments[$this_attachment_token] = $this_attachment_info;
-        $this_robot->update_session();
+        $this_robot->set_attachment($this_attachment_token, $this_attachment_info);
 
         // Update the ability's target options and trigger
         $this_battle->queue_sound_effect('fireball-sound');
@@ -119,21 +117,18 @@ $functions = array(
 
         // If the shot power was at maximum, remove the attachment from the robot
         if ($shot_power >= 3){
-            unset($this_robot->robot_attachments[$this_attachment_token]);
-            unset($this_attachment->counters['shot_power']);
-            $this_robot->update_session();
-            $this_attachment->update_session();
+            $this_robot->unset_attachment($this_attachment_token);
+            $this_attachment->unset_counter('shot_power');
         }
 
         // Either way, update this ability's settings to prevent recovery
         $this_attachment->damage_options_update($this_attachment_info['attachment_destroy'], true);
         $this_attachment->recovery_options_update($this_attachment_info['attachment_destroy'], true);
-        $this_attachment->update_session();
 
         // Return true on success
         return true;
 
-        },
+    },
     'ability_function_onload' => function($objects){
 
         // Extract all objects into the current scope
@@ -148,10 +143,11 @@ $functions = array(
         if (isset($this_robot->robot_attachments[$this_attachment_token])){
             $this_attachment_info = $this_robot->robot_attachments[$this_attachment_token];
             $shot_power = !empty($this_attachment_info['attachment_power']) ? $this_attachment_info['attachment_power'] : 1;
-            $shot_numeral = $shot_power == 3 ? 'III' : 'II';
-            $ability_damage = ceil($this_ability->ability_base_damage + (($shot_power - 1) * 4));
+            $next_shot_power = min(($shot_power + 1), 3);
+            $shot_numeral = $next_shot_power == 3 ? 'III' : 'II';
+            $ability_damage = ceil($this_ability->ability_base_damage + (($next_shot_power - 1) * 4));
             $this_ability->set_damage($ability_damage);
-            if ($shot_power > 1){ $this_ability->set_name($this_ability->ability_base_name.' '.$shot_numeral); }
+            if ($next_shot_power > 1){ $this_ability->set_name($this_ability->ability_base_name.' '.$shot_numeral); }
             else { $this_ability->set_name($this_ability->ability_base_name); }
         } else {
             $this_ability->set_damage($this_ability->ability_base_damage);
@@ -161,6 +157,6 @@ $functions = array(
         // Return true on success
         return true;
 
-        }
+    }
 );
 ?>
