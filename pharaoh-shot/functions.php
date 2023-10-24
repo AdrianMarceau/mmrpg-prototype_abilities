@@ -28,8 +28,8 @@ $functions = array(
                 'modifiers' => false,
                 'frame' => 'defend',
                 'rates' => array(100, 0, 0),
-                'success' => array(2, -24, 10, -18,  'The '.$this_ability->print_name().' faded away!<br /> '.$target_robot->print_name().'\'s weapons returned to normal!'),
-                'failure' => array(2, -24, 10, -18, 'The '.$this_ability->print_name().' faded away!<br /> '.$target_robot->print_name().'\'s weapons returned to normal!')
+                'success' => array(2, -24, 10, -18,  'The '.$this_ability->print_name().' faded away!<br /> '.$this_robot->print_name().'\'s weapons returned to normal!'),
+                'failure' => array(2, -24, 10, -18, 'The '.$this_ability->print_name().' faded away!<br /> '.$this_robot->print_name().'\'s weapons returned to normal!')
                 )
             );
 
