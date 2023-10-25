@@ -6,11 +6,16 @@ $functions = array(
         extract($objects);
 
         // Pull information about the core shield ability itself and update it's damage properties
+        //error_log('create new pseudo-ability for core-shield');
         $core_shield_info = rpg_ability::get_index_info('core-shield');
+        //error_log('> old core-shield ability_id = '.print_r($core_shield_info['ability_id'], true));
+        $core_shield_info['ability_id'] = $this_ability->ability_id.'xCS';
+        //error_log('> new core-shield ability_id = '.print_r($core_shield_info['ability_id'], true));
         $core_shield_ability = rpg_game::get_ability($this_battle, $this_player, $this_robot, $core_shield_info);
         $core_shield_ability->set_name($this_ability->ability_name);
         $core_shield_ability->set_damage($this_ability->ability_damage);
         $core_shield_ability->set_recovery($this_ability->ability_recovery);
+        //error_log('> $core_shield_ability ability_id = '.print_r($core_shield_ability->ability_id, true));
 
         // Define a function to "pull" core shields forward a bit (for visual presentation)
         $pulled_core_shields = array();
