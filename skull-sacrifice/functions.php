@@ -32,11 +32,11 @@ $functions = array(
         }
 
         // Target the ally robot we are reviving
-        $this_battle->queue_sound_effect(array('name', 'electric-sound', 'delay' => 0));
-        $this_battle->queue_sound_effect(array('name', 'electric-sound', 'delay' => 200));
+        $this_battle->queue_sound_effect(array('name', 'flame-sound', 'delay' => 0));
+        $this_battle->queue_sound_effect(array('name', 'flame-sound', 'delay' => 200));
         $this_ability->target_options_update(array(
             'frame' => 'summon',
-            'success' => array(0, 0, 0, -10, $this_robot->print_name().' attempts the '.$this_ability->print_name().' technique!')
+            'success' => array(0, 0, 0, -10, $this_robot->print_name().' performs the '.$this_ability->print_name().' technique!')
             ));
         $this_robot->trigger_target($target_robot, $this_ability);
 
@@ -77,10 +77,10 @@ $functions = array(
         $target_robot->set_attachment($fx_attachment_token, $fx_attachment_info);
 
         // Target this robot's self
-        $this_robot->set_frame($this_robot->robot_token === 'spark-man' ? 'victory' : 'taunt');
+        $this_robot->set_frame($this_robot->robot_token === 'skull-man' ? 'victory' : 'taunt');
         $this_battle->queue_sound_effect('use-reviving-ability');
-        $this_battle->queue_sound_effect(array('name', 'electric-sound', 'delay' => 200));
-        $this_battle->queue_sound_effect(array('name', 'electric-sound', 'delay' => 400));
+        $this_battle->queue_sound_effect(array('name', 'flame-sound', 'delay' => 200));
+        $this_battle->queue_sound_effect(array('name', 'flame-sound', 'delay' => 400));
         $this_ability->target_options_update(array(
             'frame' => 'defend',
             'success' => array(0, 0, 0, -10,
@@ -90,7 +90,7 @@ $functions = array(
         $target_robot->trigger_target($target_robot, $this_ability);
 
         // Increase this robot's life energy stat
-        $this_robot->set_frame($this_robot->robot_token === 'spark-man' ? 'taunt' : 'summon');
+        $this_robot->set_frame($this_robot->robot_token === 'skull-man' ? 'taunt' : 'summon');
         $target_robot->set_frame('taunt');
         $this_ability->recovery_options_update(array(
             'kind' => 'energy',
@@ -106,7 +106,7 @@ $functions = array(
         $target_robot->trigger_recovery($target_robot, $this_ability, $energy_recovery_amount);
 
         // Increase this robot's weapon energy stat
-        $this_robot->set_frame($this_robot->robot_token === 'spark-man' ? 'base2' : 'defense');
+        $this_robot->set_frame($this_robot->robot_token === 'skull-man' ? 'base2' : 'defense');
         $target_robot->set_frame('taunt');
         $this_ability->recovery_options_update(array(
             'kind' => 'weapons',
