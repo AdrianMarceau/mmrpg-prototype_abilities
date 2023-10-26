@@ -59,6 +59,8 @@ $functions = array(
                 $trigger_options = array('apply_modifiers' => true, 'apply_position_modifiers' => false);
                 $target_robot->trigger_damage($this_robot, $this_ability, $energy_damage_amount, false, $trigger_options);
                 if ($this_ability->ability_results['this_result'] != 'failure'){ $this_ability_damage += 1; }
+                $this_ability->reset_all();
+
             }
         };
 
