@@ -540,33 +540,75 @@
             "scorch-wheel"
         ]
     },
-    "MM08\/Weapons\/057T1": {
+    "MM08\/Weapons\/TenguMan": {
         "group_class": "master",
-        "group_token": "MM08\/Weapons\/057T1",
+        "group_token": "MM08\/Weapons\/TenguMan",
         "group_order": 63,
         "group_child_tokens": [
-            "tornado-hold",
-            "thunder-claw",
-            "homing-sniper",
-            "flash-bomb",
-            "frost-wave",
-            "water-balloon"
+            "tengu-blade",
+            "tornado-hold"
         ]
     },
-    "MM08\/Weapons\/057T2": {
+    "MM08\/Weapons\/AstroMan": {
         "group_class": "master",
-        "group_token": "MM08\/Weapons\/057T2",
+        "group_token": "MM08\/Weapons\/AstroMan",
         "group_order": 64,
         "group_child_tokens": [
-            "tengu-blade",
-            "flame-sword",
             "astro-crush"
+        ]
+    },
+    "MM08\/Weapons\/SwordMan": {
+        "group_class": "master",
+        "group_token": "MM08\/Weapons\/SwordMan",
+        "group_order": 65,
+        "group_child_tokens": [
+            "flame-sword"
+        ]
+    },
+    "MM08\/Weapons\/ClownMan": {
+        "group_class": "master",
+        "group_token": "MM08\/Weapons\/ClownMan",
+        "group_order": 66,
+        "group_child_tokens": [
+            "thunder-claw"
+        ]
+    },
+    "MM08\/Weapons\/SearchMan": {
+        "group_class": "master",
+        "group_token": "MM08\/Weapons\/SearchMan",
+        "group_order": 67,
+        "group_child_tokens": [
+            "homing-sniper"
+        ]
+    },
+    "MM08\/Weapons\/FrostMan": {
+        "group_class": "master",
+        "group_token": "MM08\/Weapons\/FrostMan",
+        "group_order": 68,
+        "group_child_tokens": [
+            "frost-wave"
+        ]
+    },
+    "MM08\/Weapons\/GrenadeMan": {
+        "group_class": "master",
+        "group_token": "MM08\/Weapons\/GrenadeMan",
+        "group_order": 69,
+        "group_child_tokens": [
+            "flash-bomb"
+        ]
+    },
+    "MM08\/Weapons\/AquaMan": {
+        "group_class": "master",
+        "group_token": "MM08\/Weapons\/AquaMan",
+        "group_order": 70,
+        "group_child_tokens": [
+            "water-balloon"
         ]
     },
     "MM085\/Weapons\/001T1": {
         "group_class": "master",
         "group_token": "MM085\/Weapons\/001T1",
-        "group_order": 65,
+        "group_order": 71,
         "group_child_tokens": [
             "remote-mine",
             "wave-burner",
@@ -576,7 +618,7 @@
     "MM085\/Weapons\/001T2": {
         "group_class": "master",
         "group_token": "MM085\/Weapons\/001T2",
-        "group_order": 66,
+        "group_order": 72,
         "group_child_tokens": [
             "ice-wall",
             "spread-drill",
@@ -586,7 +628,7 @@
     "MM09\/Weapons\/065T1": {
         "group_class": "master",
         "group_token": "MM09\/Weapons\/065T1",
-        "group_order": 67,
+        "group_order": 73,
         "group_child_tokens": [
             "concrete-shot",
             "tornado-blow",
@@ -598,7 +640,7 @@
     "MM09\/Weapons\/065T2": {
         "group_class": "master",
         "group_token": "MM09\/Weapons\/065T2",
-        "group_order": 68,
+        "group_order": 74,
         "group_child_tokens": [
             "laser-trident",
             "jewel-satellite",
@@ -609,7 +651,7 @@
     "MM10\/Weapons\/073T1": {
         "group_class": "master",
         "group_token": "MM10\/Weapons\/073T1",
-        "group_order": 69,
+        "group_order": 75,
         "group_child_tokens": [
             "triple-blade",
             "chill-spike"
@@ -618,7 +660,7 @@
     "MM10\/Weapons\/073T2": {
         "group_class": "master",
         "group_token": "MM10\/Weapons\/073T2",
-        "group_order": 70,
+        "group_order": 76,
         "group_child_tokens": [
             "commando-bomb",
             "rebound-striker",
@@ -631,7 +673,7 @@
     "MM11\/Weapons\/081T1": {
         "group_class": "master",
         "group_token": "MM11\/Weapons\/081T1",
-        "group_order": 71,
+        "group_order": 77,
         "group_child_tokens": [
             "blazing-torch",
             "pile-driver",
@@ -643,7 +685,7 @@
     "MM11\/Weapons\/081T2": {
         "group_class": "master",
         "group_token": "MM11\/Weapons\/081T2",
-        "group_order": 72,
+        "group_order": 78,
         "group_child_tokens": [
             "chain-blast",
             "tundra-storm",
@@ -654,7 +696,7 @@
     "MMAZ\/T2\/Weapons\/MM20": {
         "group_class": "master",
         "group_token": "MMAZ\/T2\/Weapons\/MM20",
-        "group_order": 73,
+        "group_order": 79,
         "group_child_tokens": [
             "mirror-buster",
             "screw-crusher",
@@ -665,7 +707,7 @@
     "MMAZ\/T2\/Weapons\/MM21": {
         "group_class": "master",
         "group_token": "MMAZ\/T2\/Weapons\/MM21",
-        "group_order": 74,
+        "group_order": 80,
         "group_child_tokens": [
             "buster-rod",
             "mega-water",
@@ -675,7 +717,7 @@
     "MMAZ\/T2\/Weapons\/MM30": {
         "group_class": "master",
         "group_token": "MMAZ\/T2\/Weapons\/MM30",
-        "group_order": 75,
+        "group_order": 81,
         "group_child_tokens": [
             "spark-chaser",
             "grab-buster",
@@ -692,7 +734,7 @@
     "MMExtra\/Weapons\/Group73": {
         "group_class": "master",
         "group_token": "MMExtra\/Weapons\/Group73",
-        "group_order": 76,
+        "group_order": 82,
         "group_child_tokens": [
             "magnetic-shockwave"
         ]
@@ -700,7 +742,7 @@
     "MMRPG": {
         "group_class": "master",
         "group_token": "MMRPG",
-        "group_order": 77,
+        "group_order": 83,
         "group_child_tokens": [
             "energy-fist",
             "comet-attack",
@@ -710,7 +752,7 @@
     "MM00\/Weapons\/00\/Doctors": {
         "group_class": "master",
         "group_token": "MM00\/Weapons\/00\/Doctors",
-        "group_order": 78,
+        "group_order": 84,
         "group_child_tokens": [
             "light-buster",
             "wily-buster",
@@ -720,7 +762,7 @@
     "MMRPG\/Weapons\/01\/Cutter": {
         "group_class": "master",
         "group_token": "MMRPG\/Weapons\/01\/Cutter",
-        "group_order": 79,
+        "group_order": 85,
         "group_child_tokens": [
             "cutter-shot",
             "cutter-buster",
@@ -730,7 +772,7 @@
     "MMRPG\/Weapons\/02\/Impact": {
         "group_class": "master",
         "group_token": "MMRPG\/Weapons\/02\/Impact",
-        "group_order": 80,
+        "group_order": 86,
         "group_child_tokens": [
             "impact-shot",
             "impact-buster",
@@ -740,7 +782,7 @@
     "MMRPG\/Weapons\/03\/Freeze": {
         "group_class": "master",
         "group_token": "MMRPG\/Weapons\/03\/Freeze",
-        "group_order": 81,
+        "group_order": 87,
         "group_child_tokens": [
             "freeze-shot",
             "freeze-buster",
@@ -750,7 +792,7 @@
     "MMRPG\/Weapons\/04\/Explode": {
         "group_class": "master",
         "group_token": "MMRPG\/Weapons\/04\/Explode",
-        "group_order": 82,
+        "group_order": 88,
         "group_child_tokens": [
             "explode-shot",
             "explode-buster",
@@ -760,7 +802,7 @@
     "MMRPG\/Weapons\/05\/Flame": {
         "group_class": "master",
         "group_token": "MMRPG\/Weapons\/05\/Flame",
-        "group_order": 83,
+        "group_order": 89,
         "group_child_tokens": [
             "flame-shot",
             "flame-buster",
@@ -770,7 +812,7 @@
     "MMRPG\/Weapons\/06\/Electric": {
         "group_class": "master",
         "group_token": "MMRPG\/Weapons\/06\/Electric",
-        "group_order": 84,
+        "group_order": 90,
         "group_child_tokens": [
             "electric-shot",
             "electric-buster",
@@ -780,7 +822,7 @@
     "MMRPG\/Weapons\/07\/Time": {
         "group_class": "master",
         "group_token": "MMRPG\/Weapons\/07\/Time",
-        "group_order": 85,
+        "group_order": 91,
         "group_child_tokens": [
             "time-shot",
             "time-buster",
@@ -790,7 +832,7 @@
     "MMRPG\/Weapons\/08\/Earth": {
         "group_class": "master",
         "group_token": "MMRPG\/Weapons\/08\/Earth",
-        "group_order": 86,
+        "group_order": 92,
         "group_child_tokens": [
             "earth-shot",
             "earth-buster",
@@ -800,7 +842,7 @@
     "MMRPG\/Weapons\/09\/Wind": {
         "group_class": "master",
         "group_token": "MMRPG\/Weapons\/09\/Wind",
-        "group_order": 87,
+        "group_order": 93,
         "group_child_tokens": [
             "wind-shot",
             "wind-buster",
@@ -810,7 +852,7 @@
     "MMRPG\/Weapons\/10\/Water": {
         "group_class": "master",
         "group_token": "MMRPG\/Weapons\/10\/Water",
-        "group_order": 88,
+        "group_order": 94,
         "group_child_tokens": [
             "water-shot",
             "water-buster",
@@ -820,7 +862,7 @@
     "MMRPG\/Weapons\/11\/Swift": {
         "group_class": "master",
         "group_token": "MMRPG\/Weapons\/11\/Swift",
-        "group_order": 89,
+        "group_order": 95,
         "group_child_tokens": [
             "swift-shot",
             "swift-buster",
@@ -830,7 +872,7 @@
     "MMRPG\/Weapons\/12\/Nature": {
         "group_class": "master",
         "group_token": "MMRPG\/Weapons\/12\/Nature",
-        "group_order": 90,
+        "group_order": 96,
         "group_child_tokens": [
             "nature-shot",
             "nature-buster",
@@ -840,7 +882,7 @@
     "MMRPG\/Weapons\/13\/Missile": {
         "group_class": "master",
         "group_token": "MMRPG\/Weapons\/13\/Missile",
-        "group_order": 91,
+        "group_order": 97,
         "group_child_tokens": [
             "missile-shot",
             "missile-buster",
@@ -850,7 +892,7 @@
     "MMRPG\/Weapons\/14\/Crystal": {
         "group_class": "master",
         "group_token": "MMRPG\/Weapons\/14\/Crystal",
-        "group_order": 92,
+        "group_order": 98,
         "group_child_tokens": [
             "crystal-shot",
             "crystal-buster",
@@ -860,7 +902,7 @@
     "MMRPG\/Weapons\/15\/Shadow": {
         "group_class": "master",
         "group_token": "MMRPG\/Weapons\/15\/Shadow",
-        "group_order": 93,
+        "group_order": 99,
         "group_child_tokens": [
             "shadow-shot",
             "shadow-buster",
@@ -870,7 +912,7 @@
     "MMRPG\/Weapons\/16\/Space": {
         "group_class": "master",
         "group_token": "MMRPG\/Weapons\/16\/Space",
-        "group_order": 94,
+        "group_order": 100,
         "group_child_tokens": [
             "space-shot",
             "space-buster",
@@ -880,7 +922,7 @@
     "MMRPG\/Weapons\/17\/Shield": {
         "group_class": "master",
         "group_token": "MMRPG\/Weapons\/17\/Shield",
-        "group_order": 95,
+        "group_order": 101,
         "group_child_tokens": [
             "shield-shot",
             "shield-buster",
@@ -890,7 +932,7 @@
     "MMRPG\/Weapons\/18\/Laser": {
         "group_class": "master",
         "group_token": "MMRPG\/Weapons\/18\/Laser",
-        "group_order": 96,
+        "group_order": 102,
         "group_child_tokens": [
             "laser-shot",
             "laser-buster",
@@ -900,7 +942,7 @@
     "MMRPG\/Weapons\/Copy": {
         "group_class": "master",
         "group_token": "MMRPG\/Weapons\/Copy",
-        "group_order": 97,
+        "group_order": 103,
         "group_child_tokens": [
             "copy-shot",
             "copy-soul"
@@ -909,7 +951,7 @@
     "MMRPG\/Weapons\/Core": {
         "group_class": "master",
         "group_token": "MMRPG\/Weapons\/Core",
-        "group_order": 98,
+        "group_order": 104,
         "group_child_tokens": [
             "core-shield",
             "core-laser"
@@ -918,7 +960,7 @@
     "BOSS\/RaThor\/Weapons": {
         "group_class": "master",
         "group_token": "BOSS\/RaThor\/Weapons",
-        "group_order": 99,
+        "group_order": 105,
         "group_child_tokens": [
             "barrier-drive",
             "lunar-memory",
@@ -928,7 +970,7 @@
     "BOSS\/Omega\/Weapons": {
         "group_class": "master",
         "group_token": "BOSS\/Omega\/Weapons",
-        "group_order": 100,
+        "group_order": 106,
         "group_child_tokens": [
             "omega-pulse",
             "omega-wave"
@@ -937,7 +979,7 @@
     "MMRPG\/Support\/Energy": {
         "group_class": "master",
         "group_token": "MMRPG\/Support\/Energy",
-        "group_order": 101,
+        "group_order": 107,
         "group_child_tokens": [
             "energy-boost",
             "energy-break",
@@ -947,7 +989,7 @@
     "MMRPG\/Support\/Energy2": {
         "group_class": "master",
         "group_token": "MMRPG\/Support\/Energy2",
-        "group_order": 102,
+        "group_order": 108,
         "group_child_tokens": [
             "energy-support",
             "energy-assault",
@@ -957,7 +999,7 @@
     "MMRPG\/Support\/Attack": {
         "group_class": "master",
         "group_token": "MMRPG\/Support\/Attack",
-        "group_order": 103,
+        "group_order": 109,
         "group_child_tokens": [
             "attack-boost",
             "attack-break",
@@ -967,7 +1009,7 @@
     "MMRPG\/Support\/Attack2": {
         "group_class": "master",
         "group_token": "MMRPG\/Support\/Attack2",
-        "group_order": 104,
+        "group_order": 110,
         "group_child_tokens": [
             "attack-support",
             "attack-assault",
@@ -977,7 +1019,7 @@
     "MMRPG\/Support\/Defense": {
         "group_class": "master",
         "group_token": "MMRPG\/Support\/Defense",
-        "group_order": 105,
+        "group_order": 111,
         "group_child_tokens": [
             "defense-boost",
             "defense-break",
@@ -987,7 +1029,7 @@
     "MMRPG\/Support\/Defense2": {
         "group_class": "master",
         "group_token": "MMRPG\/Support\/Defense2",
-        "group_order": 106,
+        "group_order": 112,
         "group_child_tokens": [
             "defense-support",
             "defense-assault",
@@ -997,7 +1039,7 @@
     "MMRPG\/Support\/Speed": {
         "group_class": "master",
         "group_token": "MMRPG\/Support\/Speed",
-        "group_order": 107,
+        "group_order": 113,
         "group_child_tokens": [
             "speed-boost",
             "speed-break",
@@ -1007,7 +1049,7 @@
     "MMRPG\/Support\/Speed2": {
         "group_class": "master",
         "group_token": "MMRPG\/Support\/Speed2",
-        "group_order": 108,
+        "group_order": 114,
         "group_child_tokens": [
             "speed-support",
             "speed-assault",
@@ -1017,7 +1059,7 @@
     "MMRPG\/Support\/Item": {
         "group_class": "master",
         "group_token": "MMRPG\/Support\/Item",
-        "group_order": 109,
+        "group_order": 115,
         "group_child_tokens": [
             "item-swap"
         ]
@@ -1025,7 +1067,7 @@
     "MMRPG\/Support\/Damage": {
         "group_class": "master",
         "group_token": "MMRPG\/Support\/Damage",
-        "group_order": 110,
+        "group_order": 116,
         "group_child_tokens": [
             "damage-booster",
             "damage-breaker"
@@ -1034,7 +1076,7 @@
     "MMRPG\/Support\/Recovery": {
         "group_class": "master",
         "group_token": "MMRPG\/Support\/Recovery",
-        "group_order": 111,
+        "group_order": 117,
         "group_child_tokens": [
             "recovery-booster",
             "recovery-breaker"
@@ -1043,7 +1085,7 @@
     "MMRPG\/Support\/Experience": {
         "group_class": "master",
         "group_token": "MMRPG\/Support\/Experience",
-        "group_order": 112,
+        "group_order": 118,
         "group_child_tokens": [
             "experience-booster",
             "experience-breaker"
@@ -1052,7 +1094,7 @@
     "MMRPG\/Support\/Special": {
         "group_class": "master",
         "group_token": "MMRPG\/Support\/Special",
-        "group_order": 113,
+        "group_order": 119,
         "group_child_tokens": [
             "field-support",
             "mecha-support"
@@ -1061,7 +1103,7 @@
     "MMRPG\/Support\/Hidden": {
         "group_class": "master",
         "group_token": "MMRPG\/Support\/Hidden",
-        "group_order": 114,
+        "group_order": 120,
         "group_child_tokens": [
             "friend-share"
         ]
@@ -1069,7 +1111,7 @@
     "Hidden\/Unused\/MaybeLater": {
         "group_class": "master",
         "group_token": "Hidden\/Unused\/MaybeLater",
-        "group_order": 115,
+        "group_order": 121,
         "group_child_tokens": [
             "pharaoh-wave",
             "dive-blitzkrieg",
