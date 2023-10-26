@@ -5,6 +5,18 @@ $functions = array(
         // Extract all objects into the current scope
         extract($objects);
 
+        // Define this ability's first attachment token
+        $fx_attachment_token = 'ability_'.$this_ability->ability_token.'_fx';
+        $fx_attachment_info = array(
+            'class' => 'ability',
+            'sticky' => true,
+            'ability_token' => $this_ability->ability_token,
+            'ability_frame' => 1,
+            'ability_frame_animate' => array(1,2,3),
+            'ability_frame_offset' => array('x' => -20, 'y' => 20, 'z' => -10),
+            'attachment_token' => $fx_attachment_token
+            );
+
         // Check to see if the ability is going to be a success (based on remaining energy
         $resources_available = true;
         $resources_missing = array();
@@ -62,8 +74,10 @@ $functions = array(
         $target_robot->set_counter('attack_mods', 0);
         $target_robot->set_counter('defense_mods', 0);
         $target_robot->set_counter('speed_mods', 0);
+        $target_robot->set_attachment($fx_attachment_token, $fx_attachment_info);
 
         // Target this robot's self
+        $this_robot->set_frame($this_robot->robot_token === 'spark-man' ? 'victory' : 'taunt');
         $this_battle->queue_sound_effect('use-reviving-ability');
         $this_battle->queue_sound_effect(array('name', 'electric-sound', 'delay' => 200));
         $this_battle->queue_sound_effect(array('name', 'electric-sound', 'delay' => 400));
@@ -76,6 +90,7 @@ $functions = array(
         $target_robot->trigger_target($target_robot, $this_ability);
 
         // Increase this robot's life energy stat
+        $this_robot->set_frame($this_robot->robot_token === 'spark-man' ? 'taunt' : 'summon');
         $target_robot->set_frame('taunt');
         $this_ability->recovery_options_update(array(
             'kind' => 'energy',
@@ -87,10 +102,11 @@ $functions = array(
             ));
         $energy_recovery_amount = $life_energy_required; //ceil($target_robot->robot_base_energy * ($this_ability->ability_recovery / 100));
         if ($energy_recovery_amount > $target_robot->robot_base_energy){ $energy_recovery_amount = $target_robot->robot_base_energy; }
-        $this_robot->set_energy($this_robot->robot_energy - $energy_recovery_amount);
+        $this_robot->set_energy(max(1, ($this_robot->robot_energy - $energy_recovery_amount)));
         $target_robot->trigger_recovery($target_robot, $this_ability, $energy_recovery_amount);
 
         // Increase this robot's weapon energy stat
+        $this_robot->set_frame($this_robot->robot_token === 'spark-man' ? 'base2' : 'defense');
         $target_robot->set_frame('taunt');
         $this_ability->recovery_options_update(array(
             'kind' => 'weapons',
@@ -108,6 +124,7 @@ $functions = array(
         // Reset both robot's frames to be sure
         $this_robot->reset_frame();
         $target_robot->reset_frame();
+        $target_robot->unset_attachment($fx_attachment_token);
 
         // Return true on success
         return true;
