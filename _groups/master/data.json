@@ -142,11 +142,12 @@
         "group_token": "MM03\/Weapons\/019T2",
         "group_order": 12,
         "group_child_tokens": [
-            "shadow-blade",
             "needle-cannon",
             "magnet-missile",
             "gemini-laser",
-            "hard-knuckle"
+            "hard-knuckle",
+            "spark-life",
+            "shadow-blade"
         ]
     },
     "MM04\/Weapons\/025T1": {
