@@ -40,6 +40,20 @@ $functions = array(
             ));
         $this_robot->trigger_target($target_robot, $this_ability);
 
+        // If the target is not actually disabled, this move cannot be used on the
+        if ($target_robot->robot_status !== 'disabled'){
+
+            // Update the ability's target options and trigger
+            $this_battle->queue_sound_effect('no-effect');
+            $this_ability->target_options_update(array(
+                'frame' => 'defend',
+                'success' => array(9, 0, 0, 10, '...but '.$target_robot->print_name().' is not disabled!')
+                ));
+            $target_robot->trigger_target($this_robot, $this_ability, array('prevent_default_text' => true));
+            return;
+
+        }
+
         // If the user does not have the resources available, show the no-effect text
         if (!$resources_available){
 
