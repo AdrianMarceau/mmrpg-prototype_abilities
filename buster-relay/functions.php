@@ -135,7 +135,7 @@ $functions = array(
                 $target_options = array();
                 $target_options['prevent_default_text'] = true;
                 $this_find = array('{target_player}', '{target_robot}', '{this_player}', '{this_robot}');
-                $this_replace = array($target_player->player_name, $target_robot->robot_name, $this_player->player_name, $temp_ally_robot->robot_name);
+                $this_replace = array($target_player->player_name, $target_robot->robot_name, $this_player->player_name, $this_robot->robot_name);
                 $temp_ally_robot->set_frame('taunt');
                 $this_ability->target_options_update(array('frame' => 'summon', 'success' => array(9, 0, 0, -10,
                     $this_robot->print_name().' transferred '.preg_replace('/, ([a-z]+)$/', ' and $1', implode(', ', $transferred_things)).' to '.$temp_ally_robot->print_name().'! '.
