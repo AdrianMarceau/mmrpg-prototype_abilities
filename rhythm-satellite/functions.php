@@ -16,7 +16,7 @@ $functions = array(
         // Update the ability image if the user is in their alt image
         $alt_image_triggers = array('rhythm_alt', 'rhythm_alt3', 'rhythm_alt5');
         if (in_array($this_robot->robot_image, $alt_image_triggers)){
-            $this_ability->set_image($this_ability->ability_token.'-b');
+            $this_ability->set_image($this_ability->ability_token.'-2');
         }
 
         // Define this ability's attachment token
@@ -176,7 +176,7 @@ $functions = array(
         // Update the ability image if the user is in their alt image
         $alt_image_triggers = array('rhythm_alt', 'rhythm_alt3', 'rhythm_alt5');
         if (in_array($this_robot->robot_image, $alt_image_triggers)){
-            $this_ability->set_image($this_ability->ability_token.'-b');
+            $this_ability->set_image($this_ability->ability_token.'-2');
         }
 
         // Return true on success
