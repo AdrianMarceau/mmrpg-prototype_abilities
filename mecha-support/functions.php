@@ -5,6 +5,9 @@ $functions = array(
         // Extract all objects into the current scope
         extract($objects);
 
+        // Check to see how many robots this player current has on their team
+        $num_current_robots = count($this_player->player_robots);
+
         // Update the ability's target options and trigger
         $this_ability->target_options_update(array(
             'frame' => 'summon',
@@ -14,7 +17,7 @@ $functions = array(
 
         // Only continue with the ability if player has less than 8 robots
         if ($this_robot->robot_class !== 'mecha'
-            && (count($this_player->player_robots) < MMRPG_SETTINGS_BATTLEROBOTS_PERSIDE_MAX)
+            && ($num_current_robots < MMRPG_SETTINGS_BATTLEROBOTS_PERSIDE_MAX)
             ){
 
 
@@ -25,10 +28,6 @@ $functions = array(
 
             // Check to see if this robot already has a saved support token in the session we can use
             //error_log('Check if this robot ('.$this_robot->robot_token.') has a recruited support mecha');
-            $existing_support_token = !empty($_SESSION[$session_token]['values']['battle_settings'][$ptoken]['player_robots'][$rtoken]['robot_support']) ? $_SESSION[$session_token]['values']['battle_settings'][$ptoken]['player_robots'][$rtoken]['robot_support'] : '';
-            $existing_support_image_token = !empty($_SESSION[$session_token]['values']['battle_settings'][$ptoken]['player_robots'][$rtoken]['robot_support_image']) ? $_SESSION[$session_token]['values']['battle_settings'][$ptoken]['player_robots'][$rtoken]['robot_support_image'] : '';
-            //error_log('Existing support token: '.$existing_support_token);
-            //error_log('Existing support image token: '.$existing_support_image_token);
             //error_log('$this_robot->robot_support: '.$this_robot->robot_support);
             //error_log('$this_robot->robot_support_image: '.$this_robot->robot_support_image);
 
@@ -54,7 +53,7 @@ $functions = array(
             $this_mecha_token = 'met';
             $this_mecha_image_token = '';
 
-            // Check to see if this robot has summoned a mecha during this battle already
+            // Ensure required ability counters have been set before starting
             if (!isset($this_robot->counters['ability_mecha_support'])){ $this_robot->set_counter('ability_mecha_support', 0); }
 
             // If this robot has a support mecha defined, use it directly
@@ -68,43 +67,17 @@ $functions = array(
             // Otherwise we need to auto-generate based on core and environment
             else {
 
-                // Check if this robot is a Copy Core or Elemental Core (skip if Neutral)
-                $this_field_mechas = array();
-                if (!empty($this_robot->robot_core)){
-                    if ($this_robot->robot_core == 'copy'){
-                        // Collect the current robots available for this current field
-                        $this_field_mechas = !empty($this_battle->battle_field->field_mechas) ? $this_battle->battle_field->field_mechas : array();
-                    } else {
-                        $this_field_token = false;
-                        if (!empty($this_robot->robot_field) && $this_robot->robot_field !== 'field'){ $this_field_token = $this_robot->robot_field; }
-                        elseif (!empty($this_robot->robot_field2) && $this_robot->robot_field2 !== 'field'){ $this_field_token = $this_robot->robot_field2; }
-                        if ($this_field_token){
-                            $this_field_info = rpg_field::get_index_info($this_field_token);
-                            if (!empty($this_field_info['field_mechas'])){ $this_field_mechas = $this_field_info['field_mechas']; }
-                        }
-                    }
-                }
-
-                // If no mechas were defined, default to the Met
-                if (empty($this_field_mechas)){
-                    $this_field_mechas[] = 'met';
-                }
-
-                // Based on the number of summons this battle, decide which in rotation to use
-                $this_mecha_count = count($this_field_mechas);
-                $temp_summon_pos = $this_robot->counters['ability_mecha_support'] + 1;
-                if ($this_mecha_count == 1){ $temp_summon_pos = 1; }
-                elseif ($temp_summon_pos > $this_mecha_count){
-                    $temp_summon_pos = $temp_summon_pos % $this_mecha_count;
-                    if ($temp_summon_pos < 1){ $temp_summon_pos = $this_mecha_count; }
-                }
-                $temp_summon_key = $temp_summon_pos - 1;
-                $this_mecha_token = $this_field_mechas[$temp_summon_key];
+                // Default to the Met if we are somehow unable to pull real results
+                $this_mecha_token = 'met';
+                $this_mecha_image_token = '';
 
             }
 
             // Collect database info for this mecha
-            $this_mecha_info = rpg_robot::get_index_info($this_mecha_token);
+            $this_mecha_index_info = rpg_robot::get_index_info($this_mecha_token);
+
+            // Collect a copy of the index info for this mecha
+            $this_mecha_info = $this_mecha_index_info;
 
             // If this is a human player, increment the summon counter for this mecha
             if ($this_player->player_side === 'left'){
@@ -128,16 +101,6 @@ $functions = array(
 
             // If this mecha has alt images, make sure we select the next in line
             $this_mecha_image = !empty($this_mecha_image_token) ? $this_mecha_image_token : $this_mecha_token;
-            /* if (!empty($this_mecha_info['robot_image_alts'])){
-                $alt_images = array();
-                $alt_images[] = array('token' => '', 'name' => $this_mecha_info['robot_name'], 'summons' => 0);
-                $alt_images = array_merge($alt_images, $this_mecha_info['robot_image_alts']);
-                $alt_key = $this_robot->counters['ability_mecha_support'] - 1;
-                $max_alt_key = count($alt_images) - 1;
-                if ($alt_key > $max_alt_key){ $alt_key = (($alt_key + 1) % ($max_alt_key + 1)) - 1; }
-                $alt_token = $alt_images[$alt_key]['token'];
-                $this_mecha_image = $this_mecha_token.( !empty($alt_token) ? '_'.$alt_token : '' );
-            } */
 
             // Generate the new robot and add it to this player's team
             $this_mecha_key = $temp_summoner_key; //$this_player->counters['robots_active'] + $this_player->counters['robots_disabled'] + 1;
@@ -285,6 +248,46 @@ $functions = array(
         // Return true on success
         return true;
 
+    },
+    'ability_function_onload' => function($objects){
+
+        // Extract all objects into the current scope
+        extract($objects);
+
+        // If this robot's mecha support familiar has not been defined yet
+        if (empty($this_robot->flags['mecha_support_defined'])){
+            $mecha_token = $mecha_image = '';
+            if ($this_robot->robot_class !== 'mecha'){
+                static $mecha_support_index;
+                if (empty($mecha_support_index)){ $mecha_support_index = mmrpg_prototype_mecha_support_index(); }
+                $mecha_token_info = !empty($mecha_support_index[$this_robot->robot_token]) ? $mecha_support_index[$this_robot->robot_token] : '';
+                if (!empty($mecha_token_info['custom'])){
+                    $mecha_token = $mecha_token_info['custom']['token'];
+                    $mecha_image = $mecha_token_info['custom']['image'];
+                } else {
+                    if (empty($mecha_token_info['default']) || $mecha_token_info['default'] === 'local'){
+                        $this_field_mechas = !empty($this_battle->battle_field->field_mechas) ? $this_battle->battle_field->field_mechas : array();
+                        if (!empty($this_field_mechas)){ $mecha_token = $this_field_mechas[array_rand($this_field_mechas)]; }
+                    }
+                }
+                if (empty($mecha_token)){ $mecha_token = 'met'; }
+            } else {
+                $mecha_token = $this_robot->robot_token;
+            }
+            $this_robot->set_value('robot_support', $mecha_token);
+            $this_robot->set_value('robot_support_image', $mecha_image);
+            $this_robot->set_flag('mecha_support_defined', true);
         }
+
+        // Double this ability's energy cost for each time it's been used, exponentially
+        $ability_uses_counter = $this_robot->get_counter('ability_mecha_support');
+        $ability_energy_cost = $this_ability->ability_base_energy;
+        if ($ability_uses_counter > 0){ $ability_energy_cost *= pow(2, $ability_uses_counter); }
+        $this_ability->set_energy($ability_energy_cost);
+
+        // Return true on success
+        return true;
+
+    }
 );
 ?>
