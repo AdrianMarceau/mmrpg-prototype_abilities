@@ -138,7 +138,8 @@ $functions = array(
 
             // Calculate the effective affection value given the target class
             $target_affection_value = $target_robot->counters['affection'][$this_robot->robot_token];
-            if ($target_robot->robot_class === 'mecha'){ $target_affection_value = $target_affection_value / 2; }
+            if ($target_robot->robot_core === 'empty'){ $target_affection_value = $target_affection_value / 999; }
+            elseif ($target_robot->robot_class === 'mecha'){ $target_affection_value = $target_affection_value / 2; }
             elseif ($target_robot->robot_class === 'master'){ $target_affection_value = $target_affection_value / 3; }
             elseif ($target_robot->robot_class === 'boss'){ $target_affection_value = $target_affection_value / 4; }
             //error_log('$target_robot->counters[\'affection\']['.$this_robot->robot_token.'] = '.print_r($target_robot->counters['affection'][$this_robot->robot_token], true));
@@ -180,7 +181,8 @@ $functions = array(
                 $rtoken = $this_robot->robot_token;
 
                 // If the target robot is a MECHA and has the necessary affection value we can recruit it
-                if ($target_robot->robot_class === 'mecha'){
+                if ($target_robot->robot_class === 'mecha'
+                    && $target_robot->robot_core !== 'empty'){
 
                     // Add the target mecha support to this robot's battle settings for future use
                     //error_log('We can recruit the '.$target_robot->robot_token.' mecha now!');
