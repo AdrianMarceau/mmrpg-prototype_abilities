@@ -20,7 +20,6 @@ $functions = array(
             && ($num_current_robots < MMRPG_SETTINGS_BATTLEROBOTS_PERSIDE_MAX)
             ){
 
-
             // Collect session token for saving and refs to this player/robot tokens
             $session_token = rpg_game::session_token();
             $ptoken = $this_player->player_token;
@@ -256,26 +255,29 @@ $functions = array(
 
         // If this robot's mecha support familiar has not been defined yet
         if (empty($this_robot->flags['mecha_support_defined'])){
-            $mecha_token = $mecha_image = '';
+            $mecha_token = '';
+            $mecha_image = '';
             if ($this_robot->robot_class !== 'mecha'){
                 static $mecha_support_index;
-                if (empty($mecha_support_index)){ $mecha_support_index = mmrpg_prototype_mecha_support_index(); }
-                $mecha_token_info = !empty($mecha_support_index[$this_robot->robot_token]) ? $mecha_support_index[$this_robot->robot_token] : '';
-                if (!empty($mecha_token_info['custom'])){
-                    $mecha_token = $mecha_token_info['custom']['token'];
-                    $mecha_image = $mecha_token_info['custom']['image'];
-                } else {
-                    if (empty($mecha_token_info['default']) || $mecha_token_info['default'] === 'local'){
-                        $this_field_mechas = !empty($this_battle->battle_field->field_mechas) ? $this_battle->battle_field->field_mechas : array();
-                        if (!empty($this_field_mechas)){ $mecha_token = $this_field_mechas[array_rand($this_field_mechas)]; }
-                    }
+                if (empty($mecha_support_index)){ $mecha_support_index = mmrpg_prototype_mecha_support_index(true); }
+                $mecha_support_info = !empty($mecha_support_index[$this_robot->robot_token]) ? $mecha_support_index[$this_robot->robot_token] : array();
+                if (!empty($mecha_support_info['custom'])){
+                    $mecha_token = $mecha_support_info['custom']['token'];
+                    $mecha_image = $mecha_support_info['custom']['image'];
+                } elseif (!empty($mecha_support_info['default'])){
+                    $mecha_token = $mecha_support_info['default'];
+                    $mecha_image = '';
+                }
+                if ($mecha_token === 'local'){
+                    $this_field_mechas = !empty($this_battle->battle_field->field_mechas) ? $this_battle->battle_field->field_mechas : array();
+                    if (!empty($this_field_mechas)){ $mecha_token = $this_field_mechas[array_rand($this_field_mechas)]; }
                 }
                 if (empty($mecha_token)){ $mecha_token = 'met'; }
             } else {
                 $mecha_token = $this_robot->robot_token;
             }
-            $this_robot->set_value('robot_support', $mecha_token);
-            $this_robot->set_value('robot_support_image', $mecha_image);
+            $this_robot->set_support($mecha_token);
+            $this_robot->set_support_image($mecha_image);
             $this_robot->set_flag('mecha_support_defined', true);
         }
 
