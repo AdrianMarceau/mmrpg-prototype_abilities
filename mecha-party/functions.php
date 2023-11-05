@@ -16,9 +16,8 @@ $functions = array(
         $this_robot->trigger_target($target_robot, $this_ability, array('prevent_default_text' => true));
 
         // Check to see how many mecha support we're allowed to summon right now (3 max, but reduce if too many)
-        //count($this_player->player_robots) < MMRPG_SETTINGS_BATTLEROBOTS_PERSIDE_MAX
         $num_mechas_to_summon = 3;
-        if (($num_current_robots + 1) > MMRPG_SETTINGS_BATTLEROBOTS_PERSIDE_MAX){
+        if (($num_current_robots + $num_mechas_to_summon) > MMRPG_SETTINGS_BATTLEROBOTS_PERSIDE_MAX){
             $num_mechas_to_summon = MMRPG_SETTINGS_BATTLEROBOTS_PERSIDE_MAX - $num_current_robots;
         }
 
