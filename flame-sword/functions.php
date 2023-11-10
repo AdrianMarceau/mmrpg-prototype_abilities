@@ -10,6 +10,9 @@ $functions = array(
         if ($this_robot->robot_token === 'sword-man'){ $target_frame = 'taunt'; }
 
         // Target the opposing robot
+        $this_battle->queue_sound_effect('flame-sound');
+        $this_battle->queue_sound_effect(array('name' => 'flame-sound', 'delay' => 100));
+        $this_battle->queue_sound_effect(array('name' => 'flame-sound', 'delay' => 200));
         $this_ability->target_options_update(array(
             'frame' => $target_frame,
             'success' => array(0, 50, 0, 10, $this_robot->print_name().' readies their stance...')
@@ -17,6 +20,8 @@ $functions = array(
         $this_robot->trigger_target($target_robot, $this_ability);
         
         // Target the opposing robot
+        $this_battle->queue_sound_effect('flame-sound');
+        $this_battle->queue_sound_effect(array('name' => 'hyper-slide-sound', 'delay' => 100));
         $this_robot->set_frame_offset('z', 50);
         $this_ability->target_options_update(array(
             'frame' => 'throw',
