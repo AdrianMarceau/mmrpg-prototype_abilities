@@ -28,6 +28,7 @@ $functions = array(
         if ($this_robot->robot_token === 'yamato-man'){ $target_frame = 'defend'; }
 
         // Target the opposing robot
+        $this_battle->queue_sound_effect('blade-sound');
         $this_ability->target_options_update(array(
             'frame' => $target_frame,
             'success' => array(0, $x_offset, $y_offset, 10, $this_robot->print_name().' releases a '.$this_ability->print_name().'!'),
@@ -57,6 +58,7 @@ $functions = array(
         $weapon_energy_required = $this_robot->calculate_weapon_energy($this_ability, $this_ability->ability_energy, $temp_ability_energy_mods);
 
         // Continue triggering the attack until target disabled OR user runs out of weapon energy
+
         $loop_key = 0;
         while ($target_robot->robot_status != 'disabled'
                && $this_robot->robot_weapons >= $weapon_energy_required){
@@ -76,6 +78,7 @@ $functions = array(
             $this_robot->update_session();
 
             // Target the opposing robot
+            $this_battle->queue_sound_effect('blade-sound');
             $this_ability->target_options_update(array(
                 'frame' => $target_frame,
                 'success' => array(0, $x_offset, $y_offset, 10, $this_robot->print_name().' releases another '.$this_ability->print_name().'!'),
@@ -112,16 +115,12 @@ $functions = array(
             $static_attachment_info = $this_battle->battle_attachments[$static_key][$static_attachment_token];
             if ($this_ability->ability_results['this_result'] != 'failure'){ $static_attachment_info['attachment_duration'] = 0; }
             else { $static_attachment_info['ability_frame_styles'] = ''; }
-            $this_battle->battle_attachments[$static_key][$static_attachment_token] = $static_attachment_info;
-            $this_battle->update_session();
+            $this_battle->set_attachment($static_key, $static_attachment_token, $static_attachment_info);
         }
 
         // Reset the offset and move the user back to their position
         $this_robot->set_frame('base');
         $this_robot->set_frame_offset('x', 0);
-
-        // Disable the target if this ability brought them to zero
-        if ($target_robot->robot_energy <= 0){ $target_robot->trigger_disabled($this_robot); }
 
         // Return true on success
         return true;
