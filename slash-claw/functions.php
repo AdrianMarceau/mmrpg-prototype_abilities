@@ -6,6 +6,8 @@ $functions = array(
         extract($objects);
 
         // Target the opposing robot
+        $this_battle->queue_sound_effect('quick-sound');
+        $this_battle->queue_sound_effect(array('name' => 'blade-sound', 'delay' => 100));
         $this_ability->target_options_update(array(
             'frame' => 'throw',
             'kickback' => array(-5, 0, 0),
