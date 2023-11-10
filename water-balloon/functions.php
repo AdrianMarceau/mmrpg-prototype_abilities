@@ -32,8 +32,7 @@ $functions = array(
         $this_robot->trigger_target($target_robot, $this_ability, $target_options);
 
         // Add the splash attachment to the target robot
-        $target_robot->robot_attachments[$splash_attachment_token] = $splash_attachment_info;
-        $target_robot->update_session();
+        $target_robot->set_attachment($splash_attachment_token, $splash_attachment_info);
 
         // Inflict damage on the opposing robot
         $this_battle->queue_sound_effect(array('name' => 'splash-sound', 'volume' => 0.6));
@@ -55,8 +54,7 @@ $functions = array(
         $target_robot->trigger_damage($this_robot, $this_ability, $energy_damage_amount);
 
         // Remove the splash attachment to the target robot
-        unset($target_robot->robot_attachments[$splash_attachment_token]);
-        $target_robot->update_session();
+        $target_robot->unset_attachment($splash_attachment_token);
 
         // Calculate how much WE is required for repeated attacks
         $weapon_energy_required = $this_robot->calculate_weapon_energy($this_ability, $this_ability->ability_energy, $temp_ability_energy_mods);
@@ -79,8 +77,7 @@ $functions = array(
             $this_robot->trigger_target($target_robot, $this_ability, $target_options);
 
             // Add the splash attachment to the target robot
-            $target_robot->robot_attachments[$splash_attachment_token] = $splash_attachment_info;
-            $target_robot->update_session();
+            $target_robot->set_attachment($splash_attachment_token, $splash_attachment_info);
 
             // Inflict damage on the opposing robot
             $this_battle->queue_sound_effect(array('name' => 'splash-sound', 'volume' => 0.6));
@@ -102,8 +99,7 @@ $functions = array(
             $target_robot->trigger_damage($this_robot, $this_ability, $energy_damage_amount);
 
             // Remove the splash attachment to the target robot
-            unset($target_robot->robot_attachments[$splash_attachment_token]);
-            $target_robot->update_session();
+            $target_robot->unset_attachment($splash_attachment_token);
 
         }
 
