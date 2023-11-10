@@ -6,6 +6,8 @@ $functions = array(
         extract($objects);
 
         // Target the opposing robot
+        $this_battle->queue_sound_effect('cosmic-sound');
+        $this_battle->queue_sound_effect(array('name' => 'blade-sound', 'delay' => 100));
         $this_ability->target_options_update(array(
             'frame' => 'throw',
             'success' => array(1, 150, 0, 10, $this_robot->print_name().' throws '.$this_ability->print_name().'!')
@@ -34,6 +36,7 @@ $functions = array(
             && $target_robot->robot_status != 'disabled'){
 
             // Inflict damage on the opposing robot
+            $this_battle->queue_sound_effect('blade-sound');
             $this_ability->damage_options_update(array(
                 'kind' => 'energy',
                 'kickback' => array(-10, 0, 0),
