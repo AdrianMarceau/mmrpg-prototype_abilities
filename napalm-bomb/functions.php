@@ -74,10 +74,9 @@ $functions = array(
                 ));
 
             // Define the amount and attempt to trigger damage to the target robot
-            $energy_damage_amount = $this_ability->ability_damage;
             $trigger_options = array('apply_modifiers' => true, 'apply_position_modifiers' => false);
             $target_robot->set_attachment($explosion_attachment_token, $explosion_attachment_info);
-            $target_robot->trigger_damage($this_robot, $this_ability, $energy_damage_amount, false, $trigger_options);
+            $target_robot->trigger_damage($this_robot, $this_ability, $this_ability_damage, false, $trigger_options);
             if ($this_ability->ability_results['this_result'] != 'failure'){ $this_ability_damage += 1; }
             $target_robot->unset_attachment($explosion_attachment_token);
             $this_ability->reset_all();
