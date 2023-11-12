@@ -106,10 +106,19 @@ $functions = array(
         // Extract all objects into the current scope
         extract($objects);
 
+        // Check to see which side of the field we should be targetting (either 'enemy' or 'ally')
         // Support robots can target allies, while others target the enemy (inlcuding bench w/ Target Module)
-        if ($this_robot->robot_core === ''){ $this_ability->set_target('select_this_ally'); }
-        elseif ($this_robot->has_attribute('extended-range')){ $this_ability->set_target('select_target'); }
-        else { $this_ability->set_target('auto'); }
+        // Reverse Module/Submodule inverts whatever the usual value would have been
+        $is_support_robot = $this_robot->robot_core === '' || $this_robot->robot_class === 'mecha' ? true : false;
+        $target_range = $is_support_robot ? 'ally' : 'enemy';
+        if ($this_robot->has_item('reverse-module')){ $target_range = $target_range === 'ally' ? 'enemy' : 'ally'; }
+        if ($this_robot->has_skill('reverse-submodule')){ $target_range = $target_range === 'ally' ? 'enemy' : 'ally'; }
+
+        // Now let's determine and set the actual target value given extended range or not
+        if ($target_range === 'ally'){ $actual_target_value = 'select_this_ally'; }
+        elseif ($this_robot->has_attribute('extended-range')){ $actual_target_value = 'select_target'; }
+        else { $actual_target_value = 'auto'; }
+        $this_ability->set_target($actual_target_value);
 
         // Return true on success
         return true;
