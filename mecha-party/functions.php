@@ -291,13 +291,17 @@ $functions = array(
         // Extract all objects into the current scope
         extract($objects);
 
+        // If the robot's mecha support has already been literally defined
+        if (!empty($this_robot->robot_support)){ $this_robot->set_flag('mecha_support_defined', true); }
+
         // If this robot's mecha support familiar has not been defined yet
         if (empty($this_robot->flags['mecha_support_defined'])){
             $mecha_token = '';
             $mecha_image = '';
             if ($this_robot->robot_class !== 'mecha'){
                 static $mecha_support_index;
-                if (empty($mecha_support_index)){ $mecha_support_index = mmrpg_prototype_mecha_support_index(true); }
+                $include_custom = $this_robot->player->player_controller === 'human' ? true : false;
+                if (empty($mecha_support_index)){ $mecha_support_index = mmrpg_prototype_mecha_support_index($include_custom); }
                 $mecha_support_info = !empty($mecha_support_index[$this_robot->robot_token]) ? $mecha_support_index[$this_robot->robot_token] : array();
                 if (!empty($mecha_support_info['custom'])){
                     $mecha_token = $mecha_support_info['custom']['token'];
