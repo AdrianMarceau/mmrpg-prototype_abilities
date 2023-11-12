@@ -6,6 +6,7 @@ $functions = array(
     extract($objects);
 
     // Define the target and impact frames based on user
+    $this_battle->queue_sound_effect(array('name' => 'slide-sound', 'volume' => 1.0));
     $this_frames = array('target' => 0, 'impact' => 1);
     if (preg_match('/_alt$/', $this_robot->robot_image)){ $this_frames = array('target' => 2, 'impact' => 3); }
     elseif (preg_match('/_alt2$/', $this_robot->robot_image)){ $this_frames = array('target' => 4, 'impact' => 5); }
