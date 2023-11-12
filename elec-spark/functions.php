@@ -60,17 +60,8 @@ $functions = array(
 
         }
 
-        // Trigger the disabled event on the targets now if necessary
-        if ($target_robot->robot_energy < 1 || $target_robot->robot_status == 'disabled'){
-            $target_robot->trigger_disabled($this_robot);
-        }
-        foreach ($backup_robots_active AS $key => $info){
-            if ($info['robot_id'] == $target_robot->robot_id){ continue; }
-            $temp_target_robot = rpg_game::get_robot($this_battle, $target_player, $info);
-            if ($temp_target_robot->robot_energy <= 0 || $temp_target_robot->robot_status == 'disabled'){
-                $temp_target_robot->trigger_disabled($this_robot);
-            }
-        }
+        // Now that all the damage has been dealt, allow the player to check for disabled
+        $target_player->check_robots_disabled($this_player, $this_robot);
 
         // If there was a removed attachment, put it back
         if (!empty($this_attachment_backup)){
