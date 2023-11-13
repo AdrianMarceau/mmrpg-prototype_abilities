@@ -118,7 +118,6 @@ $functions = array(
         if ($target_range === 'ally'){ $actual_target_value = 'select_this_ally'; }
         elseif ($this_robot->has_attribute('extended-range')){ $actual_target_value = 'select_target'; }
         else { $actual_target_value = 'auto'; }
-        error_log('$actual_target_value = '.print_r($actual_target_value, true));
         $this_ability->set_target($actual_target_value);
 
         // Return true on success
