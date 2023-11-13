@@ -1245,27 +1245,27 @@
             "experience-breaker"
         ]
     },
+    "MMRPG\/Support\/Field": {
+        "group_class": "master",
+        "group_token": "MMRPG\/Support\/Field",
+        "group_order": 141,
+        "group_child_tokens": [
+            "field-support"
+        ]
+    },
     "MMRPG\/Support\/Mecha": {
         "group_class": "master",
         "group_token": "MMRPG\/Support\/Mecha",
-        "group_order": 141,
+        "group_order": 142,
         "group_child_tokens": [
             "mecha-support",
             "mecha-assault",
             "mecha-party"
         ]
     },
-    "MMRPG\/Support\/FieldSpecial": {
+    "MMRPG\/Support\/Other": {
         "group_class": "master",
-        "group_token": "MMRPG\/Support\/FieldSpecial",
-        "group_order": 142,
-        "group_child_tokens": [
-            "field-support"
-        ]
-    },
-    "MMRPG\/Support\/OtherSpecial": {
-        "group_class": "master",
-        "group_token": "MMRPG\/Support\/OtherSpecial",
+        "group_token": "MMRPG\/Support\/Other",
         "group_order": 143,
         "group_child_tokens": [
             "friend-share"
