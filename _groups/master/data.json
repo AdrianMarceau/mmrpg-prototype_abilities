@@ -1245,28 +1245,36 @@
             "experience-breaker"
         ]
     },
-    "MMRPG\/Support\/Special": {
+    "MMRPG\/Support\/Mecha": {
         "group_class": "master",
-        "group_token": "MMRPG\/Support\/Special",
+        "group_token": "MMRPG\/Support\/Mecha",
         "group_order": 141,
+        "group_child_tokens": [
+            "mecha-support",
+            "mecha-assault",
+            "mecha-party"
+        ]
+    },
+    "MMRPG\/Support\/FieldSpecial": {
+        "group_class": "master",
+        "group_token": "MMRPG\/Support\/FieldSpecial",
+        "group_order": 142,
         "group_child_tokens": [
             "field-support"
         ]
     },
-    "MMRPG\/Support\/Mecha": {
+    "MMRPG\/Support\/OtherSpecial": {
         "group_class": "master",
-        "group_token": "MMRPG\/Support\/Mecha",
-        "group_order": 142,
+        "group_token": "MMRPG\/Support\/OtherSpecial",
+        "group_order": 143,
         "group_child_tokens": [
-            "mecha-support",
-            "mecha-party",
             "friend-share"
         ]
     },
     "Hidden\/Unused\/MaybeLater": {
         "group_class": "master",
         "group_token": "Hidden\/Unused\/MaybeLater",
-        "group_order": 143,
+        "group_order": 144,
         "group_child_tokens": [
             "pharaoh-wave",
             "dive-blitzkrieg",
@@ -1280,7 +1288,7 @@
     "Hidden\/Unused\/Deprecated": {
         "group_class": "master",
         "group_token": "Hidden\/Unused\/Deprecated",
-        "group_order": 144,
+        "group_order": 145,
         "group_child_tokens": [
             "attack-shuffle",
             "defense-shuffle",
