@@ -323,11 +323,16 @@ $functions = array(
             $this_robot->set_flag('mecha_support_defined', true);
         }
 
-        // Double this ability's energy cost for each time it's been used, exponentially
+        // Increase this ability's energy cost for each a mecha has been summoned by a set amount
+        //error_log('ability_function_onload() for '.$this_ability->ability_token);
+        //error_log($this_robot->robot_string.'/counters/support_mechas_summoned = '.print_r($this_robot->get_counter('support_mechas_summoned'), true));
+        //error_log($this_ability->ability_token.'/ability_base_energy = '.print_r($this_ability->ability_base_energy, true));
+        $support_mecha_summon_cost = 5;
         $support_mechas_summoned = $this_robot->get_counter('support_mechas_summoned');
-        $ability_energy_cost = $this_ability->ability_base_energy;
-        if ($support_mechas_summoned > 0){ $ability_energy_cost += $this_ability->ability_base_energy * $support_mechas_summoned; }
-        $this_ability->set_energy($ability_energy_cost);
+        $new_ability_energy_cost = $this_ability->ability_base_energy;
+        if ($support_mechas_summoned > 0){ $new_ability_energy_cost += $support_mecha_summon_cost * $support_mechas_summoned; }
+        //error_log($this_ability->ability_token.'/$new_ability_energy_cost = '.print_r($new_ability_energy_cost, true));
+        $this_ability->set_energy($new_ability_energy_cost);
 
         // Return true on success
         return true;
