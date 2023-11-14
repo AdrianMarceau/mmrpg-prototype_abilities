@@ -53,7 +53,10 @@ $functions = array(
 
             // Ensure required ability counters have been set before starting
             if (!isset($this_robot->counters['ability_mecha_party'])){ $this_robot->set_counter('ability_mecha_party', 0); }
-            if (!isset($this_robot->counters['ability_mecha_support'])){ $this_robot->set_counter('ability_mecha_support', 0); }
+            if (!isset($this_robot->counters['support_mechas_summoned'])){ $this_robot->set_counter('support_mechas_summoned', 0); }
+
+            // Update the ability counter once for each use
+            $this_robot->inc_counter('ability_mecha_party');
 
             // If this robot has a support mecha defined, use it directly
             if (!empty($this_robot->robot_support)){
@@ -74,9 +77,6 @@ $functions = array(
 
             // Collect database info for this mecha
             $this_mecha_index_info = rpg_robot::get_index_info($this_mecha_token);
-
-            // Update the ability counter once for each use
-            $this_robot->inc_counter('ability_mecha_party');
 
             // Loop through and create mechas based on the number we're allowed to summon
             for ($new_mecha_key = 0; $new_mecha_key < $num_mechas_to_summon; $new_mecha_key++){
@@ -100,7 +100,7 @@ $functions = array(
                 }
 
                 // Update the summon flag now that we're done with it
-                $this_robot->inc_counter('ability_mecha_support');
+                $this_robot->inc_counter('support_mechas_summoned');
 
                 // Update or create the counter for num mechas summoned by this player then use it to determine the letter
                 $this_letter_options = array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H');
@@ -163,7 +163,7 @@ $functions = array(
                 // Define how many rotations there should be given player number and mecha counters
                 $rotations_required = 0;
                 $rotations_required += $this_player->player_number > 0 ? ($this_player->player_number - 1) : 0;
-                $rotations_required += $this_robot->counters['ability_mecha_support'] > 0 ? ($this_robot->counters['ability_mecha_support'] - 1) : 0;
+                $rotations_required += $this_robot->counters['support_mechas_summoned'] > 0 ? ($this_robot->counters['support_mechas_summoned'] - 1) : 0;
                 $rotate_support_kinds = function() use(&$support_kind_order){
                     $first_support = array_shift($support_kind_order);
                     array_push($support_kind_order, $first_support);
@@ -226,7 +226,7 @@ $functions = array(
                 // TODO:  In the future, we should implement some hue shifting for fun!
                 // If this is a mecha beyond the first, we should modify it's appearance a bit
                 $base_appearance = $temp_mecha->get_frame_styles();
-                $shift_appearance = $this_robot->get_counter('ability_mecha_support');
+                $shift_appearance = $this_robot->get_counter('support_mechas_summoned');
                 if ($shift_appearance > 1){
                     $new_hue = -1 * (($shift_appearance - 1) * 90);
                     $new_style = trim($base_appearance).' filter: hue-rotate('.$new_hue.'deg); ';
@@ -324,9 +324,9 @@ $functions = array(
         }
 
         // Double this ability's energy cost for each time it's been used, exponentially
-        $ability_uses_counter = $this_robot->get_counter('ability_mecha_support');
+        $support_mechas_summoned = $this_robot->get_counter('support_mechas_summoned');
         $ability_energy_cost = $this_ability->ability_base_energy;
-        if ($ability_uses_counter > 0){ $ability_energy_cost *= pow(2, $ability_uses_counter); }
+        if ($support_mechas_summoned > 0){ $ability_energy_cost += $this_ability->ability_base_energy * $support_mechas_summoned; }
         $this_ability->set_energy($ability_energy_cost);
 
         // Return true on success
