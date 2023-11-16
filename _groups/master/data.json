@@ -858,10 +858,20 @@
             "sakugarne-hammer"
         ]
     },
+    "BOSS\/RaThor\/Weapons": {
+        "group_class": "master",
+        "group_token": "BOSS\/RaThor\/Weapons",
+        "group_order": 102,
+        "group_child_tokens": [
+            "barrier-drive",
+            "lunar-memory",
+            "shield-eater"
+        ]
+    },
     "MMAZ\/T2\/Weapons\/MM21": {
         "group_class": "master",
         "group_token": "MMAZ\/T2\/Weapons\/MM21",
-        "group_order": 102,
+        "group_order": 103,
         "group_child_tokens": [
             "buster-rod",
             "mega-water",
@@ -871,7 +881,7 @@
     "MMAZ\/T2\/Weapons\/MM30": {
         "group_class": "master",
         "group_token": "MMAZ\/T2\/Weapons\/MM30",
-        "group_order": 103,
+        "group_order": 104,
         "group_child_tokens": [
             "spark-chaser",
             "grab-buster",
@@ -885,10 +895,18 @@
             "sunstar-supernova"
         ]
     },
+    "BOSS\/VsCapcom\/Weapons": {
+        "group_class": "master",
+        "group_token": "BOSS\/VsCapcom\/Weapons",
+        "group_order": 105,
+        "group_child_tokens": [
+            "magnetic-shockwave"
+        ]
+    },
     "MM00\/Weapons\/00\/Doctors": {
         "group_class": "master",
         "group_token": "MM00\/Weapons\/00\/Doctors",
-        "group_order": 104,
+        "group_order": 106,
         "group_child_tokens": [
             "light-buster",
             "wily-buster",
@@ -898,7 +916,7 @@
     "MMRPG\/Weapons\/01\/Cutter": {
         "group_class": "master",
         "group_token": "MMRPG\/Weapons\/01\/Cutter",
-        "group_order": 105,
+        "group_order": 107,
         "group_child_tokens": [
             "cutter-shot",
             "cutter-buster",
@@ -908,7 +926,7 @@
     "MMRPG\/Weapons\/02\/Impact": {
         "group_class": "master",
         "group_token": "MMRPG\/Weapons\/02\/Impact",
-        "group_order": 106,
+        "group_order": 108,
         "group_child_tokens": [
             "impact-shot",
             "impact-buster",
@@ -918,7 +936,7 @@
     "MMRPG\/Weapons\/03\/Freeze": {
         "group_class": "master",
         "group_token": "MMRPG\/Weapons\/03\/Freeze",
-        "group_order": 107,
+        "group_order": 109,
         "group_child_tokens": [
             "freeze-shot",
             "freeze-buster",
@@ -928,7 +946,7 @@
     "MMRPG\/Weapons\/04\/Explode": {
         "group_class": "master",
         "group_token": "MMRPG\/Weapons\/04\/Explode",
-        "group_order": 108,
+        "group_order": 110,
         "group_child_tokens": [
             "explode-shot",
             "explode-buster",
@@ -938,7 +956,7 @@
     "MMRPG\/Weapons\/05\/Flame": {
         "group_class": "master",
         "group_token": "MMRPG\/Weapons\/05\/Flame",
-        "group_order": 109,
+        "group_order": 111,
         "group_child_tokens": [
             "flame-shot",
             "flame-buster",
@@ -948,7 +966,7 @@
     "MMRPG\/Weapons\/06\/Electric": {
         "group_class": "master",
         "group_token": "MMRPG\/Weapons\/06\/Electric",
-        "group_order": 110,
+        "group_order": 112,
         "group_child_tokens": [
             "electric-shot",
             "electric-buster",
@@ -958,7 +976,7 @@
     "MMRPG\/Weapons\/07\/Time": {
         "group_class": "master",
         "group_token": "MMRPG\/Weapons\/07\/Time",
-        "group_order": 111,
+        "group_order": 113,
         "group_child_tokens": [
             "time-shot",
             "time-buster",
@@ -968,7 +986,7 @@
     "MMRPG\/Weapons\/08\/Earth": {
         "group_class": "master",
         "group_token": "MMRPG\/Weapons\/08\/Earth",
-        "group_order": 112,
+        "group_order": 114,
         "group_child_tokens": [
             "earth-shot",
             "earth-buster",
@@ -978,7 +996,7 @@
     "MMRPG\/Weapons\/09\/Wind": {
         "group_class": "master",
         "group_token": "MMRPG\/Weapons\/09\/Wind",
-        "group_order": 113,
+        "group_order": 115,
         "group_child_tokens": [
             "wind-shot",
             "wind-buster",
@@ -988,7 +1006,7 @@
     "MMRPG\/Weapons\/10\/Water": {
         "group_class": "master",
         "group_token": "MMRPG\/Weapons\/10\/Water",
-        "group_order": 114,
+        "group_order": 116,
         "group_child_tokens": [
             "water-shot",
             "water-buster",
@@ -998,7 +1016,7 @@
     "MMRPG\/Weapons\/11\/Swift": {
         "group_class": "master",
         "group_token": "MMRPG\/Weapons\/11\/Swift",
-        "group_order": 115,
+        "group_order": 117,
         "group_child_tokens": [
             "swift-shot",
             "swift-buster",
@@ -1008,7 +1026,7 @@
     "MMRPG\/Weapons\/12\/Nature": {
         "group_class": "master",
         "group_token": "MMRPG\/Weapons\/12\/Nature",
-        "group_order": 116,
+        "group_order": 118,
         "group_child_tokens": [
             "nature-shot",
             "nature-buster",
@@ -1018,7 +1036,7 @@
     "MMRPG\/Weapons\/13\/Missile": {
         "group_class": "master",
         "group_token": "MMRPG\/Weapons\/13\/Missile",
-        "group_order": 117,
+        "group_order": 119,
         "group_child_tokens": [
             "missile-shot",
             "missile-buster",
@@ -1028,7 +1046,7 @@
     "MMRPG\/Weapons\/14\/Crystal": {
         "group_class": "master",
         "group_token": "MMRPG\/Weapons\/14\/Crystal",
-        "group_order": 118,
+        "group_order": 120,
         "group_child_tokens": [
             "crystal-shot",
             "crystal-buster",
@@ -1038,7 +1056,7 @@
     "MMRPG\/Weapons\/15\/Shadow": {
         "group_class": "master",
         "group_token": "MMRPG\/Weapons\/15\/Shadow",
-        "group_order": 119,
+        "group_order": 121,
         "group_child_tokens": [
             "shadow-shot",
             "shadow-buster",
@@ -1048,7 +1066,7 @@
     "MMRPG\/Weapons\/16\/Space": {
         "group_class": "master",
         "group_token": "MMRPG\/Weapons\/16\/Space",
-        "group_order": 120,
+        "group_order": 122,
         "group_child_tokens": [
             "space-shot",
             "space-buster",
@@ -1058,7 +1076,7 @@
     "MMRPG\/Weapons\/17\/Shield": {
         "group_class": "master",
         "group_token": "MMRPG\/Weapons\/17\/Shield",
-        "group_order": 121,
+        "group_order": 123,
         "group_child_tokens": [
             "shield-shot",
             "shield-buster",
@@ -1068,7 +1086,7 @@
     "MMRPG\/Weapons\/18\/Laser": {
         "group_class": "master",
         "group_token": "MMRPG\/Weapons\/18\/Laser",
-        "group_order": 122,
+        "group_order": 124,
         "group_child_tokens": [
             "laser-shot",
             "laser-buster",
@@ -1078,7 +1096,7 @@
     "MMRPG\/Weapons\/Copy": {
         "group_class": "master",
         "group_token": "MMRPG\/Weapons\/Copy",
-        "group_order": 123,
+        "group_order": 125,
         "group_child_tokens": [
             "copy-shot",
             "copy-soul"
@@ -1087,7 +1105,7 @@
     "MMRPG\/Weapons\/Core": {
         "group_class": "master",
         "group_token": "MMRPG\/Weapons\/Core",
-        "group_order": 124,
+        "group_order": 126,
         "group_child_tokens": [
             "core-shield",
             "core-laser"
@@ -1096,29 +1114,11 @@
     "BOSS\/Duo\/Weapons": {
         "group_class": "master",
         "group_token": "BOSS\/Duo\/Weapons",
-        "group_order": 125,
+        "group_order": 127,
         "group_child_tokens": [
             "energy-fist",
             "comet-attack",
             "meteor-knuckle"
-        ]
-    },
-    "BOSS\/RaThor\/Weapons": {
-        "group_class": "master",
-        "group_token": "BOSS\/RaThor\/Weapons",
-        "group_order": 126,
-        "group_child_tokens": [
-            "barrier-drive",
-            "lunar-memory",
-            "shield-eater"
-        ]
-    },
-    "BOSS\/VsCapcom\/Weapons": {
-        "group_class": "master",
-        "group_token": "BOSS\/VsCapcom\/Weapons",
-        "group_order": 127,
-        "group_child_tokens": [
-            "magnetic-shockwave"
         ]
     },
     "BOSS\/Omega\/Weapons": {
