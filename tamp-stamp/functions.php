@@ -51,12 +51,14 @@ $functions = array(
         $this_ability->damage_options_update(array(
             'kind' => 'energy',
             'kickback' => array(5, -10, 0),
+            'rates' => array('auto', 'auto', 60),
             'success' => array(2, 0, 80, 10, 'The '.$this_ability->print_name().' crashed into the target!'),
             'failure' => array(2, 0, 80, -10, 'The '.$this_ability->print_name().' missed&hellip;')
             ));
         $this_ability->recovery_options_update(array(
             'kind' => 'energy',
             'kickback' => array(5, -10, 0),
+            'rates' => array('auto', 'auto', 60),
             'success' => array(2, 0, 80, 10, 'The '.$this_ability->print_name().' crashed into the target!'),
             'failure' => array(2, 0, 80, -10, 'The '.$this_ability->print_name().' missed&hellip;')
             ));
