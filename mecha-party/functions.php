@@ -9,6 +9,7 @@ $functions = array(
         $num_current_robots = count($this_player->player_robots);
 
         // Update the ability's target options and trigger
+        $this_battle->queue_sound_effect('spawn-sound');
         $this_ability->target_options_update(array(
             'frame' => 'summon',
             'success' => array(0, 0, 0, 10, $this_robot->print_name().' calls for a '.$this_ability->print_name().'!')
