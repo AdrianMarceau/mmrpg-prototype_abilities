@@ -116,7 +116,8 @@ $functions = array(
             $num_hits++;
             // Call the global stat boost function with customized options
             rpg_ability::ability_function_stat_boost($this_robot, 'attack', 1, $this_ability, array(
-                'initiator_robot' => $this_robot
+                'initiator_robot' => $this_robot,
+                'skip_failure_events' => true
                 ));
         } else {
             // Increment the number of misses
@@ -155,7 +156,8 @@ $functions = array(
                 $num_hits++;
                 // Call the global stat boost function with customized options
                 rpg_ability::ability_function_stat_boost($this_robot, 'attack', 1, $this_ability, array(
-                    'initiator_robot' => $this_robot
+                    'initiator_robot' => $this_robot,
+                    'skip_failure_events' => true
                     ));
             } else {
                 // Increment the number of misses
@@ -194,7 +196,8 @@ $functions = array(
                     $num_hits++;
                     // Call the global stat boost function with customized options
                     rpg_ability::ability_function_stat_boost($this_robot, 'attack', 1, $this_ability, array(
-                        'initiator_robot' => $this_robot
+                        'initiator_robot' => $this_robot,
+                        'skip_failure_events' => true
                         ));
                 } else {
                     // Increment the number of misses
