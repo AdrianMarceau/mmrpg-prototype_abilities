@@ -24,6 +24,7 @@ $functions = array(
         $energy_damage_amount = $this_ability->ability_damage;
 
         // Loop through the allowed number of shots and fire that many times
+        $ineffective_shots = 0;
         for ($num_shot = 1; $num_shot <= $options->num_buster_shots; $num_shot++){
 
             // Update the ability's target options and trigger
@@ -56,7 +57,8 @@ $functions = array(
             if ($target_robot->robot_energy < 1 || $target_robot->robot_status === 'disabled'){ break; }
 
             // Break early if the move did literally zero damage
-            if (empty($this_ability->ability_results['this_amount'])){ break; }
+            if (empty($this_ability->ability_results['this_amount'])){ $ineffective_shots++; }
+            if ($ineffective_shots >= 2){ break; }
 
         }
 
