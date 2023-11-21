@@ -25,6 +25,7 @@ $functions = array(
 
         // Loop through the allowed number of shots and fire that many times
         $ineffective_shots = 0;
+        $num_target_attachments = count($target_robot->get_attachments());
         for ($num_shot = 1; $num_shot <= $options->num_buster_shots; $num_shot++){
 
             // Update the ability's target options and trigger
@@ -38,7 +39,7 @@ $functions = array(
             }
             $this_ability->target_options_update(array(
                 'frame' => 'shoot',
-                'success' => array(0, 105, 0, 10, $target_text)
+                'success' => array(0, 85, 0, 10, $target_text)
                 ));
             $this_battle->queue_sound_effect('shot-sound');
             $this_robot->trigger_target($target_robot, $this_ability, $target_options);
@@ -56,9 +57,11 @@ $functions = array(
             // Break early if the target has been disabled
             if ($target_robot->robot_energy < 1 || $target_robot->robot_status === 'disabled'){ break; }
 
-            // Break early if the move did literally zero damage
-            if (empty($this_ability->ability_results['this_amount'])){ $ineffective_shots++; }
-            if ($ineffective_shots >= 2){ break; }
+            // Break early if the move did virtually ineffective damage (one or less)
+            $new_num_attachments = count($target_robot->get_attachments());
+            if ($this_ability->ability_results['this_amount'] <= 1){ $ineffective_shots++; }
+            if ($ineffective_shots >= 3 && $new_num_attachments === $num_target_attachments){ break; }
+            $num_target_attachments = $new_num_attachments;
 
         }
 
