@@ -37,7 +37,74 @@ $functions = array(
         $this_ability->ability_frame_classes = 'sprite_fullscreen ';
         $this_ability->update_session();
 
+        // Define a quick function for inflicting a weakness on a given target
+        $prefixes = array();
+        $prefixes[] = 'Brrrr, that\'s cold!';
+        $prefixes[] = 'Wow, what a chill!';
+        $prefixes[] = 'Achoo!';
+        $prefixes[] = 'Wow! So icy!';
+        $prefixes[] = 'Frigid!';
+        $prefixes[] = 'Way too cold!';
+        $prefixes[] = 'Popsicle!';
+        shuffle($prefixes);
+        $inflict_weakness_to_type = function($target_robot, $type)
+            use ($this_battle, $this_robot, $this_ability, &$prefixes){
+            // Return early if the typeis empty of they're already weak to it
+            if (empty($type)){ return false; }
+            if ($target_robot->has_weakness($type)){ return false; }
+            // Inflict the weakness on the target by adding it to the appropriate lists
+            $weaknesses = $target_robot->get_weaknesses();
+            $weaknesses[] = $type;
+            $target_robot->set_weaknesses($weaknesses);
+            $target_robot->set_base_weaknesses($weaknesses);
+            // If the target had a resistance to this type, make sure we remove it
+            $resistances = $target_robot->get_resistances();
+            if (in_array($type, $resistances)){
+                $resistances = array_diff($resistances, array($type));
+                $target_robot->set_resistances($resistances);
+                $target_robot->set_base_resistances($resistances);
+                }
+            // If the target had an immunity to this type, make sure we remove it
+            $immunities = $target_robot->get_immunities();
+            if (in_array($type, $immunities)){
+                $immunities = array_diff($immunities, array($type));
+                $target_robot->set_immunities($immunities);
+                $target_robot->set_base_immunities($immunities);
+                }
+            // Print a message showing that this effect is taking place
+            $prefix = !empty($prefixes) ? array_shift($prefixes).' ' : '';
+            $target_robot->set_frame('defend');
+            $target_robot->set_frame_styles('filter: sepia(1) saturate(2) hue-rotate(180deg); ');
+            $this_battle->queue_sound_effect('debuff-received');
+            $this_battle->events_create($target_robot, false, $this_robot->robot_name.'\'s '.$this_ability->ability_name,
+                $prefix.$target_robot->print_name().' feels <em>super</em> cold! <br />'.
+                ucfirst($target_robot->get_pronoun('subject')).' suddenly found '.$target_robot->get_pronoun('reflexive').' weak to the '.rpg_type::print_span($type).' type!',
+                array(
+                    'this_ability' => $this_ability,
+                    'canvas_show_this_ability_overlay' => false,
+                    'canvas_show_this_ability_underlay' => false,
+                    'event_flag_camera_action' => true,
+                    'event_flag_camera_side' => $target_robot->player->player_side,
+                    'event_flag_camera_focus' => $target_robot->robot_position,
+                    'event_flag_camera_depth' => $target_robot->robot_key
+                    )
+                );
+            $target_robot->reset_frame();
+            $target_robot->reset_frame_styles();
+            $this_battle->events_create($target_robot, false, '', '',
+                array(
+                    'event_flag_camera_action' => true,
+                    'event_flag_camera_side' => $target_robot->player->player_side,
+                    'event_flag_camera_focus' => $target_robot->robot_position,
+                    'event_flag_camera_depth' => $target_robot->robot_key
+                    )
+                );
+            };
+
         // -- DAMAGE TARGETS -- //
+
+        // Define a variable to keep track of which targets to inflict weaknesses on
+        $inflict_weaknesses_on_targets = array();
 
         // Inflict damage on the opposing robot
         $this_battle->queue_sound_effect(array('name' => 'ice-sound', 'volume' => 0.3));
@@ -65,17 +132,11 @@ $functions = array(
         $target_robot->unset_attachment($this_attachment_token.'_fx');
         $num_hits_counter++;
 
-        // Trigger a defense break if the ability was successful
+        // Inflict a weakness if the ability was successful and actually did damage
         if ($target_robot->robot_status != 'disabled'
             && $this_ability->ability_results['this_result'] != 'failure'
-            && $target_robot->counters['speed_mods'] > 0){
-
-            // Call the global stat break function with customized options
-            $speed_breaks = $target_robot->counters['speed_mods'];
-            rpg_ability::ability_function_fixed_stat_break($target_robot, 'speed', $speed_breaks, $this_ability, array(
-                'initiator_robot' => $this_robot
-                ));
-
+            && !empty($this_ability->ability_results['this_amount'])){
+            $inflict_weaknesses_on_targets[] = $target_robot;
         }
 
         // Loop through the target's benched robots, inflicting damage to each
@@ -108,14 +169,14 @@ $functions = array(
             $temp_target_robot->trigger_damage($this_robot, $this_ability, $energy_damage_amount, false, $trigger_options);
             $temp_target_robot->unset_attachment($this_attachment_token.'_fx');
             $num_hits_counter++;
-            if ($temp_target_robot->robot_status != 'disabled'
+
+            // Inflict a weakness if the ability was successful and actually did damage
+            if ($target_robot->robot_status != 'disabled'
                 && $this_ability->ability_results['this_result'] != 'failure'
-                && $temp_target_robot->counters['speed_mods'] > 0){
-                $speed_breaks = $temp_target_robot->counters['speed_mods'];
-                rpg_ability::ability_function_fixed_stat_break($temp_target_robot, 'speed', $speed_breaks, $this_ability, array(
-                    'initiator_robot' => $this_robot
-                    ));
+                && !empty($this_ability->ability_results['this_amount'])){
+                $inflict_weaknesses_on_targets[] = $temp_target_robot;
             }
+
         }
 
         // Return the user to their base frame
@@ -144,6 +205,12 @@ $functions = array(
 
         // Now that all the damage has been dealt, allow the player to check for disabled
         $target_player->check_robots_disabled($this_player, $this_robot);
+
+        // If any robots survived, make sure we inflict weaknesses on them
+        foreach ($inflict_weaknesses_on_targets AS $temp_target_robot){
+            if ($temp_target_robot->robot_status === 'disabled'){ continue; }
+            $inflict_weakness_to_type($temp_target_robot, $this_ability->ability_type);
+        }
 
         // Change the image to the full-screen rain effect
         $this_ability->ability_image = $this_ability->ability_base_image;
