@@ -63,8 +63,7 @@ $functions = array(
         $static_attachment_info = array();
         $static_ability_token = 'super-arm';
         $static_ability_object_token = 'super-block';
-        if ($target_robot->robot_position == 'active'){ $static_key = $target_player->player_side.'-active'; }
-        else { $static_key = $target_player->player_side.'-bench-'.$target_robot->robot_key; }
+        $static_key = $target_player->get_static_attachment_key();
         $static_attachment_token = 'ability_'.$static_ability_token.'_'.$static_ability_object_token.'_'.$static_key;
         //error_log('Checking for super block at '.$static_key.' with token '.$static_attachment_token);
         //error_log('$this_battle->battle_attachments = '.print_r($this_battle->battle_attachments, true));
