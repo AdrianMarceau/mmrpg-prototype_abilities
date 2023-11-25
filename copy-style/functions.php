@@ -8,6 +8,9 @@ $functions = array(
         // Collect session token for later
         $session_token = rpg_game::session_token();
 
+        // Check if this ability is already charged
+        $is_transformed = !empty($this_robot->robot_persona) ? true : false;
+
         // Define the frames based on current character
         $temp_ability_frames = array('target' => 0, 'damage' => 1, 'summon' => 2);
         if ($this_robot->robot_token == 'mega-man'){ $temp_ability_frames = array('target' => 0, 'damage' => 1, 'summon' => 2); }
@@ -39,188 +42,289 @@ $functions = array(
             ));
         $this_robot->trigger_target($target_robot, $this_ability);
 
-        // Inflict damage on the opposing robot
-        $this_ability->damage_options_update(array(
-            'kind' => 'energy',
-            'kickback' => array(10, 0, 0),
-            'success' => array($temp_ability_frames['damage'], -15, 45, -10, 'The '.$this_ability->print_name().' drains the target\'s power!'),
-            'failure' => array($temp_ability_frames['damage'], -15, 45, -10, 'The '.$this_ability->print_name().' had no effect...')
-            ));
-        $target_robot->trigger_damage($this_robot, $this_ability, $this_ability->ability_damage, false);
+        // If the user has NOT already transformed, we can COPY style now
+        if (!$is_transformed){
 
-        // Attach the ability to this robot
-        $this_attachment_info['ability_frame'] = $temp_ability_frames['summon'];
-        $this_attachment_info['ability_frame_animate'] = array($temp_ability_frames['summon']);
-        $this_robot->robot_attachments[$this_attachment_token] = $this_attachment_info;
-        $this_robot->update_session();
+            // Inflict damage on the opposing robot
+            $this_ability->damage_options_update(array(
+                'kind' => 'energy',
+                'kickback' => array(10, 0, 0),
+                'success' => array($temp_ability_frames['damage'], -15, 45, -10, 'The '.$this_ability->print_name().' drains the target\'s power!'),
+                'failure' => array($temp_ability_frames['damage'], -15, 45, -10, 'The '.$this_ability->print_name().' had no effect...')
+                ));
+            $target_robot->trigger_damage($this_robot, $this_ability, $this_ability->ability_damage, false);
 
-        // Check to ensure the ability was a success before continuing AND the user isn't holding incompatible item
-        $copy_soul_success = false;
-        if ($this_ability->ability_results['this_result'] != 'failure'){
+            // Attach the ability to this robot
+            $this_attachment_info['ability_frame'] = $temp_ability_frames['summon'];
+            $this_attachment_info['ability_frame_animate'] = array($temp_ability_frames['summon']);
+            $this_robot->robot_attachments[$this_attachment_token] = $this_attachment_info;
+            $this_robot->update_session();
 
-            // Ensure the target robot has a core type to draw from
-            if (!empty($target_robot->robot_core)){
+            // Check to ensure the ability was a success before continuing AND the user isn't holding incompatible item
+            $copy_style_success = false;
+            if ($this_ability->ability_results['this_result'] != 'failure'){
 
-                // Collect the core type to be copied
-                $current_core_type = $this_robot->robot_core;
-                $new_core_type = $target_robot->robot_core != $current_core_type ? $target_robot->robot_core : '';
-                if (empty($new_core_type) && !empty($target_robot->robot_core2)){ $new_core_type = $target_robot->robot_core2 != $current_core_type ? $target_robot->robot_core2 : ''; }
+                // Ensure the target robot's persona can be copied
+                if ($this_robot->robot_token !== $target_robot->robot_token
+                    || (!empty($this_robot->robot_persona) && $this_robot->robot_persona !== $target_robot->robot_token)){
 
-                // If the new core type was not empty and was from a valid source
-                if (!empty($new_core_type)
-                    && $new_core_type != 'empty'){
+                    // Collect the target's token as the persona as well as their current image
+                    $persona_token = $target_robot->robot_token;
+                    $persona_image_token = $target_robot->robot_image;
 
-                    // Create the item object to trigger data loading (mostly for display)
-                    $new_item_token = $new_core_type.'-'.($target_robot->robot_class === 'mecha' ? 'shard' : 'core');
-                    $new_item_info = array('item_token' => $new_item_token);
-                    $this_new_item = rpg_game::get_item($this_battle, $this_player, $this_robot, $new_item_info);
+                    // Update the robot's persona in the current battle state
+                    $this_robot->set_persona($persona_token);
+                    $this_robot->set_persona_image($persona_image_token);
 
-                    // Set the success frames for the player and robot
-                    $this_robot->set_frame('taunt');
-                    $this_player->set_frame('victory');
+                    // Collect the target persona's index info as well as a backup of our original info
+                    $persona_robot_info = rpg_robot::get_index_info($this_robot->robot_persona);
+                    $persona_robot_name_span = rpg_type::print_span($persona_robot_info['robot_core'], $persona_robot_info['robot_name']);
+                    $original_robot_info = rpg_robot::get_index_info($this_robot->robot_token);
+                    $original_robot_name_span = rpg_type::print_span($original_robot_info['robot_core'], $original_robot_info['robot_name']);
 
-                    // If the user isn't holding an item (or the item is already a core), we give CORE ITEM + CORE SHIELD
-                    if ((empty($this_robot->robot_item) || preg_match('/-core$/i', $this_robot->robot_item))){
+                    // If this was a human player, make sure we update the player's session with the new persona
+                    if ($this_player->player_side == 'left'
+                        && empty($this_battle->flags['player_battle'])
+                        && empty($this_battle->flags['challenge_battle'])){
+                        $ptoken = $this_player->player_token;
+                        $rtoken = $this_robot->robot_token;
+                        if (!empty($_SESSION[$session_token]['values']['battle_settings'][$ptoken]['player_robots'][$rtoken])){
+                            $_SESSION[$session_token]['values']['battle_settings'][$ptoken]['player_robots'][$rtoken]['robot_persona'] = $persona_token;
+                            $_SESSION[$session_token]['values']['battle_settings'][$ptoken]['player_robots'][$rtoken]['robot_persona_image'] = $persona_image_token;
+                        }
+                    }
 
-                        // Collect index data for the user robot
-                        $this_robot_index = rpg_robot::get_index_info($this_robot->robot_token);
+                    // Update relevant stats back to what they should be for the new persona
+                    if (true){
 
-                        // If this robot isn't holding an item, generate a new core
-                        $new_item_generated = false;
-                        $existing_item_transformed = false;
-                        $core_shield_refreshed = false;
-                        if (empty($this_robot->robot_item)
-                            || (preg_match('/-core$/i', $this_robot->robot_item)
-                                && $this_robot->robot_item != $new_item_token)){
+                        // Define a new name for this persona so it's clear that it's a transformation
+                        //$persona_presets = array('mega-man' => 'R', 'bass' => 'F', 'proto-man' => 'B', 'doc-robot' => 'D');
+                        //if (isset($persona_presets[$original_robot_info['robot_token']])){ $cross_letter = $persona_presets[$original_robot_info['robot_token']]; }
+                        //else { $cross_letter = ucfirst(substr($original_robot_info['robot_token'], 0, 1)); }
+                        $cross_letter = ucfirst(substr($original_robot_info['robot_token'], 0, 1));
+                        $persona_name = $persona_robot_info['robot_name'].' '.$cross_letter.'✗';
+                        $this_robot->set_name($persona_name);
+                        $this_robot->set_base_name($persona_name);
 
-                            // Update the core type for the robot
-                            if (empty($this_robot->robot_item)){ $new_item_generated = true; }
-                            else { $existing_item_transformed = true; }
-                            $this_robot->set_item($new_item_token);
-
-                        } else {
-
-                            // We'll simply refresh the core shield
-                            $core_shield_refreshed = true;
-
+                        // List out the fields we want to copy verbaitm
+                        $clone_fields = array(
+                            'robot_number', 'robot_game', 'robot_gender',
+                            'robot_core', 'robot_core2', 'robot_field', 'robot_field2',
+                            'robot_image', 'robot_image_size',
+                            'robot_description', 'robot_description2', 'robot_quotes',
+                            'robot_weaknesses', 'robot_resistances', 'robot_affinities', 'robot_immunities',
+                            'robot_skill', 'robot_skill_name', 'robot_skill_description', 'robot_skill_description2', 'robot_skill_parameters',
+                            );
+                        // Loop through and simply copy over the easy ones to the current robotinfo array
+                        foreach ($clone_fields AS $clone_field){
+                            if (!isset($persona_robot_info[$clone_field])){ continue; }
+                            $func_name = str_replace('robot_', 'set_', $clone_field);
+                            $func_base_name = str_replace('robot_', 'set_base_', $clone_field);
+                            $clone_value = $persona_robot_info[$clone_field];
+                            $this_robot->$clone_field = $clone_value;
+                            if (method_exists($this_robot, $func_name)){ $this_robot->$func_name($clone_value); }
+                            if (method_exists($this_robot, $func_base_name)){ $this_robot->$func_base_name($clone_value); }
                         }
 
-                        // If the user created a new core or shifted an existing one, apply the auto core shield
-                        if ($new_item_generated
-                            || $existing_item_transformed
-                            || $core_shield_refreshed){
-                            $existing_shields = !empty($this_robot->robot_attachments) ? substr_count(implode('|', array_keys($this_robot->robot_attachments)), 'ability_core-shield_') : 0;
-                            $shield_duration = 3;
-                            $shield_exists = false;
-                            $shield_kind = 'core';
-                            if ($target_robot->robot_class === 'mecha'){ $shield_duration = 1; $shield_kind = 'shard'; }
-                            $shield_info = rpg_ability::get_static_core_shield($new_core_type, $shield_duration, $existing_shields);
-                            $shield_token = $shield_info['attachment_token'];
-                            if (!isset($this_robot->robot_attachments[$shield_token])){
-                                $this_robot->set_attachment($shield_token, $shield_info);
-                            } else {
-                                $shield_exists = true;
-                                $shield_info = array_merge($shield_info, $this_robot->robot_attachments[$shield_token]);
-                                $shield_info['attachment_duration'] += $shield_duration;
-                                $this_robot->set_attachment($shield_token, $shield_info);
+                        // Now let's overwrite the persona image if a specific one has been supplied
+                        $image_value = !empty($persona_image_token) ? $persona_image_token : $persona_token;
+                        $this_robot->set_image($image_value);
+                        $this_robot->set_base_image($image_value);
+
+                        // Now let's copy over the stats either directly or relatively depending on class
+                        $stats_to_copy = array('energy', 'weapons', 'attack', 'defense', 'speed');
+                        $stats_to_copy_values = array();
+                        if ($original_robot_info['robot_class'] === $persona_robot_info['robot_class']){
+                            // Copy the stats over 1-to-1 because the persona is of the same class
+                            foreach ($stats_to_copy AS $stat_to_copy){
+                                if (empty($persona_robot_info['robot_'.$stat_to_copy])){ continue; }
+                                $copy_value = $persona_robot_info['robot_'.$stat_to_copy];
+                                $stats_to_copy_values[$stat_to_copy] = $copy_value;
+                            }
+                        } else {
+                            // The persona is of a different class, so calculate base-stat-total
+                            // for current and then use that to pull relative values from the target persona
+                            $base_stat_total = 0;
+                            foreach ($stats_to_copy AS $stat_to_copy){
+                                if (empty($this_robotinfo['robot_'.$stat_to_copy])){ continue; }
+                                $base_stat_total += $this_robotinfo['robot_'.$stat_to_copy];
+                            }
+                            foreach ($stats_to_copy AS $stat_to_copy){
+                                if (empty($persona_robot_info['robot_'.$stat_to_copy])){ continue; }
+                                $copy_value = round($base_stat_total * ($persona_robot_info['robot_'.$stat_to_copy] / 100));
+                                $stats_to_copy_values[$stat_to_copy] = $copy_value;
                             }
                         }
-
-                        // Create an event displaying the new copied element
-                        $event_header = $this_new_item->item_name.' Copied';
-                        $event_body = $this_ability->print_name().' converts the collected elemental energy&hellip;<br />';
-                        if ($new_item_generated){ $event_body .= $this_robot->print_name().' generated a new '.$this_new_item->print_name().' and '.rpg_type::print_span($new_core_type, 'Core Shield').'!'; }
-                        elseif ($existing_item_transformed){ $event_body .= $this_robot->print_name().'\'s held core transformed! A new '.rpg_type::print_span($new_core_type, 'Core Shield').' was created too!'; }
-                        elseif ($core_shield_refreshed){ $event_body .= $this_robot->print_name().'\'s protection from '.rpg_type::print_span($new_core_type).' type damage was extended!'; }
-                        $event_options = array();
-                        $event_options['console_show_target'] = false;
-                        $event_options['this_item'] = $this_new_item;
-                        $event_options['this_item_image'] = 'icon';
-                        $event_options['console_show_this_robot'] = false;
-                        $event_options['canvas_show_this_item'] = false;
-                        $event_options['console_show_this_item'] = true;
-                        $this_battle->events_create($this_robot, $target_robot, $event_header, $event_body, $event_options);
-                        $copy_soul_success = true;
-
-                        // If a core was generated or modified, we need to add update the user's item in the session
-                        if (($new_item_generated || $existing_item_transformed)
-                            && $this_player->player_side == 'left'
-                            && empty($this_battle->flags['player_battle'])
-                            && empty($this_battle->flags['challenge_battle'])){
-                            $ptoken = $this_player->player_token;
-                            $rtoken = $this_robot->robot_token;
-                            $itoken = $new_item_token;
-                            if (!empty($_SESSION[$session_token]['values']['battle_settings'][$ptoken]['player_robots'][$rtoken])){
-                                $_SESSION[$session_token]['values']['battle_settings'][$ptoken]['player_robots'][$rtoken]['robot_item'] = $itoken;
-                            }
+                        foreach ($stats_to_copy_values AS $stat_to_copy => $copy_value){
+                            $func_name = 'set_'.$stat_to_copy;
+                            $func_base_name = 'set_base_'.$stat_to_copy;
+                            $this_robot->$stat_to_copy = $copy_value;
+                            if (method_exists($this_robot, $func_name)){ $this_robot->$func_name($copy_value); }
+                            if (method_exists($this_robot, $func_base_name)){ $this_robot->$func_base_name($copy_value); }
                         }
+                        $this_robot->unset_flag('apply_stat_bonuses');
+                        $this_robot->apply_stat_bonuses();
 
                     }
-                    // Otherwise, if the user is already holding an item, we give the shield only
-                    elseif (!empty($this_robot->robot_item)){
 
-                        // If the user created a new core or shifted an existing one, apply the auto core shield
-                        $existing_shields = !empty($this_robot->robot_attachments) ? substr_count(implode('|', array_keys($this_robot->robot_attachments)), 'ability_core-shield_') : 0;
-                        $shield_info = rpg_ability::get_static_core_shield($new_core_type, 3, $existing_shields);
-                        $shield_token = $shield_info['attachment_token'];
-                        $shield_duration = $shield_info['attachment_duration'];
-                        $shield_exists = false;
-                        if (!isset($this_robot->robot_attachments[$shield_token])){
-                            $this_robot->set_attachment($shield_token, $shield_info);
-                        } else {
-                            $shield_exists = true;
-                            $shield_info = array_merge($shield_info, $this_robot->robot_attachments[$shield_token]);
-                            $shield_info['attachment_duration'] += $shield_duration;
-                            $this_robot->set_attachment($shield_token, $shield_info);
-                        }
+                    // Print out a message showing that the effect has taken place
+                    $this_battle->events_create($this_robot, false,
+                        $original_robot_info['robot_name'].'\'s '.$this_ability->ability_name,
+                        $original_robot_name_span.' emulated '.$target_robot->print_name_s().' persona! <br />'.
+                        $original_robot_name_span.' styled changed into '.rpg_type::print_span(array_filter(array($this_robot->robot_core, $this_robot->robot_core2)), $this_robot->robot_name).'!',
+                        //$original_robot_name_span.' turned into '.(preg_match('/^(a|e|i|o|u)/i', $target_robot->robot_core) ? 'an' : 'a').' '.$target_robot->print_core().' type '.$this_robot->print_name().'!',
+                        array(
+                            'event_flag_camera_action' => true,
+                            'event_flag_camera_side' => $this_robot->player->player_side,
+                            'event_flag_camera_focus' => $this_robot->robot_position,
+                            'event_flag_camera_depth' => $this_robot->robot_key
+                            )
+                        );
 
-                        // Create an event displaying the new copied element
-                        $this_new_item->set_name('Core Shield');
-                        $event_header = $this_new_item->item_name.' Copied';
-                        $event_body = $this_ability->print_name().' converts the target\'s elemental energy&hellip; <br />';
-                        if (!$shield_exists){ $event_body .= $this_robot->print_name().' generated a new '.rpg_type::print_span($new_core_type, 'Core Shield').'!'; }
-                        else { $event_body .= $this_robot->print_name().'\'s protection from '.rpg_type::print_span($new_core_type).' type damage was extended!'; }
-                        $event_options = array();
-                        $event_options['console_show_target'] = false;
-                        $event_options['this_item'] = $this_new_item;
-                        $event_options['this_item_image'] = 'icon';
-                        $event_options['console_show_this_robot'] = false;
-                        $event_options['canvas_show_this_item'] = false;
-                        $event_options['console_show_this_item'] = true;
-                        $this_battle->events_create($this_robot, $target_robot, $event_header, $event_body, $event_options);
-                        $this_new_item->reset_name();
-                        $copy_soul_success = true;
-
-                    }
+                    // Set the ability success flag to true
+                    $copy_style_success = true;
 
                 }
 
             }
 
+            // Now that all the damage has been dealt, allow the player to check for disabled
+            $target_player->check_robots_disabled($this_player, $this_robot);
+
+            // Remove the temporary ability attachment from this robot
+            $this_robot->unset_attachment($this_attachment_token);
+
+            // If the ability was a failure, print out a message saying so
+            if (!$copy_style_success){
+
+                // Update the ability's target options and trigger
+                $this_ability->target_options_update(array(
+                    'frame' => 'defend',
+                    'success' => array(9, 0, 0, 10, 'The target\'s persona could not be copied...')
+                    ));
+                $this_robot->trigger_target($target_robot, $this_ability, array('prevent_default_text' => true));
+                return;
+
+            }
+
         }
+        // Otherwise, if we are ALREADY transformed, we need to DROP style
+        else {
 
-        // Now that all the damage has been dealt, allow the player to check for disabled
-        $target_player->check_robots_disabled($this_player, $this_robot);
+            $persona_robot_info = rpg_robot::get_index_info($this_robot->robot_persona);
+            $persona_robot_name_span = rpg_type::print_span($persona_robot_info['robot_core'], $persona_robot_info['robot_name']);
+            $original_robot_info = rpg_robot::get_index_info($this_robot->robot_token);
+            $original_robot_name_span = rpg_type::print_span($original_robot_info['robot_core'], $original_robot_info['robot_name']);
 
-        // Remove the temporary ability attachment from this robot
-        $this_robot->unset_attachment($this_attachment_token);
+            // Clear the persona variables for the current robot
+            $this_robot->set_persona('');
+            $this_robot->set_persona_image('');
 
-        // If the ability was a failure, print out a message saying so
-        if (!$copy_soul_success){
+            // If a persona was copied or modified in any way, and this is a human, make sure we update the player's session
+            if ($this_player->player_side == 'left'
+                && empty($this_battle->flags['player_battle'])
+                && empty($this_battle->flags['challenge_battle'])){
+                $ptoken = $this_player->player_token;
+                $rtoken = $this_robot->robot_token;
+                if (!empty($_SESSION[$session_token]['values']['battle_settings'][$ptoken]['player_robots'][$rtoken])){
+                    $_SESSION[$session_token]['values']['battle_settings'][$ptoken]['player_robots'][$rtoken]['robot_persona'] = '';
+                    $_SESSION[$session_token]['values']['battle_settings'][$ptoken]['player_robots'][$rtoken]['robot_persona_image'] = '';
+                }
+            }
 
-            // Update the ability's target options and trigger
-            $this_ability->target_options_update(array(
-                'frame' => 'defend',
-                'success' => array(9, 0, 0, 10, 'The target\'s core could not be copied...')
-                ));
-            $this_robot->trigger_target($target_robot, $this_ability, array('prevent_default_text' => true));
-            return;
+            // Reset relevant stats back to what they used to be before
+            if (true){
+
+                // List out the fields we want to reset verbaitm
+                $reset_fields = array(
+                    'robot_name', 'robot_number', 'robot_game', 'robot_gender',
+                    'robot_core', 'robot_core2', 'robot_field', 'robot_field2',
+                    'robot_image', 'robot_image_size',
+                    'robot_description', 'robot_description2', 'robot_quotes',
+                    'robot_weaknesses', 'robot_resistances', 'robot_affinities', 'robot_immunities',
+                    'robot_skill', 'robot_skill_name', 'robot_skill_description', 'robot_skill_description2', 'robot_skill_parameters'
+                    );
+
+                // Loop through and reset each field to the original value
+                foreach($reset_fields AS $reset_field){
+                    if (!isset($original_robot_info[$reset_field])){ continue; }
+                    $func_name = str_replace('robot_', 'set_', $reset_field);
+                    $func_base_name = str_replace('robot_', 'set_base_', $reset_field);
+                    $reset_value = $original_robot_info[$reset_field];
+                    $this_robot->$reset_field = $reset_value;
+                    if (method_exists($this_robot, $func_name)){ $this_robot->$func_name($reset_value); }
+                    if (method_exists($this_robot, $func_base_name)){ $this_robot->$func_base_name($reset_value); }
+                }
+
+                // Loop through and reset stats to their original indexed values
+                $stats_to_copy = array('energy', 'weapons', 'attack', 'defense', 'speed');
+                foreach($stats_to_copy AS $stat_to_copy){
+                    $func_name = 'set_'.$stat_to_copy;
+                    $func_base_name = 'set_base_'.$stat_to_copy;
+                    $reset_value = $original_robot_info['robot_'.$stat_to_copy];
+                    $this_robot->$stat_to_copy = $reset_value;
+                    if (method_exists($this_robot, $func_name)){ $this_robot->$func_name($reset_value); }
+                    if (method_exists($this_robot, $func_base_name)){ $this_robot->$func_base_name($reset_value); }
+                }
+                $this_robot->unset_flag('apply_stat_bonuses');
+                $this_robot->apply_stat_bonuses();
+
+            }
+
+            // Print out a message showing that the effect has taken place
+            $this_battle->events_create($this_robot, false,
+                $this_robot->robot_name.'\'s '.$this_ability->ability_name,
+                $original_robot_name_span.' dropped the '.$persona_robot_name_span.' persona!',
+                array(
+                    'event_flag_camera_action' => true,
+                    'event_flag_camera_side' => $this_robot->player->player_side,
+                    'event_flag_camera_focus' => $this_robot->robot_position,
+                    'event_flag_camera_depth' => $this_robot->robot_key
+                    )
+                );
+
+            // Remove the temporary ability attachment from this robot
+            $this_robot->unset_attachment($this_attachment_token);
 
         }
 
         // Return true on success
         return true;
 
+    },
+    'ability_function_onload' => function($objects){
+
+        // Extract all objects into the current scope
+        extract($objects);
+
+        // Check if this ability is already charged
+        $is_transformed = !empty($this_robot->robot_persona) ? true : false;
+
+        // If the ability flag had already been set, reduce the weapon energy to zero
+        if ($is_transformed){ $this_ability->set_energy(0); }
+        // Otherwise, return the weapon energy back to default
+        else { $this_ability->reset_energy(); }
+
+        // If the ability is already charged, allow bench targeting
+        if (!$is_transformed){ $this_ability->set_target('select_target'); }
+        else { $this_ability->set_target('auto'); }
+
+        // If this ability is being already charged, we should put an indicator
+        if ($is_transformed){
+            $new_name = $this_ability->ability_base_name;
+            $new_name = str_replace('Copy', 'Drop', $new_name);
+            $this_ability->set_name($new_name);
+            $this_ability->set_type('');
+            $this_ability->set_damage(0);
+        } else {
+            $this_ability->reset_name();
+            $this_ability->reset_type();
+            $this_ability->reset_damage();
         }
+
+        // Return true on success
+        return true;
+
+    }
 );
 ?>
