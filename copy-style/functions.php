@@ -29,21 +29,21 @@ $functions = array(
             'ability_frame_offset' => array('x' => -10, 'y' => 35, 'z' => -10)
             );
 
-        // Attach the ability to this robot
-        $this_attachment = rpg_game::get_ability($this_battle, $this_player, $this_robot, $this_attachment_info);
-        $this_robot->robot_attachments[$this_attachment_token] = $this_attachment_info;
-        $this_robot->update_session();
-
-        // Update the ability's target options and trigger
-        $this_battle->queue_sound_effect('intense-growing-sound');
-        $this_ability->target_options_update(array(
-            'frame' => 'summon',
-            'success' => array($temp_ability_frames['target'], 55, 35, -10, $this_robot->print_name().' uses the '.$this_ability->print_name().' technique!')
-            ));
-        $this_robot->trigger_target($target_robot, $this_ability);
-
         // If the user has NOT already transformed, we can COPY style now
         if (!$is_transformed){
+
+            // Attach the ability to this robot
+            $this_attachment = rpg_game::get_ability($this_battle, $this_player, $this_robot, $this_attachment_info);
+            $this_robot->robot_attachments[$this_attachment_token] = $this_attachment_info;
+            $this_robot->update_session();
+
+            // Update the ability's target options and trigger
+            $this_battle->queue_sound_effect('intense-growing-sound');
+            $this_ability->target_options_update(array(
+                'frame' => 'summon',
+                'success' => array($temp_ability_frames['target'], 55, 35, -10, $this_robot->print_name().' uses the '.$this_ability->print_name().' technique!')
+                ));
+            $this_robot->trigger_target($target_robot, $this_ability);
 
             // Inflict damage on the opposing robot
             $this_ability->damage_options_update(array(
@@ -65,8 +65,8 @@ $functions = array(
             if ($this_ability->ability_results['this_result'] != 'failure'){
 
                 // Ensure the target robot's persona can be copied
-                if ($this_robot->robot_token !== $target_robot->robot_token
-                    || (!empty($this_robot->robot_persona) && $this_robot->robot_persona !== $target_robot->robot_token)){
+                $current_persona = !empty($this_robot->robot_persona) ? $this_robot->robot_persona : $this_robot->robot_token;
+                if ($current_persona !== $target_robot->robot_token){
 
                     // Collect the target's token as the persona as well as their current image
                     $persona_token = $target_robot->robot_token;
@@ -78,9 +78,9 @@ $functions = array(
 
                     // Collect the target persona's index info as well as a backup of our original info
                     $persona_robot_info = rpg_robot::get_index_info($this_robot->robot_persona);
-                    $persona_robot_name_span = rpg_type::print_span($persona_robot_info['robot_core'], $persona_robot_info['robot_name']);
+                    $persona_robot_name_span = rpg_type::print_span('x', $persona_robot_info['robot_name']);
                     $original_robot_info = rpg_robot::get_index_info($this_robot->robot_token);
-                    $original_robot_name_span = rpg_type::print_span($original_robot_info['robot_core'], $original_robot_info['robot_name']);
+                    $original_robot_name_span = rpg_type::print_span('x', $original_robot_info['robot_name']);
 
                     // If this was a human player, make sure we update the player's session with the new persona
                     if ($this_player->player_side == 'left'
@@ -102,7 +102,8 @@ $functions = array(
                         //if (isset($persona_presets[$original_robot_info['robot_token']])){ $cross_letter = $persona_presets[$original_robot_info['robot_token']]; }
                         //else { $cross_letter = ucfirst(substr($original_robot_info['robot_token'], 0, 1)); }
                         $cross_letter = ucfirst(substr($original_robot_info['robot_token'], 0, 1));
-                        $persona_name = $persona_robot_info['robot_name'].' '.$cross_letter.'✗';
+                        //$persona_name = $persona_robot_info['robot_name'].' '.$cross_letter.'✗';
+                        $persona_name = $persona_robot_info['robot_name'].' '.$cross_letter.'X';
                         $this_robot->set_name($persona_name);
                         $this_robot->set_base_name($persona_name);
 
@@ -134,6 +135,7 @@ $functions = array(
                         // Now let's copy over the stats either directly or relatively depending on class
                         $stats_to_copy = array('energy', 'weapons', 'attack', 'defense', 'speed');
                         $stats_to_copy_values = array();
+
                         if ($original_robot_info['robot_class'] === $persona_robot_info['robot_class']){
                             // Copy the stats over 1-to-1 because the persona is of the same class
                             foreach ($stats_to_copy AS $stat_to_copy){
@@ -144,17 +146,30 @@ $functions = array(
                         } else {
                             // The persona is of a different class, so calculate base-stat-total
                             // for current and then use that to pull relative values from the target persona
-                            $base_stat_total = 0;
+                            $old_base_stat_total = 0;
+                            $persona_base_stat_total = 0;
                             foreach ($stats_to_copy AS $stat_to_copy){
-                                if (empty($this_robotinfo['robot_'.$stat_to_copy])){ continue; }
-                                $base_stat_total += $this_robotinfo['robot_'.$stat_to_copy];
+                                if (empty($original_robot_info['robot_'.$stat_to_copy])){ continue; }
+                                $old_base_stat_total += $original_robot_info['robot_'.$stat_to_copy];
                             }
                             foreach ($stats_to_copy AS $stat_to_copy){
                                 if (empty($persona_robot_info['robot_'.$stat_to_copy])){ continue; }
-                                $copy_value = round($base_stat_total * ($persona_robot_info['robot_'.$stat_to_copy] / 100));
-                                $stats_to_copy_values[$stat_to_copy] = $copy_value;
+                                $persona_base_stat_total += $persona_robot_info['robot_'.$stat_to_copy];
+                            }
+                            // Calculate stat ratios for the new robot then apply them to the old BST
+                            foreach ($stats_to_copy as $stat_to_copy) {
+                                if (empty($persona_robot_info['robot_'.$stat_to_copy])){ continue; }
+                                $persona_stat_ratio = $persona_robot_info['robot_' . $stat_to_copy] / $persona_base_stat_total;
+                                $copy_value = ($old_base_stat_total * $persona_stat_ratio);
+                                if ($stat_to_copy === 'energy'){
+                                    $stats_to_copy_values[$stat_to_copy] = ceil($copy_value);
+                                } else {
+                                    $stats_to_copy_values[$stat_to_copy] = round($copy_value);
+                                }
                             }
                         }
+
+                        // Apply the calculated stats to the robot object
                         foreach ($stats_to_copy_values AS $stat_to_copy => $copy_value){
                             $func_name = 'set_'.$stat_to_copy;
                             $func_base_name = 'set_base_'.$stat_to_copy;
@@ -168,11 +183,23 @@ $functions = array(
                     }
 
                     // Print out a message showing that the effect has taken place
+                    $this_robot->set_frame_styles('filter: sepia(1) saturate(4) hue-rotate(230deg); ');
                     $this_battle->events_create($this_robot, false,
                         $original_robot_info['robot_name'].'\'s '.$this_ability->ability_name,
                         $original_robot_name_span.' emulated '.$target_robot->print_name_s().' persona! <br />'.
                         $original_robot_name_span.' styled changed into '.rpg_type::print_span(array_filter(array($this_robot->robot_core, $this_robot->robot_core2)), $this_robot->robot_name).'!',
                         //$original_robot_name_span.' turned into '.(preg_match('/^(a|e|i|o|u)/i', $target_robot->robot_core) ? 'an' : 'a').' '.$target_robot->print_core().' type '.$this_robot->print_name().'!',
+                        array(
+                            'event_flag_camera_action' => true,
+                            'event_flag_camera_side' => $this_robot->player->player_side,
+                            'event_flag_camera_focus' => $this_robot->robot_position,
+                            'event_flag_camera_depth' => $this_robot->robot_key
+                            )
+                        );
+                    $this_robot->reset_frame_styles();
+
+                    // Briefly show the robot in it's new outwithout without any special colouring
+                    $this_battle->events_create($this_robot, false, '', '',
                         array(
                             'event_flag_camera_action' => true,
                             'event_flag_camera_side' => $this_robot->player->player_side,
@@ -211,10 +238,32 @@ $functions = array(
         // Otherwise, if we are ALREADY transformed, we need to DROP style
         else {
 
+            // Update the ability's target options and trigger
+            $this_battle->queue_sound_effect('small-debuff-received');
+            $this_ability->target_options_update(array(
+                'frame' => 'summon',
+                'success' => array($temp_ability_frames['target'], 55, 35, -10, $this_robot->print_name().' uses the '.$this_ability->print_name().' technique!')
+                ));
+            $this_robot->trigger_target($target_robot, $this_ability, array('prevent_default_text' => true));
+
+            // Briefly show the robot in the old outfit, glowing in their colour
+            $this_robot->set_frame('summon');
+            $this_robot->set_frame_styles('filter: sepia(1) saturate(4) hue-rotate(230deg); ');
+            $this_battle->events_create($this_robot, false, '', '',
+                array(
+                    'event_flag_camera_action' => true,
+                    'event_flag_camera_side' => $this_robot->player->player_side,
+                    'event_flag_camera_focus' => $this_robot->robot_position,
+                    'event_flag_camera_depth' => $this_robot->robot_key
+                    )
+                );
+            $this_robot->reset_frame();
+            $this_robot->reset_frame_styles();
+
             $persona_robot_info = rpg_robot::get_index_info($this_robot->robot_persona);
-            $persona_robot_name_span = rpg_type::print_span($persona_robot_info['robot_core'], $persona_robot_info['robot_name']);
+            $persona_robot_name_span = rpg_type::print_span($this_robot->robot_core, $this_robot->robot_name);
             $original_robot_info = rpg_robot::get_index_info($this_robot->robot_token);
-            $original_robot_name_span = rpg_type::print_span($original_robot_info['robot_core'], $original_robot_info['robot_name']);
+            $original_robot_name_span = rpg_type::print_span('x', $original_robot_info['robot_name']);
 
             // Clear the persona variables for the current robot
             $this_robot->set_persona('');
@@ -306,7 +355,7 @@ $functions = array(
         else { $this_ability->reset_energy(); }
 
         // If the ability is already charged, allow bench targeting
-        if (!$is_transformed){ $this_ability->set_target('select_target'); }
+        if (!$is_transformed && $this_robot->has_attribute('extended-range')){ $this_ability->set_target('select_target'); }
         else { $this_ability->set_target('auto'); }
 
         // If this ability is being already charged, we should put an indicator
