@@ -1117,7 +1117,8 @@
         "group_order": 127,
         "group_child_tokens": [
             "copy-shot",
-            "copy-soul"
+            "copy-soul",
+            "copy-style"
         ]
     },
     "MMRPG\/Support\/Energy": {
