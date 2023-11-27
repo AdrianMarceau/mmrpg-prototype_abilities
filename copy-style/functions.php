@@ -13,9 +13,19 @@ $functions = array(
 
         // Define the frames based on current character
         $temp_ability_frames = array('target' => 0, 'damage' => 1, 'summon' => 2);
-        if ($this_robot->robot_token == 'mega-man'){ $temp_ability_frames = array('target' => 0, 'damage' => 1, 'summon' => 2); }
-        elseif ($this_robot->robot_token == 'bass'){ $temp_ability_frames = array('target' => 3, 'damage' => 4, 'summon' => 5); }
-        elseif ($this_robot->robot_token == 'proto-man'){ $temp_ability_frames = array('target' => 6, 'damage' => 7, 'summon' => 8); }
+        $temp_transform_styles = 'filter: sepia(1) saturate(2) hue-rotate(230deg) brightness(0.8) contrast(2); ';
+        if ($this_robot->robot_token == 'mega-man'){
+            $temp_ability_frames = array('target' => 0, 'damage' => 1, 'summon' => 2);
+            $temp_transform_styles = 'filter: sepia(1) saturate(2) hue-rotate(-170deg) brightness(0.8) contrast(2); ';
+        }
+        elseif ($this_robot->robot_token == 'bass'){
+            $temp_ability_frames = array('target' => 3, 'damage' => 4, 'summon' => 5);
+            $temp_transform_styles = 'filter: sepia(1) saturate(2) hue-rotate(-20deg) brightness(0.8) contrast(2); ';
+        }
+        elseif ($this_robot->robot_token == 'proto-man'){
+            $temp_ability_frames = array('target' => 6, 'damage' => 7, 'summon' => 8);
+            $temp_transform_styles = 'filter: sepia(1) saturate(2) hue-rotate(-55deg) brightness(0.8) contrast(2); ';
+        }
 
         // Define this ability's attachment token
         $this_attachment_token = 'ability_'.$this_ability->ability_token;
@@ -62,7 +72,8 @@ $functions = array(
 
             // Check to ensure the ability was a success before continuing AND the user isn't holding incompatible item
             $copy_style_success = false;
-            if ($this_ability->ability_results['this_result'] != 'failure'){
+            if ($this_ability->ability_results['this_result'] != 'failure'
+                && !empty($this_ability->ability_results['this_amount'])){
 
                 // Ensure the target robot's persona can be copied
                 $current_persona = !empty($this_robot->robot_persona) ? $this_robot->robot_persona : $this_robot->robot_token;
@@ -97,13 +108,18 @@ $functions = array(
                     // Update relevant stats back to what they should be for the new persona
                     if (true){
 
+                        // Save the initial damage and remaining weapon energy to reapply later
+                        $initial_energy_percent = $this_robot->robot_energy / $this_robot->robot_base_energy;
+                        $initial_weapons_percent = $this_robot->robot_weapons / $this_robot->robot_base_weapons;
+                        $inflicted_damage_amount = $this_ability->ability_results['this_amount'];
+
                         // Define a new name for this persona so it's clear that it's a transformation
                         //$persona_presets = array('mega-man' => 'R', 'bass' => 'F', 'proto-man' => 'B', 'doc-robot' => 'D');
                         //if (isset($persona_presets[$original_robot_info['robot_token']])){ $cross_letter = $persona_presets[$original_robot_info['robot_token']]; }
                         //else { $cross_letter = ucfirst(substr($original_robot_info['robot_token'], 0, 1)); }
                         $cross_letter = ucfirst(substr($original_robot_info['robot_token'], 0, 1));
                         //$persona_name = $persona_robot_info['robot_name'].' '.$cross_letter.'✗';
-                        $persona_name = $persona_robot_info['robot_name'].' '.$cross_letter.'X';
+                        $persona_name = $cross_letter.'× '.$persona_robot_info['robot_name'];
                         $this_robot->set_name($persona_name);
                         $this_robot->set_base_name($persona_name);
 
@@ -132,10 +148,15 @@ $functions = array(
                         $this_robot->set_image($image_value);
                         $this_robot->set_base_image($image_value);
 
-                        // Now let's copy over the stats either directly or relatively depending on class
-                        $stats_to_copy = array('energy', 'weapons', 'attack', 'defense', 'speed');
+                        // Create an array to hold the stats we will copy over
                         $stats_to_copy_values = array();
 
+                        // Weapon energy is always copied over 1-to-1 because it does not scale with robot
+                        $stats_to_copy_values['robot_weapons'] = $persona_robot_info['robot_weapons'];
+                        $stats_to_copy_values['robot_base_weapons'] = $persona_robot_info['robot_weapons'];
+
+                        // Now let's copy over the stats either directly or relatively depending on class
+                        $stats_to_copy = array('energy', 'attack', 'defense', 'speed');
                         if ($original_robot_info['robot_class'] === $persona_robot_info['robot_class']){
                             // Copy the stats over 1-to-1 because the persona is of the same class
                             foreach ($stats_to_copy AS $stat_to_copy){
@@ -180,10 +201,75 @@ $functions = array(
                         $this_robot->unset_flag('apply_stat_bonuses');
                         $this_robot->apply_stat_bonuses();
 
+                        // Reapply the initial energy and weapons percentages
+                        $new_energy = ceil($this_robot->robot_base_energy * $initial_energy_percent);
+                        $new_weapons = ceil($this_robot->robot_base_weapons * $initial_weapons_percent);
+                        if ($inflicted_damage_amount > 0){ $new_energy += $inflicted_damage_amount; }
+                        if ($new_energy > $this_robot->robot_base_energy){ $new_energy = $this_robot->robot_base_energy; }
+                        $this_robot->set_energy($new_energy);
+                        $this_robot->set_weapons($new_weapons);
+
+                        // Pull a list of the user and the target's current abilities so we can parse them
+                        $user_ability_list = $this_robot->get_abilities();
+                        $target_ability_list = $target_robot->get_abilities();
+                        //error_log('target_ability_list: '.print_r($target_ability_list, true));
+                        //error_log('user_ability_list: '.print_r($user_ability_list, true));
+
+                        // Find the position of copy-style in the user's list, and if it's NOT the last item, we do stuff
+                        $max_list_size = MMRPG_SETTINGS_BATTLEABILITIES_PERROBOT_MAX;
+                        $copy_style_position = array_search('copy-style', $user_ability_list);
+                        if ($copy_style_position !== false && $copy_style_position < ($max_list_size - 1)){
+
+                            // Create a new list of abilities given compatibility
+                            $new_ability_list = array();
+                            //error_log('$new_ability_list: '.print_r($new_ability_list, true));
+
+                            // Populate the list with the user's existing abilities up to and including copy-style
+                            for ($i = 0; $i <= $copy_style_position; $i++){
+                                $new_ability_list[] = $user_ability_list[$i];
+                                //error_log('+ add user ability '.$user_ability_list[$i].' to list');
+                            }
+
+                            // Now loop through the target's abilities and include any that aren't duplicates, are compatible, and are unlocked already
+                            foreach ($target_ability_list AS $key => $token){
+                                if ($token === 'copy-style'){ continue; }
+                                if (in_array($token, $new_ability_list)){ continue; }
+                                $compatible = rpg_robot::has_ability_compatibility($persona_robot_info, $token, $this_robot->robot_item);
+                                $unlocked = mmrpg_prototype_ability_unlocked('', '', $token);
+                                //error_log('check target ability '.$token.' / $compatible: '.$compatible.' / $unlocked: '.$unlocked);
+                                if (!$compatible || !$unlocked){ continue; }
+                                //error_log('+ add target ability '.$token.' to list');
+                                $new_ability_list[] = $token;
+                            }
+
+                            // Make sure we don't allow the list to exceed the max size
+                            $new_ability_list = array_unique($new_ability_list);
+                            if (count($new_ability_list) > $max_list_size){ $new_ability_list = array_slice($new_ability_list, 0, $max_list_size); }
+                            //error_log('$new_ability_list: '.print_r($new_ability_list, true));
+
+                            // Update the user's ability list with the new list
+                            $this_robot->set_abilities($new_ability_list);
+                            $this_robot->set_base_abilities($new_ability_list);
+
+                            // If this was a human player, make sure we update the player's session with the new persona
+                            if ($this_player->player_side == 'left'
+                                && empty($this_battle->flags['player_battle'])
+                                && empty($this_battle->flags['challenge_battle'])){
+                                $ptoken = $this_player->player_token;
+                                $rtoken = $this_robot->robot_token;
+                                $atokens = array();
+                                foreach ($new_ability_list AS $token){ $atokens[$token] = array('ability_token' => $token); }
+                                if (!empty($_SESSION[$session_token]['values']['battle_settings'][$ptoken]['player_robots'][$rtoken])){
+                                    $_SESSION[$session_token]['values']['battle_settings'][$ptoken]['player_robots'][$rtoken]['robot_abilities'] = $atokens;
+                                }
+                            }
+
+                        }
+
                     }
 
                     // Print out a message showing that the effect has taken place
-                    $this_robot->set_frame_styles('filter: sepia(1) saturate(4) hue-rotate(230deg); ');
+                    $this_robot->set_frame_styles($temp_transform_styles);
                     $this_battle->events_create($this_robot, false,
                         $original_robot_info['robot_name'].'\'s '.$this_ability->ability_name,
                         $original_robot_name_span.' emulated '.$target_robot->print_name_s().' persona! <br />'.
@@ -248,7 +334,7 @@ $functions = array(
 
             // Briefly show the robot in the old outfit, glowing in their colour
             $this_robot->set_frame('summon');
-            $this_robot->set_frame_styles('filter: sepia(1) saturate(4) hue-rotate(230deg); ');
+            $this_robot->set_frame_styles($temp_transform_styles);
             $this_battle->events_create($this_robot, false, '', '',
                 array(
                     'event_flag_camera_action' => true,
@@ -284,6 +370,10 @@ $functions = array(
             // Reset relevant stats back to what they used to be before
             if (true){
 
+                // Save the initial damage and remaining weapon energy to reapply later
+                $initial_energy_percent = $this_robot->robot_energy / $this_robot->robot_base_energy;
+                $initial_weapons_percent = $this_robot->robot_weapons / $this_robot->robot_base_weapons;
+
                 // List out the fields we want to reset verbaitm
                 $reset_fields = array(
                     'robot_name', 'robot_number', 'robot_game', 'robot_gender',
@@ -291,7 +381,7 @@ $functions = array(
                     'robot_image', 'robot_image_size',
                     'robot_description', 'robot_description2', 'robot_quotes',
                     'robot_weaknesses', 'robot_resistances', 'robot_affinities', 'robot_immunities',
-                    'robot_skill', 'robot_skill_name', 'robot_skill_description', 'robot_skill_description2', 'robot_skill_parameters'
+                    'robot_skill', 'robot_skill_name', 'robot_skill_description', 'robot_skill_description2', 'robot_skill_parameters',
                     );
 
                 // Loop through and reset each field to the original value
@@ -317,6 +407,12 @@ $functions = array(
                 }
                 $this_robot->unset_flag('apply_stat_bonuses');
                 $this_robot->apply_stat_bonuses();
+
+                // Reapply the initial energy and weapons percentages
+                $new_energy = ceil($this_robot->robot_base_energy * $initial_energy_percent);
+                $new_weapons = ceil($this_robot->robot_base_weapons * $initial_weapons_percent);
+                $this_robot->set_energy($new_energy);
+                $this_robot->set_weapons($new_weapons);
 
             }
 
