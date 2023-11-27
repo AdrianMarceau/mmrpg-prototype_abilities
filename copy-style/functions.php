@@ -108,18 +108,19 @@ $functions = array(
                     // Update relevant stats back to what they should be for the new persona
                     if (true){
 
-                        // Save the initial damage and remaining weapon energy to reapply later
+                        // Save the initial damage and remaining energy to reapply later
+                        $initial_energy_base = $this_robot->robot_base_energy;
+                        $initial_energy_current = $this_robot->robot_energy;
                         $initial_energy_percent = $this_robot->robot_energy / $this_robot->robot_base_energy;
-                        $initial_weapons_percent = $this_robot->robot_weapons / $this_robot->robot_base_weapons;
                         $inflicted_damage_amount = $this_ability->ability_results['this_amount'];
 
+                        // Save the initial weapons amount so we can reset back to it later
+                        $initial_weapons_base = $this_robot->robot_base_weapons;
+                        $initial_weapons_current = $this_robot->robot_weapons;
+
                         // Define a new name for this persona so it's clear that it's a transformation
-                        //$persona_presets = array('mega-man' => 'R', 'bass' => 'F', 'proto-man' => 'B', 'doc-robot' => 'D');
-                        //if (isset($persona_presets[$original_robot_info['robot_token']])){ $cross_letter = $persona_presets[$original_robot_info['robot_token']]; }
-                        //else { $cross_letter = ucfirst(substr($original_robot_info['robot_token'], 0, 1)); }
                         $cross_letter = ucfirst(substr($original_robot_info['robot_token'], 0, 1));
-                        //$persona_name = $persona_robot_info['robot_name'].' '.$cross_letter.'✗';
-                        $persona_name = $cross_letter.'× '.$persona_robot_info['robot_name'];
+                        $persona_name = $cross_letter.'× '.$persona_robot_info['robot_name']; // options: X ✗ ×
                         $this_robot->set_name($persona_name);
                         $this_robot->set_base_name($persona_name);
 
@@ -150,10 +151,6 @@ $functions = array(
 
                         // Create an array to hold the stats we will copy over
                         $stats_to_copy_values = array();
-
-                        // Weapon energy is always copied over 1-to-1 because it does not scale with robot
-                        $stats_to_copy_values['robot_weapons'] = $persona_robot_info['robot_weapons'];
-                        $stats_to_copy_values['robot_base_weapons'] = $persona_robot_info['robot_weapons'];
 
                         // Now let's copy over the stats either directly or relatively depending on class
                         $stats_to_copy = array('energy', 'attack', 'defense', 'speed');
@@ -190,6 +187,12 @@ $functions = array(
                             }
                         }
 
+                        // Preset energy and weapons to max before any calculations are (re) done
+                        $this_robot->set_energy($initial_energy_base);
+                        $this_robot->set_base_energy($initial_energy_base);
+                        $this_robot->set_weapons($initial_weapons_base);
+                        $this_robot->set_base_weapons($initial_weapons_base);
+
                         // Apply the calculated stats to the robot object
                         foreach ($stats_to_copy_values AS $stat_to_copy => $copy_value){
                             $func_name = 'set_'.$stat_to_copy;
@@ -201,13 +204,15 @@ $functions = array(
                         $this_robot->unset_flag('apply_stat_bonuses');
                         $this_robot->apply_stat_bonuses();
 
-                        // Reapply the initial energy and weapons percentages
+                        // Reapply the initial energy percentage to the newly adjusted value
                         $new_energy = ceil($this_robot->robot_base_energy * $initial_energy_percent);
-                        $new_weapons = ceil($this_robot->robot_base_weapons * $initial_weapons_percent);
                         if ($inflicted_damage_amount > 0){ $new_energy += $inflicted_damage_amount; }
                         if ($new_energy > $this_robot->robot_base_energy){ $new_energy = $this_robot->robot_base_energy; }
                         $this_robot->set_energy($new_energy);
-                        $this_robot->set_weapons($new_weapons);
+
+                        // But set the weapons to exactly what they were before as they shoudln't have changed
+                        $this_robot->set_weapons($initial_weapons_current);
+                        $this_robot->set_base_weapons($initial_weapons_current);
 
                         // Pull a list of the user and the target's current abilities so we can parse them
                         $user_ability_list = $this_robot->get_abilities();
@@ -370,9 +375,8 @@ $functions = array(
             // Reset relevant stats back to what they used to be before
             if (true){
 
-                // Save the initial damage and remaining weapon energy to reapply later
+                // Save the initial damage and remaining energy to reapply later
                 $initial_energy_percent = $this_robot->robot_energy / $this_robot->robot_base_energy;
-                $initial_weapons_percent = $this_robot->robot_weapons / $this_robot->robot_base_weapons;
 
                 // List out the fields we want to reset verbaitm
                 $reset_fields = array(
@@ -396,7 +400,7 @@ $functions = array(
                 }
 
                 // Loop through and reset stats to their original indexed values
-                $stats_to_copy = array('energy', 'weapons', 'attack', 'defense', 'speed');
+                $stats_to_copy = array('energy', 'attack', 'defense', 'speed');
                 foreach($stats_to_copy AS $stat_to_copy){
                     $func_name = 'set_'.$stat_to_copy;
                     $func_base_name = 'set_base_'.$stat_to_copy;
@@ -408,11 +412,9 @@ $functions = array(
                 $this_robot->unset_flag('apply_stat_bonuses');
                 $this_robot->apply_stat_bonuses();
 
-                // Reapply the initial energy and weapons percentages
+                // Reapply the initial energy percentage
                 $new_energy = ceil($this_robot->robot_base_energy * $initial_energy_percent);
-                $new_weapons = ceil($this_robot->robot_base_weapons * $initial_weapons_percent);
                 $this_robot->set_energy($new_energy);
-                $this_robot->set_weapons($new_weapons);
 
             }
 
