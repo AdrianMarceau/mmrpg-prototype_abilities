@@ -50,7 +50,7 @@ $functions = array(
             // Collect the current robot level for this field
             $this_robot_level = !empty($this_robot->robot_level) ? $this_robot->robot_level : 1;
             $this_field_level = !empty($this_battle->battle_level) ? $this_battle->battle_level : 1;
-            $this_mecha_token = 'met';
+            $this_mecha_token = '';
             $this_mecha_image_token = '';
 
             // Ensure required ability counters have been set before starting
@@ -62,19 +62,30 @@ $functions = array(
 
             // If this robot has a support mecha defined, use it directly
             if (!empty($this_robot->robot_support)){
-
                 // Collect the mecha token from the support field directly
                 $this_mecha_token = $this_robot->robot_support;
                 $this_mecha_image_token = $this_robot->robot_support_image;
-
             }
-            // Otherwise we need to auto-generate based on core and environment
-            else {
+            //error_log('$this_mecha_token = '.print_r($this_mecha_token, true));
+            //error_log('$this_mecha_image_token = '.print_r($this_mecha_image_token, true));
 
+            // If the mecha token was simply given as "local", attempt to pull one from the field
+            if ($this_mecha_token === 'local'){
+                //error_log('$this_field->field_mechas = '.print_r($this_field->field_mechas, true));
+                $this_field_mechas = !empty($this_field->field_mechas) ? $this_field->field_mechas : array();
+                if (!empty($this_field_mechas)){ $this_mecha_token = $this_field_mechas[array_rand($this_field_mechas)]; }
+                else { $this_mecha_token = ''; }
+                //error_log('$this_mecha_token = '.print_r($this_mecha_token, true));
+                //error_log('$this_mecha_image_token = '.print_r($this_mecha_image_token, true));
+            }
+
+            // Otherwise we need to auto-generate based on core and environment
+            if (empty($this_mecha_token)){
                 // Default to the Met if we are somehow unable to pull real results
                 $this_mecha_token = 'met';
                 $this_mecha_image_token = '';
-
+                //error_log('$this_mecha_token = '.print_r($this_mecha_token, true));
+                //error_log('$this_mecha_image_token = '.print_r($this_mecha_image_token, true));
             }
 
             // Collect database info for this mecha
