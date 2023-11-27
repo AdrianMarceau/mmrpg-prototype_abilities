@@ -17,9 +17,13 @@ $functions = array(
         $this_robot->trigger_target($target_robot, $this_ability);
 
         // Call the global stat break function with customized options
-        rpg_ability::ability_function_stat_break($target_robot, $best_stat, 2, $this_ability, array(
-            'initiator_robot' => $this_robot
-            ));
+        if ($best_stat === 'all'){ $stats = array('attack', 'defense', 'speed'); }
+        else { $stats = array($best_stat); }
+        foreach ($stats AS $stat){
+            rpg_ability::ability_function_stat_break($target_robot, $stat, 2, $this_ability, array(
+                'initiator_robot' => $this_robot
+                ));
+        }
 
         // Return true on success
         return true;
