@@ -20,7 +20,7 @@ $functions = array(
         }
         elseif ($this_robot->robot_token == 'bass'){
             $temp_ability_frames = array('target' => 3, 'damage' => 4, 'summon' => 5);
-            $temp_transform_styles = 'filter: sepia(1) saturate(2) hue-rotate(-20deg) brightness(0.8) contrast(2); ';
+            $temp_transform_styles = 'filter: sepia(1) saturate(4) hue-rotate(-38deg) brightness(0.8) contrast(2); ';
         }
         elseif ($this_robot->robot_token == 'proto-man'){
             $temp_ability_frames = array('target' => 6, 'damage' => 7, 'summon' => 8);
@@ -461,10 +461,12 @@ $functions = array(
             $this_ability->set_name($new_name);
             $this_ability->set_type('');
             $this_ability->set_damage(0);
+            $this_ability->set_image($this_ability->ability_token.'-2');
         } else {
             $this_ability->reset_name();
             $this_ability->reset_type();
             $this_ability->reset_damage();
+            $this_ability->set_image($this_ability->ability_token);
         }
 
         // Return true on success
