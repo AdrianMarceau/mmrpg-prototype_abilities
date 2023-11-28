@@ -73,11 +73,13 @@ $functions = array(
             // Check to ensure the ability was a success before continuing AND the user isn't holding incompatible item
             $copy_style_success = false;
             if ($this_ability->ability_results['this_result'] != 'failure'
-                && !empty($this_ability->ability_results['this_amount'])){
+                && !empty($this_ability->ability_results['this_amount'])
+                && empty($target_robot->robot_energy)){
 
                 // Ensure the target robot's persona can be copied
                 $current_persona = !empty($this_robot->robot_persona) ? $this_robot->robot_persona : $this_robot->robot_token;
-                if ($current_persona !== $target_robot->robot_token){
+                if ($this_robot->robot_token !== $target_robot->robot_token
+                    && $current_persona !== $target_robot->robot_token){
 
                     // Collect the target's token as the persona as well as their current image
                     $persona_token = $target_robot->robot_token;
@@ -103,6 +105,21 @@ $functions = array(
                             $_SESSION[$session_token]['values']['battle_settings'][$ptoken]['player_robots'][$rtoken]['robot_persona'] = $persona_token;
                             $_SESSION[$session_token]['values']['battle_settings'][$ptoken]['player_robots'][$rtoken]['robot_persona_image'] = $persona_image_token;
                         }
+                    }
+
+                    // If this is a human player, increment the summon counter for this persona
+                    if ($this_player->player_side === 'left'){
+                        if (!isset($_SESSION[$session_token]['values']['robot_database'][$persona_token])){ $_SESSION[$session_token]['values']['robot_database'][$persona_token] = array('robot_token' => $persona_token); }
+                        if (empty($_SESSION[$session_token]['values']['robot_database'][$persona_token]['robot_summoned'])){ $_SESSION[$session_token]['values']['robot_database'][$persona_token]['robot_summoned'] = 0; }
+                        $this_persona_summoned_counter = $_SESSION[$session_token]['values']['robot_database'][$persona_token]['robot_summoned'] + 1;
+                        $_SESSION[$session_token]['values']['robot_database'][$persona_token]['robot_summoned'] = $this_persona_summoned_counter;
+                    }
+                    // Else if the target is the human player, increment their encounter counter for this persona
+                    elseif ($target_player->player_side === 'left'){
+                        if (!isset($_SESSION[$session_token]['values']['robot_database'][$persona_token])){ $_SESSION[$session_token]['values']['robot_database'][$persona_token] = array('robot_token' => $persona_token); }
+                        if (empty($_SESSION[$session_token]['values']['robot_database'][$persona_token]['robot_encountered'])){ $_SESSION[$session_token]['values']['robot_database'][$persona_token]['robot_encountered'] = 0; }
+                        $this_persona_encountered_counter = $_SESSION[$session_token]['values']['robot_database'][$persona_token]['robot_encountered'] + 1;
+                        $_SESSION[$session_token]['values']['robot_database'][$persona_token]['robot_encountered'] = $this_persona_encountered_counter;
                     }
 
                     // Update relevant stats back to what they should be for the new persona
@@ -376,7 +393,14 @@ $functions = array(
             if (true){
 
                 // Save the initial damage and remaining energy to reapply later
+                $initial_energy_base = $this_robot->robot_base_energy;
+                $initial_energy_current = $this_robot->robot_energy;
                 $initial_energy_percent = $this_robot->robot_energy / $this_robot->robot_base_energy;
+                $inflicted_damage_amount = $this_ability->ability_results['this_amount'];
+
+                // Save the initial weapons amount so we can reset back to it later
+                $initial_weapons_base = $this_robot->robot_base_weapons;
+                $initial_weapons_current = $this_robot->robot_weapons;
 
                 // List out the fields we want to reset verbaitm
                 $reset_fields = array(
@@ -415,6 +439,10 @@ $functions = array(
                 // Reapply the initial energy percentage
                 $new_energy = ceil($this_robot->robot_base_energy * $initial_energy_percent);
                 $this_robot->set_energy($new_energy);
+
+                // But set the weapons to exactly what they were before as they shoudln't have changed
+                $this_robot->set_weapons($initial_weapons_current);
+                $this_robot->set_base_weapons($initial_weapons_current);
 
             }
 
