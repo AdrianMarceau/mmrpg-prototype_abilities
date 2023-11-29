@@ -89,7 +89,7 @@ $functions = array(
         $this_ability->target_options_update(array(
             'frame' => 'slide',
             'kickback' => array(120, 0, 0),
-            'success' => array(1, -120, 0, -110, $this_robot->print_name().' lunges at the target!', 2)
+            'success' => array(1, -100, 0, -110, $this_robot->print_name().' lunges at the target!', 2)
             ));
         $this_robot->trigger_target($target_robot, $this_ability, array('prevent_default_text' => true));
 
@@ -130,9 +130,28 @@ $functions = array(
             && $target_robot->robot_status != 'disabled'){
 
             // Inflict the target with a weakness to the user's own type
+            $core_type = $this_robot->robot_base_core;
             $this_robot->set_frame('taunt');
-            $inflict_weakness_to_type($target_robot, $this_robot->robot_base_core);
+            $inflict_weakness_to_type($target_robot, $core_type);
             $this_robot->reset_frame();
+
+            // Also inflict the target with a little venom to make like-typed attacks do even more
+            $this_attachment_token = 'ability_'.$this_ability->ability_token.'_venom';
+            $this_attachment_multiplier = 1.5;
+            if ($target_robot->has_attachment($this_attachment_token)){
+                $this_attachment_info = $target_robot->get_attachment($this_attachment_token);
+                $this_attachment_info['attachment_damage_input_booster_'.$core_type] += 0.5;
+            } else {
+                $this_attachment_info = array(
+                    'class' => 'ability',
+                    'ability_id' => $this_ability->ability_id,
+                    'ability_token' => $this_ability->ability_token,
+                    'ability_image' => false,
+                    'attachment_token' => $this_attachment_token,
+                    'attachment_damage_input_booster_'.$core_type => $this_attachment_multiplier
+                    );
+            }
+            $target_robot->set_attachment($this_attachment_token, $this_attachment_info);
 
         }
 
