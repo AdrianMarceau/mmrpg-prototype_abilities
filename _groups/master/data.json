@@ -256,7 +256,8 @@
         "group_token": "MM03\/Weapons\/SnakeMan",
         "group_order": 28,
         "group_child_tokens": [
-            "search-snake"
+            "search-snake",
+            "snake-bite"
         ]
     },
     "MM03\/Weapons\/SparkMan": {
