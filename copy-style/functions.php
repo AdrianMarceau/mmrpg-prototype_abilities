@@ -295,7 +295,7 @@ $functions = array(
                     $this_battle->events_create($this_robot, false,
                         $original_robot_info['robot_name'].'\'s '.$this_ability->ability_name,
                         $original_robot_name_span.' emulated '.$target_robot->print_name_s().' persona! <br />'.
-                        $original_robot_name_span.' styled changed into '.rpg_type::print_span(array_filter(array($this_robot->robot_core, $this_robot->robot_core2)), $this_robot->robot_name).'!',
+                        $original_robot_name_span.' style-changed into '.rpg_type::print_span(trim($this_robot->robot_core.'_'.$this_robot->robot_core2, '_'), $this_robot->robot_name).'!',
                         //$original_robot_name_span.' turned into '.(preg_match('/^(a|e|i|o|u)/i', $target_robot->robot_core) ? 'an' : 'a').' '.$target_robot->print_core().' type '.$this_robot->print_name().'!',
                         array(
                             'event_flag_camera_action' => true,
@@ -441,8 +441,8 @@ $functions = array(
                 $this_robot->set_energy($new_energy);
 
                 // But set the weapons to exactly what they were before as they shoudln't have changed
+                $this_robot->set_base_weapons($initial_weapons_base);
                 $this_robot->set_weapons($initial_weapons_current);
-                $this_robot->set_base_weapons($initial_weapons_current);
 
             }
 
