@@ -1,7 +1,7 @@
 {
     "ability_token": "pharaoh-shot",
     "ability_name": "Pharaoh Shot",
-    "ability_game": "MMRPGP",
+    "ability_game": "MM4",
     "ability_class": "master",
     "ability_subclass": "",
     "ability_master": "pharaoh-man",
@@ -11,6 +11,7 @@
     "ability_image_size": 40,
     "ability_image_editor": "adrianmarceau",
     "ability_image_editor2": "",
+    "ability_image_editor3": "",
     "ability_type": "flame",
     "ability_type2": "",
     "ability_description": "The user charges itself with a solar energy that doubles the damage of its own attacks for up to three turns.  If this ability is used again after charging, the held solar energy will instead be released at the target to inflict massive damage!",
