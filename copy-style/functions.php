@@ -126,14 +126,14 @@ $functions = array(
                     if (true){
 
                         // Save the initial damage and remaining energy to reapply later
+                        $initial_energy = $this_robot->robot_energy;
                         $initial_energy_base = $this_robot->robot_base_energy;
-                        $initial_energy_current = $this_robot->robot_energy;
                         $initial_energy_percent = $this_robot->robot_energy / $this_robot->robot_base_energy;
                         $inflicted_damage_amount = $this_ability->ability_results['this_amount'];
 
-                        // Save the initial weapons amount so we can reset back to it later
+                        // Save the initial weapon energy remaining so we can reapply later
+                        $initial_weapons = $this_robot->robot_weapons;
                         $initial_weapons_base = $this_robot->robot_base_weapons;
-                        $initial_weapons_current = $this_robot->robot_weapons;
 
                         // Define a new name for this persona so it's clear that it's a transformation
                         $cross_letter = ucfirst(substr($original_robot_info['robot_token'], 0, 1));
@@ -204,32 +204,36 @@ $functions = array(
                             }
                         }
 
-                        // Preset energy and weapons to max before any calculations are (re) done
+                        // Preset energy to max before any calculations are (re) done
                         $this_robot->set_energy($initial_energy_base);
                         $this_robot->set_base_energy($initial_energy_base);
-                        $this_robot->set_weapons($initial_weapons_base);
-                        $this_robot->set_base_weapons($initial_weapons_base);
 
                         // Apply the calculated stats to the robot object
                         foreach ($stats_to_copy_values AS $stat_to_copy => $copy_value){
+                            $stat_prop_name = 'robot_'.$stat_to_copy;
+                            $stat_prop_base_name = 'robot_base_'.$stat_to_copy;
+                            $stat_prop_backup_name = $stat_prop_base_name.'_backup';
                             $func_name = 'set_'.$stat_to_copy;
                             $func_base_name = 'set_base_'.$stat_to_copy;
                             $this_robot->$stat_to_copy = $copy_value;
-                            if (method_exists($this_robot, $func_name)){ $this_robot->$func_name($copy_value); }
-                            if (method_exists($this_robot, $func_base_name)){ $this_robot->$func_base_name($copy_value); }
+                            $this_robot->set_value($stat_prop_backup_name, $copy_value);
+                            $this_robot->$func_name($copy_value);
+                            $this_robot->$func_base_name($copy_value);
                         }
-                        $this_robot->unset_flag('apply_stat_bonuses');
-                        $this_robot->apply_stat_bonuses();
+                        $base_stats_ref = $persona_robot_info;
+                        $base_stats_ref['robot_energy'] = $stats_to_copy_values['energy'];
+                        $base_stats_ref['robot_weapons'] = $original_robot_info['robot_weapons'];
+                        $base_stats_ref['robot_attack'] = $stats_to_copy_values['attack'];
+                        $base_stats_ref['robot_defense'] = $stats_to_copy_values['defense'];
+                        $base_stats_ref['robot_speed'] = $stats_to_copy_values['speed'];
+                        $this_robot->apply_stat_bonuses(true, $base_stats_ref);
 
                         // Reapply the initial energy percentage to the newly adjusted value
                         $new_energy = ceil($this_robot->robot_base_energy * $initial_energy_percent);
                         if ($inflicted_damage_amount > 0){ $new_energy += $inflicted_damage_amount; }
                         if ($new_energy > $this_robot->robot_base_energy){ $new_energy = $this_robot->robot_base_energy; }
                         $this_robot->set_energy($new_energy);
-
-                        // But set the weapons to exactly what they were before as they shoudln't have changed
-                        $this_robot->set_weapons($initial_weapons_current);
-                        $this_robot->set_base_weapons($initial_weapons_current);
+                        $this_robot->set_weapons($initial_weapons);
 
                         // Pull a list of the user and the target's current abilities so we can parse them
                         $user_ability_list = $this_robot->get_abilities();
@@ -393,14 +397,14 @@ $functions = array(
             if (true){
 
                 // Save the initial damage and remaining energy to reapply later
+                $initial_energy = $this_robot->robot_energy;
                 $initial_energy_base = $this_robot->robot_base_energy;
-                $initial_energy_current = $this_robot->robot_energy;
                 $initial_energy_percent = $this_robot->robot_energy / $this_robot->robot_base_energy;
                 $inflicted_damage_amount = $this_ability->ability_results['this_amount'];
-
-                // Save the initial weapons amount so we can reset back to it later
-                $initial_weapons_base = $this_robot->robot_base_weapons;
-                $initial_weapons_current = $this_robot->robot_weapons;
+                //error_log('$initial_energy_base = '.print_r($initial_energy_base, true));
+                //error_log('$initial_energy = '.print_r($initial_energy, true));
+                //error_log('$initial_energy_percent = '.print_r($initial_energy_percent, true));
+                //error_log('$inflicted_damage_amount = '.print_r($inflicted_damage_amount, true));
 
                 // List out the fields we want to reset verbaitm
                 $reset_fields = array(
@@ -424,25 +428,26 @@ $functions = array(
                 }
 
                 // Loop through and reset stats to their original indexed values
-                $stats_to_copy = array('energy', 'attack', 'defense', 'speed');
+                $stats_to_copy = array('energy', 'weapons', 'attack', 'defense', 'speed');
                 foreach($stats_to_copy AS $stat_to_copy){
+                    $reset_value = $original_robot_info['robot_'.$stat_to_copy];
+                    $stat_prop_name = 'robot_'.$stat_to_copy;
+                    $stat_prop_base_name = 'robot_base_'.$stat_to_copy;
+                    $stat_prop_backup_name = $stat_prop_base_name.'_backup';
                     $func_name = 'set_'.$stat_to_copy;
                     $func_base_name = 'set_base_'.$stat_to_copy;
-                    $reset_value = $original_robot_info['robot_'.$stat_to_copy];
                     $this_robot->$stat_to_copy = $reset_value;
-                    if (method_exists($this_robot, $func_name)){ $this_robot->$func_name($reset_value); }
-                    if (method_exists($this_robot, $func_base_name)){ $this_robot->$func_base_name($reset_value); }
+                    $this_robot->set_value($stat_prop_backup_name, $reset_value);
+                    $this_robot->$func_name($reset_value);
+                    $this_robot->$func_base_name($reset_value);
                 }
-                $this_robot->unset_flag('apply_stat_bonuses');
-                $this_robot->apply_stat_bonuses();
+                $base_stats_ref = $original_robot_info;
+                $this_robot->apply_stat_bonuses(true, $base_stats_ref);
 
                 // Reapply the initial energy percentage
                 $new_energy = ceil($this_robot->robot_base_energy * $initial_energy_percent);
                 $this_robot->set_energy($new_energy);
-
-                // But set the weapons to exactly what they were before as they shoudln't have changed
-                $this_robot->set_base_weapons($initial_weapons_base);
-                $this_robot->set_weapons($initial_weapons_current);
+                //error_log('$new_energy = '.print_r($new_energy, true));
 
             }
 
