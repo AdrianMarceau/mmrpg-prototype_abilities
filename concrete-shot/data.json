@@ -1,7 +1,7 @@
 {
     "ability_token": "concrete-shot",
     "ability_name": "Concrete Shot",
-    "ability_game": "MMRPGP",
+    "ability_game": "MM9",
     "ability_class": "master",
     "ability_subclass": "",
     "ability_master": "concrete-man",
@@ -11,6 +11,7 @@
     "ability_image_size": 40,
     "ability_image_editor": "",
     "ability_image_editor2": "",
+    "ability_image_editor3": "",
     "ability_type": "earth",
     "ability_type2": "",
     "ability_description": "",
