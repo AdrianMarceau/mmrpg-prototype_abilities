@@ -71,7 +71,11 @@ $functions = array(
             $this_robot->update_session();
 
             // Define the list of robot's with dynamically shifting images so we ensure the base is copied
-            $dynamic_image_personas = array('trill', 'trille-bot', 'ballade');
+            $dynamic_image_personas = array(
+                'trill' => array('alt', 'alt2', 'alt3'),
+                'trille-bot' => array('alt', 'alt2', 'alt3'),
+                'ballade' => array('alt')
+                );
 
             // Check to ensure the ability was a success before continuing AND the user isn't holding incompatible item
             $copy_style_success = false;
@@ -95,13 +99,28 @@ $functions = array(
                     $original_robot_name_span = rpg_type::print_span('x', $original_robot_info['robot_name']);
 
                     // If this is a special alt-changing robot, we need to make sure we remove the "_alt1234" suffix
-                    if (in_array($persona_token, $dynamic_image_personas)
-                        || $persona_robot_info['robot_core'] === 'copy'
-                        || $persona_robot_info['robot_core2'] === 'copy'){
-                        $persona_image_token = preg_replace('/_alt\d+$/i', '', $persona_image_token);
+                    if (strstr($persona_image_token, '_')){
+                        //error_log('persona_image_token has alt: '.$persona_image_token);
+                        $frags = explode('_', $persona_image_token);
+                        //error_log('$frags = '.print_r($frags, true));
+                        //error_log('check for $dynamic_image_personas['.$persona_token.']...');
+                        if (!empty($dynamic_image_personas[$persona_token])){
+                            //error_log('dynamic image alt found!');
+                            $alts = $dynamic_image_personas[$persona_token];
+                            //error_log('$alts = '.print_r($alts, true));
+                            if (in_array($frags[1], $alts)){ $persona_image_token = $frags[0]; }
+                            //error_log('new $persona_image_token = '.print_r($persona_image_token, true));
+                        } elseif ($persona_robot_info['robot_core'] === 'copy'
+                            || $persona_robot_info['robot_core2'] === 'copy'){
+                            //error_log('copy image alt found!');
+                            $persona_image_token = $frags[0];
+                            //error_log('new $persona_image_token = '.print_r($persona_image_token, true));
+                        }
                     }
 
                     // Update the robot's persona in the current battle state
+                    //error_log('final $persona_token = '.print_r($persona_token, true));
+                    //error_log('final $persona_image_token = '.print_r($persona_image_token, true));
                     $this_robot->set_persona($persona_token);
                     $this_robot->set_persona_image($persona_image_token);
 
