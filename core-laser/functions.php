@@ -18,6 +18,7 @@ $functions = array(
         $this_battle->queue_sound_effect('laser-sound');
         $this_ability->target_options_update(array(
             'frame' => 'shoot',
+            'kickback' => array(-40, 0, 0),
             'success' => array(2, 120, -20, 10, $this_robot->print_name().' fires the '.$this_ability->print_name().'!', 2)
             ));
         $target_options = array('prevent_default_text' => true);
