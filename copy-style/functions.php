@@ -88,22 +88,22 @@ $functions = array(
                     $persona_token = $target_robot->robot_token;
                     $persona_image_token = $target_robot->robot_image;
 
+                    // Collect the target persona's index info as well as a backup of our original info
+                    $persona_robot_info = rpg_robot::get_index_info($persona_token);
+                    $persona_robot_name_span = rpg_type::print_span('x', $persona_robot_info['robot_name']);
+                    $original_robot_info = rpg_robot::get_index_info($this_robot->robot_token);
+                    $original_robot_name_span = rpg_type::print_span('x', $original_robot_info['robot_name']);
+
                     // If this is a special alt-changing robot, we need to make sure we remove the "_alt1234" suffix
                     if (in_array($persona_token, $dynamic_image_personas)
-                        || $target_robot->robot_core === 'copy'
-                        || $target_robot->robot_core2 === 'copy'){
+                        || $persona_robot_info['robot_core'] === 'copy'
+                        || $persona_robot_info['robot_core2'] === 'copy'){
                         $persona_image_token = preg_replace('/_alt\d+$/i', '', $persona_image_token);
                     }
 
                     // Update the robot's persona in the current battle state
                     $this_robot->set_persona($persona_token);
                     $this_robot->set_persona_image($persona_image_token);
-
-                    // Collect the target persona's index info as well as a backup of our original info
-                    $persona_robot_info = rpg_robot::get_index_info($this_robot->robot_persona);
-                    $persona_robot_name_span = rpg_type::print_span('x', $persona_robot_info['robot_name']);
-                    $original_robot_info = rpg_robot::get_index_info($this_robot->robot_token);
-                    $original_robot_name_span = rpg_type::print_span('x', $original_robot_info['robot_name']);
 
                     // If this was a human player, make sure we update the player's session with the new persona
                     if ($this_player->player_side == 'left'
