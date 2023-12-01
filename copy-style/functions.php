@@ -70,6 +70,9 @@ $functions = array(
             $this_robot->robot_attachments[$this_attachment_token] = $this_attachment_info;
             $this_robot->update_session();
 
+            // Define the list of robot's with dynamically shifting images so we ensure the base is copied
+            $dynamic_image_personas = array('trill', 'trille-bot', 'ballade');
+
             // Check to ensure the ability was a success before continuing AND the user isn't holding incompatible item
             $copy_style_success = false;
             if ($this_ability->ability_results['this_result'] != 'failure'
@@ -84,6 +87,13 @@ $functions = array(
                     // Collect the target's token as the persona as well as their current image
                     $persona_token = $target_robot->robot_token;
                     $persona_image_token = $target_robot->robot_image;
+
+                    // If this is a special alt-changing robot, we need to make sure we remove the "_alt1234" suffix
+                    if (in_array($persona_token, $dynamic_image_personas)
+                        || $target_robot->robot_core === 'copy'
+                        || $target_robot->robot_core2 === 'copy'){
+                        $persona_image_token = preg_replace('/_alt\d+$/i', '', $persona_image_token);
+                    }
 
                     // Update the robot's persona in the current battle state
                     $this_robot->set_persona($persona_token);
