@@ -52,22 +52,24 @@ $functions = array(
             $temp_first_target_robot = $temp_target_robots[0];
 
             // Deal damage to the first target robot immediately
-            $this_ability->damage_options_update(array(
-                'kind' => 'energy',
-                'kickback' => array(10, 0, 0),
-                'success' => array(3, 15, -15, 10, 'Another hit! The '.$this_ability->print_name().' zapped the target!'),
-                'failure' => array(3, -60, -15, 10, 'The '.$this_ability->print_name().' missed the target&hellip;')
-                ));
-            $this_ability->recovery_options_update(array(
-                'kind' => 'energy',
-                'frame' => 'taunt',
-                'kickback' => array(10, 0, 0),
-                'success' => array(3, 15, -15, 10, 'The '.$this_ability->print_name().' energized the target!'),
-                'failure' => array(3, -65, -15, 10, 'The '.$this_ability->print_name().' missed the target&hellip;')
-                ));
-            $energy_damage_amount = $this_ability->ability_damage2;
-            $temp_first_target_robot->trigger_damage($this_robot, $this_ability, $energy_damage_amount);
-            if ($this_ability->ability_results['this_result'] != 'failure'){ $num_hits_counter++; }
+            if ($temp_first_target_robot->robot_energy > 0){
+                $this_ability->damage_options_update(array(
+                    'kind' => 'energy',
+                    'kickback' => array(10, 0, 0),
+                    'success' => array(3, 15, -15, 10, 'Another hit! The '.$this_ability->print_name().' zapped the target!'),
+                    'failure' => array(3, -60, -15, 10, 'The '.$this_ability->print_name().' missed the target&hellip;')
+                    ));
+                $this_ability->recovery_options_update(array(
+                    'kind' => 'energy',
+                    'frame' => 'taunt',
+                    'kickback' => array(10, 0, 0),
+                    'success' => array(3, 15, -15, 10, 'The '.$this_ability->print_name().' energized the target!'),
+                    'failure' => array(3, -65, -15, 10, 'The '.$this_ability->print_name().' missed the target&hellip;')
+                    ));
+                $energy_damage_amount = $this_ability->ability_damage2;
+                $temp_first_target_robot->trigger_damage($this_robot, $this_ability, $energy_damage_amount, false);
+                if ($this_ability->ability_results['this_result'] != 'failure'){ $num_hits_counter++; }
+            }
 
             // Select the last target from the bottom of the list
             $temp_second_target_robot = $temp_target_robots[count($temp_target_robots) - 1];
@@ -89,11 +91,14 @@ $functions = array(
                     'failure' => array(2, -75, -15, 10, 'The '.$this_ability->print_name().' missed the target&hellip;')
                     ));
                 $energy_damage_amount = $this_ability->ability_damage2;
-                $temp_second_target_robot->trigger_damage($this_robot, $this_ability, $energy_damage_amount);
+                $temp_second_target_robot->trigger_damage($this_robot, $this_ability, $energy_damage_amount, false);
                 if ($this_ability->ability_results['this_result'] != 'failure'){ $num_hits_counter++; }
             }
 
         }
+
+        // Now that all the damage has been dealt, allow the player to check for disabled
+        $target_player->check_robots_disabled($this_player, $this_robot);
 
         // Return true on success
         return true;
