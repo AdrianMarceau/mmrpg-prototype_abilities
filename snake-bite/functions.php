@@ -30,6 +30,13 @@ $functions = array(
                 $target_robot->set_immunities($immunities);
                 $target_robot->set_base_immunities($immunities);
                 }
+            // If the target had an affinity to this type, make sure we remove it
+            $affinities = $target_robot->get_affinities();
+            if (in_array($type, $affinities)){
+                $affinities = array_diff($affinities, array($type));
+                $target_robot->set_affinities($affinities);
+                $target_robot->set_base_affinities($affinities);
+                }
             // Collect the type info so we can know its colour values
             $type_info = rpg_type::get_index_info($type);
             $type_hsl = cms_image::color_rgb2hsl(array_values($type_info['type_colour_dark']));
