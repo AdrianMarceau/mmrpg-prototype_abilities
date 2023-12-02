@@ -12,6 +12,9 @@ $functions = array(
         $this_refresh_text = ($this_robot->print_name().' refreshed the '.rpg_type::print_span('space_explode', 'Black Hole').' behind '.$target_robot->print_name().'!<br /> '.
             'That position on the field will continue to take end-of-turn damage!'
             );
+        $this_destroy_text = ($this_robot->print_name().' sent out a new '.rpg_type::print_span('space_explode', 'Black Hole').' toward '.$target_robot->print_name().'!<br /> '.
+            'Oh wow! The two '.rpg_type::print_span('space_explode', 'Black Holes').' cancelled each other out!'
+            );
 
         // Define this ability's attachment token
         $static_attachment_key = $target_robot->get_static_attachment_key();
@@ -45,21 +48,27 @@ $functions = array(
                 }
 
             }
-            // Else if the ability flag was set, reinforce the hazard by one more duration point
+            // Else if the ability flag was set, this black hole cancels out the other one and removes it!
             else {
 
                 // Collect the attachment from the robot to back up its info
                 $this_attachment_info = $this_battle->battle_attachments[$static_attachment_key][$this_attachment_token];
                 if (empty($this_attachment_info['attachment_duration'])
                     || $this_attachment_info['attachment_duration'] < $static_attachment_duration){
-                    $this_attachment_info['attachment_duration'] = $static_attachment_duration;
-                    $this_battle->battle_attachments[$static_attachment_key][$this_attachment_token] = $this_attachment_info;
-                    $this_battle->update_session();
+                    $this_attachment_info['attachment_duration'] = 0;
+                    $this_battle->set_attachment($static_attachment_key, $this_attachment_token, $this_attachment_info);
                 }
                 if ($target_robot->robot_status != 'disabled'){
-                    $this_ability->target_options_update(array('frame' => 'defend', 'success' => array(0, -9999, -9999, -9999, $this_refresh_text)));
+                    $this_ability->target_options_update(array('frame' => 'defend', 'success' => array(0, -9999, -9999, -9999, $this_destroy_text)));
                     $target_robot->trigger_target($target_robot, $this_ability);
                 }
+                $this_battle->unset_attachment($static_attachment_key, $this_attachment_token);
+                $this_battle->events_create($this_robot, $target_robot, '', '', array(
+                    'event_flag_camera_action' => true,
+                    'event_flag_camera_side' => $target_robot->player->player_side,
+                    'event_flag_camera_focus' => $target_robot->robot_position,
+                    'event_flag_camera_depth' => $target_robot->robot_key
+                    ));
 
             }
 
