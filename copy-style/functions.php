@@ -379,6 +379,9 @@ $functions = array(
             // Now that all the damage has been dealt, allow the player to check for disabled
             $target_player->check_robots_disabled($this_player, $this_robot);
 
+            // Let's also remove any stray submodule-group robots that don't exist anymore
+            $this_player->check_robots_submodules_disabled();
+
             // Remove the temporary ability attachment from this robot
             $this_robot->unset_attachment($this_attachment_token);
 
@@ -513,6 +516,9 @@ $functions = array(
                     )
                 );
 
+            // Let's also remove any stray submodule-group robots that don't exist anymore
+            $this_player->check_robots_submodules_disabled();
+
             // Remove the temporary ability attachment from this robot
             $this_robot->unset_attachment($this_attachment_token);
 
@@ -523,6 +529,9 @@ $functions = array(
             // Trigger this robot's custom function if one has been defined for this context
             $this_robot->trigger_custom_function('rpg-ability_persona-change_after', $extra_objects);
             if ($options->return_early){ return $options->return_value; }
+
+            // Let's also remove any stray submodule-group robots that don't exist anymore
+            $this_player->check_robots_submodules_disabled();
 
         }
 
