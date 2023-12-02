@@ -138,7 +138,7 @@ $functions = array(
 
             // Calculate the effective affection value given the target class
             $target_affection_value = $target_robot->counters['affection'][$this_robot->robot_token];
-            if ($target_robot->robot_core === 'empty'){ $target_affection_value = $target_affection_value / 999; }
+            if ($target_robot->robot_core === 'empty'){ $target_affection_value = $target_affection_value / 5; }
             elseif ($target_robot->robot_class === 'mecha'){ $target_affection_value = $target_affection_value / 2; }
             elseif ($target_robot->robot_class === 'master'){ $target_affection_value = $target_affection_value / 3; }
             elseif ($target_robot->robot_class === 'boss'){ $target_affection_value = $target_affection_value / 4; }
@@ -147,9 +147,15 @@ $functions = array(
 
             // Generate the appropriate affection text given the stat of things
             $target_name_prefix = $target_robot->robot_class === 'mecha' ? 'the ' : '';
-            $target_affection_text = $affection_thresholds[0];
-            foreach ($affection_thresholds AS $threshold => $threshold_text){
-                if ($target_affection_value >= $threshold){ $target_affection_text = $threshold_text; }
+            if ($target_robot->robot_core !== 'empty'){
+                $target_heart_icon = 'heart';
+                $target_affection_text = $affection_thresholds[0];
+                foreach ($affection_thresholds AS $threshold => $threshold_text){
+                    if ($target_affection_value >= $threshold){ $target_affection_text = $threshold_text; }
+                }
+            } else {
+                $target_heart_icon = 'heart-broken';
+                $target_affection_text = 'is not impressed by';
             }
 
             // Display a little message based on how friendly the target robot has become
@@ -158,7 +164,7 @@ $functions = array(
             $target_robot->set_frame('base2');
             $event_header = $this_robot->robot_name.' and '.$target_robot->robot_name;
             $event_body = ucfirst($target_name_prefix).$target_robot->print_name().' '.$target_affection_text.' '.$this_robot->print_name().'!';
-            $event_body .= '<br /> <span style="font-size: 80%;">'.str_repeat('<i class="fa fas fa-heart"></i>', floor(min($target_affection_value, 25))).'</span>';
+            $event_body .= '<br /> <span style="font-size: 80%;">'.str_repeat('<i class="fa fas fa-'.$target_heart_icon.'"></i>', floor(min($target_affection_value, 25))).'</span>';
             $this_battle->events_create($target_robot, false, $event_header, $event_body, array(
                 'console_show_this_player' => false,
                 'console_show_target_player' => false,
@@ -181,62 +187,108 @@ $functions = array(
                 $rtoken = $this_robot->robot_token;
 
                 // If the target robot is a MECHA and has the necessary affection value we can recruit it
-                if ($target_robot->robot_class === 'mecha'
-                    && $target_robot->robot_core !== 'empty'){
+                if ($target_robot->robot_class === 'mecha'){
 
-                    // Add the target mecha support to this robot's battle settings for future use
-                    //error_log('We can recruit the '.$target_robot->robot_token.' mecha now!');
-                    $old_support_token = !empty($_SESSION[$session_token]['values']['battle_settings'][$ptoken]['player_robots'][$rtoken]['robot_support']) ? $_SESSION[$session_token]['values']['battle_settings'][$ptoken]['player_robots'][$rtoken]['robot_support'] : '';
-                    $old_support_image_token = !empty($_SESSION[$session_token]['values']['battle_settings'][$ptoken]['player_robots'][$rtoken]['robot_support_image']) ? $_SESSION[$session_token]['values']['battle_settings'][$ptoken]['player_robots'][$rtoken]['robot_support_image'] : '';
-                    $new_support_token = $target_robot->robot_token;
-                    $new_support_image_token = $target_robot->robot_image !== $target_robot->robot_token ? $target_robot->robot_image : '';
-                    $old_support_exists = !empty($old_support_token) ? true : false;
-                    unset($_SESSION[$session_token]['values']['battle_settings'][$ptoken]['player_robots'][$rtoken]['robot_support']);
-                    unset($_SESSION[$session_token]['values']['battle_settings'][$ptoken]['player_robots'][$rtoken]['robot_support_image']);
-                    $_SESSION[$session_token]['values']['battle_settings'][$ptoken]['player_robots'][$rtoken]['robot_support'] = $new_support_token;
-                    if ($new_support_image_token){ $_SESSION[$session_token]['values']['battle_settings'][$ptoken]['player_robots'][$rtoken]['robot_support_image'] = $new_support_image_token; }
-                    $this_robot->set_support($new_support_token);
-                    $this_robot->set_support_image($new_support_image_token);
-                    //error_log('$old_support_token = '.print_r($old_support_token, true));
-                    //error_log('$old_support_image_token = '.print_r($old_support_image_token, true));
-                    //error_log('$new_support_token = '.print_r($new_support_token, true));
-                    //error_log('$new_support_image_token = '.print_r($new_support_image_token, true));
-                    //error_log('$old_support_exists = '.print_r($old_support_exists, true));
-                    //error_log('$_SESSION//settings/'.$rtoken.' = '.print_r($_SESSION[$session_token]['values']['battle_settings'][$ptoken]['player_robots'][$rtoken], true));
+                    // If this is NOT an empty type mecha, we can recruit it NORMALLY with a friendly message
+                    if ($target_robot->robot_core !== 'empty'){
 
-                    // Display a little message showing that the mecha has been recruited
-                    $this_battle->queue_sound_effect('get-weird-item');
-                    $this_robot->set_frame('summon');
-                    $target_robot->set_frame('victory');
-                    $event_header = $this_robot->robot_name.' and '.$target_robot->robot_name;
-                    $event_body = 'The '.$target_robot->print_name().' decided to join '.$this_robot->print_name().' on '.$this_robot->get_pronoun('possessive2').' journey!';
-                    if ($old_support_exists
-                        && ($old_support_token !== $new_support_token
-                            || $old_support_image_token !== $new_support_image_token)){
-                        $event_body .= '<br /> '.$this_robot->print_name().' waves goodbye to '.$this_robot->get_pronoun('possessive2').' previous support mecha!';
-                    } else {
-                        $event_body .= '<br /> '.$this_robot->print_name().' waves hello to '.$this_robot->get_pronoun('possessive2').' new support mecha!';
+                        // Add the target mecha support to this robot's battle settings for future use
+                        //error_log('We can recruit the '.$target_robot->robot_token.' mecha now!');
+                        $old_support_token = !empty($_SESSION[$session_token]['values']['battle_settings'][$ptoken]['player_robots'][$rtoken]['robot_support']) ? $_SESSION[$session_token]['values']['battle_settings'][$ptoken]['player_robots'][$rtoken]['robot_support'] : '';
+                        $old_support_image_token = !empty($_SESSION[$session_token]['values']['battle_settings'][$ptoken]['player_robots'][$rtoken]['robot_support_image']) ? $_SESSION[$session_token]['values']['battle_settings'][$ptoken]['player_robots'][$rtoken]['robot_support_image'] : '';
+                        $new_support_token = $target_robot->robot_token;
+                        $new_support_image_token = $target_robot->robot_image !== $target_robot->robot_token ? $target_robot->robot_image : '';
+                        $old_support_exists = !empty($old_support_token) ? true : false;
+                        unset($_SESSION[$session_token]['values']['battle_settings'][$ptoken]['player_robots'][$rtoken]['robot_support']);
+                        unset($_SESSION[$session_token]['values']['battle_settings'][$ptoken]['player_robots'][$rtoken]['robot_support_image']);
+                        $_SESSION[$session_token]['values']['battle_settings'][$ptoken]['player_robots'][$rtoken]['robot_support'] = $new_support_token;
+                        if ($new_support_image_token){ $_SESSION[$session_token]['values']['battle_settings'][$ptoken]['player_robots'][$rtoken]['robot_support_image'] = $new_support_image_token; }
+                        $this_robot->set_support($new_support_token);
+                        $this_robot->set_support_image($new_support_image_token);
+                        //error_log('$old_support_token = '.print_r($old_support_token, true));
+                        //error_log('$old_support_image_token = '.print_r($old_support_image_token, true));
+                        //error_log('$new_support_token = '.print_r($new_support_token, true));
+                        //error_log('$new_support_image_token = '.print_r($new_support_image_token, true));
+                        //error_log('$old_support_exists = '.print_r($old_support_exists, true));
+                        //error_log('$_SESSION//settings/'.$rtoken.' = '.print_r($_SESSION[$session_token]['values']['battle_settings'][$ptoken]['player_robots'][$rtoken], true));
+
+                        // Display a little message showing that the mecha has been recruited
+                        $this_battle->queue_sound_effect('get-weird-item');
+                        $this_robot->set_frame('summon');
+                        $target_robot->set_frame('victory');
+                        $event_header = $this_robot->robot_name.' and '.$target_robot->robot_name;
+                        $event_body = 'The '.$target_robot->print_name().' decided to join '.$this_robot->print_name().' on '.$this_robot->get_pronoun('possessive2').' journey!';
+                        if ($old_support_exists
+                            && ($old_support_token !== $new_support_token
+                                || $old_support_image_token !== $new_support_image_token)){
+                            $event_body .= '<br /> '.$this_robot->print_name().' waves goodbye to '.$this_robot->get_pronoun('possessive2').' previous support mecha!';
+                        } else {
+                            $event_body .= '<br /> '.$this_robot->print_name().' waves hello to '.$this_robot->get_pronoun('possessive2').' new support mecha!';
+                        }
+                        $event_body .= ' <i class="fas fa-hand-heart"></i>';
+                        $this_battle->events_create($target_robot, false, $event_header, $event_body, array(
+                            'console_show_this_player' => false,
+                            'console_show_target_player' => false,
+                            'event_flag_camera_action' => true,
+                            'event_flag_camera_side' => $target_robot->player->player_side,
+                            'event_flag_camera_focus' => $target_robot->robot_position,
+                            'event_flag_camera_depth' => $target_robot->robot_key
+                            ));
+                        $this_robot->reset_frame();
+                        //error_log('$target_robot [old] ('.$target_robot->robot_string.') robot frame is '.$target_robot->robot_frame.' on '.__LINE__.' of '.basename(__FILE__));
+
+                        // Mark the mecha as friend and disabled so that the battle can end when everything else is done
+                        $target_robot->set_flag('is_friendly', true);
+                        $target_robot->set_flag('is_recruited', true);
+                        $target_robot->set_status('disabled');
+                        $target_robot->set_frame('victory');
+                        $target_robot->set_frame_styles('display: none;');
+                        $target_player->check_robots_disabled($this_player, $this_robot);
+                        //error_log('$target_robot [old] ('.$target_robot->robot_string.') robot frame is '.$target_robot->robot_frame.' on '.__LINE__.' of '.basename(__FILE__));
+
                     }
-                    $event_body .= ' <i class="fas fa-hand-heart"></i>';
-                    $this_battle->events_create($target_robot, false, $event_header, $event_body, array(
-                        'console_show_this_player' => false,
-                        'console_show_target_player' => false,
-                        'event_flag_camera_action' => true,
-                        'event_flag_camera_side' => $target_robot->player->player_side,
-                        'event_flag_camera_focus' => $target_robot->robot_position,
-                        'event_flag_camera_depth' => $target_robot->robot_key
-                        ));
-                    $this_robot->reset_frame();
-                    //error_log('$target_robot [old] ('.$target_robot->robot_string.') robot frame is '.$target_robot->robot_frame.' on '.__LINE__.' of '.basename(__FILE__));
+                    // Otherwise, if this IS an EMPTY type mecha, we will instead sever any connections to prior support mecha
+                    else {
 
-                    // Mark the mecha as friend and disabled so that the battle can end when everything else is done
-                    $target_robot->set_flag('is_friendly', true);
-                    $target_robot->set_flag('is_recruited', true);
-                    $target_robot->set_status('disabled');
-                    $target_robot->set_frame('victory');
-                    $target_robot->set_frame_styles('display: none;');
-                    $target_player->check_robots_disabled($this_player, $this_robot);
-                    //error_log('$target_robot [old] ('.$target_robot->robot_string.') robot frame is '.$target_robot->robot_frame.' on '.__LINE__.' of '.basename(__FILE__));
+                        // Remove any of this robot's preset support mecha as punishment for trying
+                        //error_log('Trying to recruit the '.$target_robot->robot_token.' backfired!');
+                        $old_support_token = !empty($_SESSION[$session_token]['values']['battle_settings'][$ptoken]['player_robots'][$rtoken]['robot_support']) ? $_SESSION[$session_token]['values']['battle_settings'][$ptoken]['player_robots'][$rtoken]['robot_support'] : '';
+                        $old_support_image_token = !empty($_SESSION[$session_token]['values']['battle_settings'][$ptoken]['player_robots'][$rtoken]['robot_support_image']) ? $_SESSION[$session_token]['values']['battle_settings'][$ptoken]['player_robots'][$rtoken]['robot_support_image'] : '';
+                        $old_support_exists = !empty($old_support_token) ? true : false;
+                        unset($_SESSION[$session_token]['values']['battle_settings'][$ptoken]['player_robots'][$rtoken]['robot_support']);
+                        unset($_SESSION[$session_token]['values']['battle_settings'][$ptoken]['player_robots'][$rtoken]['robot_support_image']);
+                        $this_robot->set_support('');
+                        $this_robot->set_support_image('');
+                        //error_log('$old_support_token = '.print_r($old_support_token, true));
+                        //error_log('$old_support_image_token = '.print_r($old_support_image_token, true));
+                        //error_log('$old_support_exists = '.print_r($old_support_exists, true));
+                        //error_log('$_SESSION//settings/'.$rtoken.' = '.print_r($_SESSION[$session_token]['values']['battle_settings'][$ptoken]['player_robots'][$rtoken], true));
+
+                        // Display a little message showing that the mecha sent out bad vibes and severed the user's connection if applicable
+                        $this_battle->queue_sound_effect('debuff-received');
+                        $this_robot->set_frame('defend');
+                        $target_robot->set_frame('summon');
+                        $event_header = $this_robot->robot_name.' and '.$target_robot->robot_name;
+                        $event_body = 'The '.$target_robot->print_name().' rejected '.$this_robot->print_name().'\'s attempt to recruit it!';
+                        if ($old_support_exists){
+                            $event_body .= '<br /> What the?! '.$this_robot->print_name().' lost '.$this_robot->get_pronoun('possessive2').' connection to '.$this_robot->get_pronoun('possessive2').' previous support mecha!';
+                        } else {
+                            $event_body .= '<br /> '.$target_robot->print_name().' is sending some pretty bad vibes right now!';
+                        }
+                        $event_body .= ' <i class="fas fa-heart-broken"></i>';
+                        $this_battle->events_create($target_robot, false, $event_header, $event_body, array(
+                            'console_show_this_player' => false,
+                            'console_show_target_player' => false,
+                            'event_flag_camera_action' => true,
+                            'event_flag_camera_side' => $target_robot->player->player_side,
+                            'event_flag_camera_focus' => $target_robot->robot_position,
+                            'event_flag_camera_depth' => $target_robot->robot_key
+                            ));
+                        $this_robot->reset_frame();
+                        //error_log('$target_robot [old] ('.$target_robot->robot_string.') robot frame is '.$target_robot->robot_frame.' on '.__LINE__.' of '.basename(__FILE__));
+
+                    }
+
 
                 }
                 // Else if the target robot is a MASTER or a BOSS, we cannot really do anything with it (for now)
