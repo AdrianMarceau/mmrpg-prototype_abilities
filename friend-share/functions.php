@@ -198,6 +198,13 @@ $functions = array(
                         $old_support_image_token = !empty($_SESSION[$session_token]['values']['battle_settings'][$ptoken]['player_robots'][$rtoken]['robot_support_image']) ? $_SESSION[$session_token]['values']['battle_settings'][$ptoken]['player_robots'][$rtoken]['robot_support_image'] : '';
                         $new_support_token = $target_robot->robot_token;
                         $new_support_image_token = $target_robot->robot_image !== $target_robot->robot_token ? $target_robot->robot_image : '';
+                        if (strstr($target_robot->robot_image, '_')
+                            && ($target_robot->robot_core === 'copy'
+                                || $target_robot->robot_core2 === 'copy')){
+                            // break off the final part of the image and only use the base fragment
+                            $frags = explode('_', $target_robot->robot_image);
+                            $new_support_image_token = $frags[0];
+                        }
                         $old_support_exists = !empty($old_support_token) ? true : false;
                         unset($_SESSION[$session_token]['values']['battle_settings'][$ptoken]['player_robots'][$rtoken]['robot_support']);
                         unset($_SESSION[$session_token]['values']['battle_settings'][$ptoken]['player_robots'][$rtoken]['robot_support_image']);
