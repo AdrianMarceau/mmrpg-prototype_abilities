@@ -175,6 +175,12 @@ $functions = array(
                 ));
             $this_robot->reset_frame();
 
+            // Define the list of robot's with dynamically shifting images so we ensure the base is copied
+            $dynamic_image_mechas = array(
+                'sniper-joe' => array('alt'),
+                'trille-bot' => array('alt', 'alt2', 'alt3')
+                );
+
             // Only check recruitment logic if the player using this ability is a human character
             if ($this_player->player_side === 'left'
                 && !empty($target_affection_value)
@@ -198,12 +204,21 @@ $functions = array(
                         $old_support_image_token = !empty($_SESSION[$session_token]['values']['battle_settings'][$ptoken]['player_robots'][$rtoken]['robot_support_image']) ? $_SESSION[$session_token]['values']['battle_settings'][$ptoken]['player_robots'][$rtoken]['robot_support_image'] : '';
                         $new_support_token = $target_robot->robot_token;
                         $new_support_image_token = $target_robot->robot_image !== $target_robot->robot_token ? $target_robot->robot_image : '';
-                        if (strstr($target_robot->robot_image, '_')
-                            && ($target_robot->robot_core === 'copy'
-                                || $target_robot->robot_core2 === 'copy')){
-                            // break off the final part of the image and only use the base fragment
+                        if (strstr($target_robot->robot_image, '_')){
                             $frags = explode('_', $target_robot->robot_image);
-                            $new_support_image_token = $frags[0];
+                            //error_log('$frags = '.print_r($frags, true));
+                            if (!empty($dynamic_image_mechas[$new_support_token])){
+                                //error_log('dynamic image alt found!');
+                                $alts = $dynamic_image_mechas[$new_support_token];
+                                //error_log('$alts = '.print_r($alts, true));
+                                if (in_array($frags[1], $alts)){ $new_support_image_token = $frags[0]; }
+                                //error_log('new $new_support_image_token = '.print_r($new_support_image_token, true));
+                            } elseif ($target_robot->robot_core === 'copy'
+                                || $target_robot->robot_core2 === 'copy'){
+                                //error_log('copy core found!');
+                                $new_support_image_token = $frags[0];
+                                //error_log('new $new_support_image_token = '.print_r($new_support_image_token, true));
+                            }
                         }
                         $old_support_exists = !empty($old_support_token) ? true : false;
                         unset($_SESSION[$session_token]['values']['battle_settings'][$ptoken]['player_robots'][$rtoken]['robot_support']);
