@@ -39,6 +39,17 @@ $functions = array(
             'ability_frame_offset' => array('x' => -10, 'y' => 35, 'z' => -10)
             );
 
+        // Create an options object for this function and populate
+        $options = rpg_game::new_options_object();
+        $options->persona_token = '';
+        $options->persona_image_token = '';
+        $extra_objects = array('options' => $options);
+        $extra_objects['this_ability'] = $this_ability;
+        $extra_objects['this_player'] = $this_player;
+        $extra_objects['this_robot'] = $this_robot;
+        $extra_objects['target_player'] = $target_player;
+        $extra_objects['target_robot'] = $target_robot;
+
         // If the user has NOT already transformed, we can COPY style now
         if (!$is_transformed){
 
@@ -256,6 +267,7 @@ $functions = array(
                         $base_stats_ref['robot_defense'] = $stats_to_copy_values['defense'];
                         $base_stats_ref['robot_speed'] = $stats_to_copy_values['speed'];
                         $this_robot->apply_stat_bonuses(true, $base_stats_ref);
+                        $this_robot->robot_reload();
 
                         // Reapply the initial energy percentage to the newly adjusted value
                         $new_energy = ceil($this_robot->robot_base_energy * $initial_energy_percent);
@@ -351,6 +363,14 @@ $functions = array(
 
                     // Set the ability success flag to true
                     $copy_style_success = true;
+
+                    // Create an options object for this function and populate
+                    $options->persona_token = $persona_token;
+                    $options->persona_image_token = $persona_image_token;
+
+                    // Trigger this robot's custom function if one has been defined for this context
+                    $this_robot->trigger_custom_function('rpg-ability_persona-change_after', $extra_objects);
+                    if ($options->return_early){ return $options->return_value; }
 
                 }
 
@@ -472,6 +492,7 @@ $functions = array(
                 }
                 $base_stats_ref = $original_robot_info;
                 $this_robot->apply_stat_bonuses(true, $base_stats_ref);
+                $this_robot->robot_reload();
 
                 // Reapply the initial energy percentage
                 $new_energy = ceil($this_robot->robot_base_energy * $initial_energy_percent);
@@ -494,6 +515,14 @@ $functions = array(
 
             // Remove the temporary ability attachment from this robot
             $this_robot->unset_attachment($this_attachment_token);
+
+            // Create an options object for this function and populate
+            $options->persona_token = '';
+            $options->persona_image_token = '';
+
+            // Trigger this robot's custom function if one has been defined for this context
+            $this_robot->trigger_custom_function('rpg-ability_persona-change_after', $extra_objects);
+            if ($options->return_early){ return $options->return_value; }
 
         }
 
