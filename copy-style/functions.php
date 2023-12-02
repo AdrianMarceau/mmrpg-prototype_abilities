@@ -83,6 +83,7 @@ $functions = array(
 
             // Define the list of robot's with dynamically shifting images so we ensure the base is copied
             $dynamic_image_personas = array(
+                'sniper-joe' => array('alt'),
                 'trill' => array('alt', 'alt2', 'alt3'),
                 'trille-bot' => array('alt', 'alt2', 'alt3'),
                 'ballade' => array('alt')
