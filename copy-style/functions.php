@@ -73,7 +73,8 @@ $functions = array(
                 'success' => array($temp_ability_frames['damage'], -15, 45, -10, 'The '.$this_ability->print_name().' drains the target\'s power!'),
                 'failure' => array($temp_ability_frames['damage'], -15, 45, -10, 'The '.$this_ability->print_name().' had no effect...')
                 ));
-            $target_robot->trigger_damage($this_robot, $this_ability, $this_ability->ability_damage, false);
+            $energy_damage_amount = $this_ability->ability_damage;
+            $target_robot->trigger_damage($this_robot, $this_ability, $energy_damage_amount, false);
 
             // Attach the ability to this robot
             $this_attachment_info['ability_frame'] = $temp_ability_frames['summon'];
