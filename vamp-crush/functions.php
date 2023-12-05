@@ -16,7 +16,7 @@ $functions = array(
 
         // Move the user forward so it looks like their chowing down
         $this_robot->set_frame('defend');
-        $this_robot->set_frame_offset('x', 180);
+        $this_robot->set_frame_offset('x', 200);
         $this_robot->set_frame_styles('filter: brightness(0.1); ');
         $target_robot->set_frame_styles('filter: brightness(0.1); ');
 
@@ -26,8 +26,8 @@ $functions = array(
             'percent' => true,
             'modifiers' => false,
             'kickback' => array(15, 0, 0),
-            'success' => array(1, -65, -10, -10, 'The '.$this_ability->print_name().' shook the very soul of the target!'),
-            'failure' => array(1, -85, -5, -10, 'The '.$this_ability->print_name().' didn\'t faze the target at all&hellip;')
+            'success' => array(1, -40, 0, -10, 'The '.$this_ability->print_name().' shook the very soul of the target!'),
+            'failure' => array(1, -60, 0, -10, 'The '.$this_ability->print_name().' didn\'t faze the target at all&hellip;')
             ));
         $this_ability->recovery_options_update(array(
             'kind' => 'energy',
@@ -35,8 +35,8 @@ $functions = array(
             'percent' => true,
             'modifiers' => false,
             'kickback' => array(5, 0, 0),
-            'success' => array(1, -35, -10, -10, 'The '.$this_ability->print_name().' just made the target stronger! Drats!'),
-            'failure' => array(1, -65, -5, -10, 'The '.$this_ability->print_name().' didn\'t faze the target at all&hellip;')
+            'success' => array(1, -40, 0, -10, 'The '.$this_ability->print_name().' just made the target stronger! Drats!'),
+            'failure' => array(1, -60, 0, -10, 'The '.$this_ability->print_name().' didn\'t faze the target at all&hellip;')
             ));
         $energy_damage_percent = ($this_ability->ability_damage / 100);
         $energy_damage_amount = round($energy_damage_percent * $target_robot->robot_energy);
@@ -64,8 +64,8 @@ $functions = array(
                 'rates' => array(100, 0, 0),
                 'type' => '',
                 'frame' => 'taunt',
-                'success' => array(2, -9999, 5, -10, $this_robot->print_name().'&#39;s energy was restored!'),
-                'failure' => array(2, -9999, 5, -10, $this_robot->print_name().'&#39;s energy was not affected&hellip;')
+                'success' => array(2, 0, 10, -10, $this_robot->print_name().'&#39;s energy was restored!'),
+                'failure' => array(2, 0, 5, -10, $this_robot->print_name().'&#39;s energy was not affected&hellip;')
             ));
             $energy_recovery_amount = $this_ability->ability_results['this_amount'];
             $this_robot->trigger_recovery($this_robot, $this_ability, $energy_recovery_amount);
