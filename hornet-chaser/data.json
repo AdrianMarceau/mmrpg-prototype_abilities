@@ -13,7 +13,7 @@
     "ability_image_editor2": "",
     "ability_type": "nature",
     "ability_type2": "missile",
-    "ability_description": "The user releases a robotic hornet drone that races across field to sting the target and deal damage!  If the target is disabled by this ability and was holding an item, the drone may steal and return that item to the user instead!",
+    "ability_description": "The user releases a small robotic drone that races across field to sting the target and deal damage!  If the target is holding an item and is disabled by this attack, the drone may return that item to the user instead!",
     "ability_description2": "",
     "ability_speed": 1,
     "ability_speed2": 1,
