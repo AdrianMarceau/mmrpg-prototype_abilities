@@ -11,6 +11,7 @@
     "ability_image_size": 40,
     "ability_image_editor": "",
     "ability_image_editor2": "",
+    "ability_image_editor3": "",
     "ability_type": "wind",
     "ability_type2": "",
     "ability_description": "The user summons a powerful blizzard that covers the screen with snow and damages all robots on the opponent's side of the field!  If any of the robots hit by this attack have had their speed stat boosted, this ability will also reduce that stat boost by one stage!",
@@ -34,7 +35,7 @@
     "ability_shop_level": 3,
     "ability_target": "auto",
     "ability_flag_hidden": 0,
-    "ability_flag_complete": 0,
+    "ability_flag_complete": 1,
     "ability_flag_published": 1,
-    "ability_flag_unlockable": 0
+    "ability_flag_unlockable": 1
 }
