@@ -6,6 +6,7 @@ $functions = array(
         extract($objects);
 
         // Target this robot's self
+        $this_battle->queue_sound_effect('flame-sound');
         $this_ability->target_options_update(array(
             'frame' => 'summon',
             'success' => array(0, -10, 0, 10, $this_robot->print_name().' summons a wheel of fire!')
@@ -13,6 +14,7 @@ $functions = array(
         $this_robot->trigger_target($this_robot, $this_ability);
 
         // Target the opposing robot
+        $this_battle->queue_sound_effect('fireball-sound');
         $this_ability->target_options_update(array(
             'frame' => 'throw',
             'success' => array(1, 100, 0, 10, $this_robot->print_name().' drives the '.$this_ability->print_name().' forward!')
