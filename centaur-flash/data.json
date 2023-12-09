@@ -19,7 +19,7 @@
     "ability_speed": 1,
     "ability_speed2": 1,
     "ability_energy": 8,
-    "ability_energy_percent": 1,
+    "ability_energy_percent": 0,
     "ability_damage": 0,
     "ability_damage_percent": 0,
     "ability_damage2": 0,
