@@ -6,11 +6,11 @@ $functions = array(
         extract($objects);
 
         // Target the opposing robot
+        $this_battle->queue_sound_effect('zephyr-sound');
         $this_ability->target_options_update(array(
             'frame' => 'throw',
             'success' => array(1, 125, 0, 10, $this_robot->print_name().' fires off a '.$this_ability->print_name().'!')
             ));
-        $this_battle->queue_sound_effect('timer-sound');
         $this_robot->trigger_target($target_robot, $this_ability);
 
         // Inflict damage on the opposing robot
@@ -56,6 +56,15 @@ $functions = array(
             $old_item = rpg_game::get_item($this_battle, $target_player, $target_robot, array('item_token' => $old_item_token));
             $target_robot->set_attachment($this_attachment_token, $this_attachment_info);
             $target_robot->set_counter('item_disabled', 3);
+
+            // If the held item was a core, and that core matches a core shield, remove it
+            if (strstr($old_item_token, '-core')){
+                $core_type = str_replace('-core', '', $old_item_token);
+                $core_shield_attachment_token = 'ability_core-shield_'.$core_type;
+                if ($target_robot->has_attachment($core_shield_attachment_token)){
+                    $target_robot->unset_attachment($core_shield_attachment_token);
+                }
+            }
 
             // Update the ability's target options and trigger
             $temp_rotate_amount = 45;
