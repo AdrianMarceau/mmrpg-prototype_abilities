@@ -92,6 +92,30 @@ $functions = array(
         // Return true on success
         return true;
 
+    },
+    'ability_function_onload' => function($objects){
+
+        // Extract all objects into the current scope
+        extract($objects);
+
+        // Update this ability's damage if it's already attached to the robot
+        $check_stats = array('attack', 'defense', 'speed');
+        $base_damage = $this_ability->ability_base_damage;
+        //error_log('$check_stats: '.print_r($check_stats, true));
+        //error_log('$base_damage: '.$base_damage);
+        $new_damage = $base_damage;
+        foreach ($check_stats AS $check_stat){
+            if (!empty($this_robot->counters[$check_stat.'_mods'])){
+                //error_log('check_stat: '.$check_stat.' w/ '.$this_robot->counters[$check_stat.'_mods']);
+                $new_damage += $this_robot->counters[$check_stat.'_mods'];
+            }
         }
+        //error_log('$new_damage: '.$new_damage);
+        $this_ability->set_damage($new_damage);
+
+        // Return true on success
+        return true;
+
+    }
 );
 ?>
