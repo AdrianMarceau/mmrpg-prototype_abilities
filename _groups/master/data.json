@@ -423,6 +423,7 @@
         "group_token": "MM06\/Weapons\/CentaurMan",
         "group_order": 48,
         "group_child_tokens": [
+            "centaur-arrow",
             "centaur-flash"
         ]
     },
