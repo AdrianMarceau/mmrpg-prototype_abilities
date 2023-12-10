@@ -48,7 +48,7 @@ $functions = array(
                 'failure' => array(1, -65, -15, 10, 'The '.$this_ability->print_name().' missed the target&hellip;')
                 ));
             $energy_damage_amount = $this_ability->ability_damage;
-            $temp_first_target_robot->trigger_damage($this_robot, $this_ability, $energy_damage_amount);
+            $temp_first_target_robot->trigger_damage($this_robot, $this_ability, $energy_damage_amount, false);
             if ($this_ability->ability_results['this_result'] != 'failure'){ $num_hits_counter++; }
 
             // Select the last target from the bottom of the list
@@ -71,7 +71,7 @@ $functions = array(
                     'failure' => array(1, -75, -15, -10, 'The '.$this_ability->print_name().' missed the target&hellip;')
                     ));
                 $energy_damage_amount = $this_ability->ability_damage;
-                $temp_second_target_robot->trigger_damage($this_robot, $this_ability, $energy_damage_amount);
+                $temp_second_target_robot->trigger_damage($this_robot, $this_ability, $energy_damage_amount, false);
                 if ($this_ability->ability_results['this_result'] != 'failure'){ $num_hits_counter++; }
             }
 
@@ -105,7 +105,7 @@ $functions = array(
                 'failure' => array(1, -65, -15, 10, 'The '.$this_ability->print_name().' missed the target&hellip;')
                 ));
             $energy_damage_amount = $this_ability->ability_damage;
-            $temp_target_robot->trigger_damage($this_robot, $this_ability, $energy_damage_amount);
+            $temp_target_robot->trigger_damage($this_robot, $this_ability, $energy_damage_amount, false);
             if ($this_ability->ability_results['this_result'] != 'failure'){ $num_hits_counter++; }
 
             // Inflict damage again if target not disabled
@@ -126,11 +126,14 @@ $functions = array(
                     'failure' => array(1, -75, -15, -10, 'The '.$this_ability->print_name().' missed the target&hellip;')
                     ));
                 $energy_damage_amount = $this_ability->ability_damage;
-                $temp_target_robot->trigger_damage($this_robot, $this_ability, $energy_damage_amount);
+                $temp_target_robot->trigger_damage($this_robot, $this_ability, $energy_damage_amount, false);
                 if ($this_ability->ability_results['this_result'] != 'failure'){ $num_hits_counter++; }
             }
 
         }
+
+        // Now that all the damage has been dealt, allow the player to check for disabled
+        $target_player->check_robots_disabled($this_player, $this_robot);
 
         // Return true on success
         return true;
