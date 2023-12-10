@@ -65,19 +65,6 @@ $functions = array(
         $target_robot->unset_attachment($this_attachment_token.'_fx');
         $num_hits_counter++;
 
-        // Trigger an attack break if the ability was successful
-        if ($target_robot->robot_status != 'disabled'
-            && $this_ability->ability_results['this_result'] != 'failure'
-            && $target_robot->counters['attack_mods'] > 0){
-
-            // Call the global stat break function with customized options
-            $attack_breaks = $target_robot->counters['attack_mods'];
-            rpg_ability::ability_function_fixed_stat_break($target_robot, 'attack', $attack_breaks, $this_ability, array(
-                'initiator_robot' => $this_robot
-                ));
-
-        }
-
         // Loop through the target's benched robots, inflicting damage to each
         $backup_target_robots_active = $target_player->values['robots_active'];
         foreach ($backup_target_robots_active AS $key => $info){
