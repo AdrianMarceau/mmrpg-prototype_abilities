@@ -8,6 +8,9 @@ $functions = array(
         // Collect session token for later
         $session_token = rpg_game::session_token();
 
+        // Define the list of "consumable" items for later
+        $consumable_item_regex = '/^(super|energy|weapon|attack|defense|speed)-(pellet|capsule|tank)$/';
+
         // Target the opposing robot
         $this_ability->target_options_update(array(
             'frame' => 'shoot',
@@ -26,6 +29,7 @@ $functions = array(
 
             // Collect the item token
             $old_item_token = $target_robot->robot_item;
+            //error_log('target had an item: '.$old_item_token);
 
             // Define this ability's attachment token
             $temp_rotate_amount = 25;
@@ -43,10 +47,8 @@ $functions = array(
 
              // Remove the item from the target robot and update w/ attachment info
             $old_item = rpg_game::get_item($this_battle, $target_player, $target_robot, array('item_token' => $old_item_token));
-            $old_item->update_session();
-            $target_robot->robot_attachments[$item_attachment_token] = $item_attachment_info;
-            $target_robot->robot_item = '';
-            $target_robot->update_session();
+            $target_robot->set_attachment($item_attachment_token, $item_attachment_info);
+            $target_robot->set_item('');
             $removed_target_item = true;
 
         }
@@ -73,14 +75,15 @@ $functions = array(
 
         // Remove the visual icon attachment from the target
         if ($removed_target_item){
+            //error_log('$removed_target_item: '.print_r($removed_target_item, true));
 
             // Remove the item attachment from view
-            unset($target_robot->robot_attachments[$item_attachment_token]);
-            $target_robot->update_session();
+            $target_robot->unset_attachment($item_attachment_token);
 
             // If the target robot was disabled by the attack, steal the item
             if ($target_robot->robot_status == 'disabled'
                 || $target_robot->robot_energy <= 0){
+                //error_log('target was disabled');
 
                 // If the target robot was the player, we gotta update the session
                 if ($target_player->player_side == 'left'
@@ -94,8 +97,7 @@ $functions = array(
                 }
 
                 // Make sure the target looks disabled right now
-                $target_robot->robot_frame = 'disabled';
-                $target_robot->update_session();
+                $target_robot->set_frame('disabled');
 
                 // Define this ability's attachment token in case we use it
                 $ability_attachment_token = 'ability_'.$this_ability->ability_token;
@@ -110,8 +112,7 @@ $functions = array(
                     );
 
                 // Attach a sprite of this ability to the user returning from its trip
-                $this_robot->robot_attachments[$ability_attachment_token] = $ability_attachment_info;
-                $this_robot->update_session();
+                $this_robot->set_attachment($ability_attachment_token, $ability_attachment_info);
 
                  // Make a duplicate of the target's item for the user to show it being taken
                 $new_item_token = $old_item_token;
@@ -119,9 +120,9 @@ $functions = array(
                 $new_item->update_session();
 
                 // If the target was a consumable like a pellet, capsule, or tank - consume it!
-                $temp_item_regex = '/^(super|energy|weapon|attack|defense|speed)-(pellet|capsule|tank)$/';
-                if (preg_match($temp_item_regex, $old_item_token)
+                if (preg_match($consumable_item_regex, $old_item_token)
                     || in_array($old_item_token, array('yashichi'))){
+                    //error_log('target had consumable item');
 
                     // Break down the token into two parts, stat and size
                     if (strstr($old_item_token, '-')){ list($item_stat, $item_size) = explode('-', $old_item_token); }
@@ -212,8 +213,8 @@ $functions = array(
                     }
 
                 }
-                // Otherwise, if holdable and the user does NOT have a held item already
-                elseif (empty($this_robot->robot_item)){
+                // Otherwise, check to see if we can give this item back to the user in some other way
+                else {
 
                     // Update the ability's target options and trigger
                     $temp_rotate_amount = 45;
@@ -226,46 +227,59 @@ $functions = array(
                         ));
                     $this_robot->trigger_target($this_robot, $new_item, array('prevent_default_text' => true));
 
-                    // Give the cloned item to the user of the ability
-                    $this_robot->robot_item = $new_item_token;
-                    $this_robot->update_session();
+                    // If the user does NOT have a held item already, we can pull this one over and EQUIP it
+                    if (empty($this_robot->robot_item)){
 
-                    // If the target robot was the player, we gotta update the session
-                    if ($this_player->player_side == 'left'
-                        && empty($this_battle->flags['player_battle'])
-                        && empty($this_battle->flags['challenge_battle'])){
-                        $ptoken = $this_player->player_token;
-                        $rtoken = $this_robot->robot_token;
-                        if (!empty($_SESSION[$session_token]['values']['battle_settings'][$ptoken]['player_robots'][$rtoken])){
-                            $_SESSION[$session_token]['values']['battle_settings'][$ptoken]['player_robots'][$rtoken]['robot_item'] = $new_item_token;
+                        // Give the cloned item to the user of the ability
+                        $this_robot->set_item($new_item_token);
+
+                        // If the target robot was the player, we gotta update the session
+                        if ($this_player->player_side == 'left'
+                            && empty($this_battle->flags['player_battle'])
+                            && empty($this_battle->flags['challenge_battle'])){
+                            $ptoken = $this_player->player_token;
+                            $rtoken = $this_robot->robot_token;
+                            if (!empty($_SESSION[$session_token]['values']['battle_settings'][$ptoken]['player_robots'][$rtoken])){
+                                $_SESSION[$session_token]['values']['battle_settings'][$ptoken]['player_robots'][$rtoken]['robot_item'] = $new_item_token;
+                            }
                         }
+
+                        // Adjust the position of the ability attachment and show it moving before removing
+                        $ability_attachment_info['ability_frame_offset'] = array('x' => -90, 'y' => 30, 'z' => -21);
+                        $this_robot->set_attachment($ability_attachment_token, $ability_attachment_info);
+                        $this_battle->events_create(false, false, '', '');
+
                     }
+                    // Else if they DO have an item but is a human player, we at least add this item to the INVENTORY for later
+                    elseif ($this_player->player_side == 'left'){
 
-                    // Adjust the position of the ability attachment and show it moving before removing
-                    $ability_attachment_info['ability_frame_offset'] = array('x' => -90, 'y' => 30, 'z' => -21);
-                    $this_robot->robot_attachments[$ability_attachment_token] = $ability_attachment_info;
-                    $this_robot->update_session();
-                    $this_battle->events_create(false, false, '', '');
+                        // Trigger the actual item drop function on for the player
+                        $this_robot->set_frame('defend');
+                        $item_reward_key = 0;
+                        $item_reward_token = $new_item_token;
+                        $item_quantity_dropped = 1;
+                        rpg_player::trigger_item_drop($this_battle, $target_player, $target_robot, $this_robot, $item_reward_key, $item_reward_token, $item_quantity_dropped);
+                        $this_robot->reset_frame();
 
-                }
-                // Otherwise, if already has an item, do nothing
-                else {
+                    }
+                    // Otherwise we do nothing because there's nothing we can do
+                    else {
 
-                    // Do nothing further
+                        // Do nothing further
+
+                    }
 
                 }
 
                 // Remove the ability attachment from view and give the item to the user
-                unset($this_robot->robot_attachments[$ability_attachment_token]);
-                $this_robot->update_session();
+                $this_robot->unset_attachment($ability_attachment_token);
 
             }
             // Otherwise, put the item back and place and continue
             else {
 
                 // Re-attach the item to the target robot
-                $target_robot->robot_item = $old_item_token;
-                $target_robot->update_session();
+                $target_robot->set_item($old_item_token);
 
             }
         }
