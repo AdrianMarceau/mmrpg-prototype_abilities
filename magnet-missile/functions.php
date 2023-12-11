@@ -23,13 +23,19 @@ $functions = array(
         $target_has_item = !empty($target_robot->robot_item) ? true : false;
         $old_item_token = false;
         $removed_target_item = false;
+        $removed_item_was_consumable = false;
         if ($target_has_item
             && !$target_robot->has_immunity($this_ability->ability_type)
             && !$target_robot->has_immunity($this_ability->ability_type2)){
 
             // Collect the item token
             $old_item_token = $target_robot->robot_item;
-            //error_log('target had an item: '.$old_item_token);
+
+            // Check to see if the target item was consumable
+            if (preg_match($consumable_item_regex, $old_item_token)
+                || in_array($old_item_token, array('yashichi'))){
+                $removed_item_was_consumable = true;
+            }
 
             // Define this ability's attachment token
             $temp_rotate_amount = 25;
@@ -117,12 +123,11 @@ $functions = array(
                  // Make a duplicate of the target's item for the user to show it being taken
                 $new_item_token = $old_item_token;
                 $new_item = rpg_game::get_item($this_battle, $this_player, $this_robot, array('item_token' => $new_item_token));
-                $new_item->update_session();
 
                 // If the target was a consumable like a pellet, capsule, or tank - consume it!
-                if (preg_match($consumable_item_regex, $old_item_token)
-                    || in_array($old_item_token, array('yashichi'))){
+                if ($removed_item_was_consumable){
                     //error_log('target had consumable item');
+                    //error_log('consuming the target item');
 
                     // Break down the token into two parts, stat and size
                     if (strstr($old_item_token, '-')){ list($item_stat, $item_size) = explode('-', $old_item_token); }
@@ -215,6 +220,7 @@ $functions = array(
                 }
                 // Otherwise, check to see if we can give this item back to the user in some other way
                 else {
+                    //error_log('target had non-consumable item');
 
                     // Update the ability's target options and trigger
                     $temp_rotate_amount = 45;
