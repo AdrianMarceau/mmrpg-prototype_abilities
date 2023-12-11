@@ -43,6 +43,7 @@ $functions = array(
             $extra_objects['target_robot'] = $this_robot;
             
             // Trigger this robot's custom function if one has been defined for this context
+            $existing_counter = $target_robot->get_counter('skill_disabled');
             $target_robot->trigger_custom_function('rpg-skill_disable-skill_before', $extra_objects);
             $target_robot->set_counter('skill_disabled', 3);
 
@@ -65,19 +66,21 @@ $functions = array(
             $target_robot->set_attachment($this_skillblock_token, $this_skillblock_info);
 
             // Display an event showing this skill-blocking after effect
-            $this_battle->queue_sound_effect('shields-down');
-            $header = $this_robot->robot_name.'\'s '.$this_ability->ability_name;
-            $body = 'The '.$this_ability->print_name().' disabled '.$target_robot->print_name_s().' passive skill!';
-            $this_robot->set_frame('taunt');
-            $target_robot->set_frame('defend');
-            $this_battle->events_create($this_robot, false, $header, $body, array(
-                'event_flag_camera_action' => true,
-                'event_flag_camera_side' => $target_robot->player->player_side,
-                'event_flag_camera_focus' => $target_robot->robot_position,
-                'event_flag_camera_depth' => $target_robot->robot_key,
-                ));
-            $this_robot->reset_frame();
-            $target_robot->reset_frame();
+            if (empty($existing_counter)){
+                $this_battle->queue_sound_effect('shields-down');
+                $header = $this_robot->robot_name.'\'s '.$this_ability->ability_name;
+                $body = 'The '.$this_ability->print_name().' disabled '.$target_robot->print_name_s().' passive skill!';
+                $this_robot->set_frame('taunt');
+                $target_robot->set_frame('defend');
+                $this_battle->events_create($this_robot, false, $header, $body, array(
+                    'event_flag_camera_action' => true,
+                    'event_flag_camera_side' => $target_robot->player->player_side,
+                    'event_flag_camera_focus' => $target_robot->robot_position,
+                    'event_flag_camera_depth' => $target_robot->robot_key,
+                    ));
+                $this_robot->reset_frame();
+                $target_robot->reset_frame();
+            }
 
         }
 
