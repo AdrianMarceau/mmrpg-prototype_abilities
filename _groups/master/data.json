@@ -822,6 +822,7 @@
         "group_token": "MM11\/Weapons\/TundraMan",
         "group_order": 97,
         "group_child_tokens": [
+            "tundra-spin",
             "tundra-storm"
         ]
     },
