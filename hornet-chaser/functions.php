@@ -269,11 +269,8 @@ $functions = array(
             }
         }
 
-        // If the target was disabled, trigger approptiate action
-        if ($target_robot->robot_status == 'disabled'
-            || $target_robot->robot_energy <= 0){
-            $target_robot->trigger_disabled($this_robot);
-        }
+        // Now that all the damage has been dealt, allow the player to check for disabled
+        $target_player->check_robots_disabled($this_player, $this_robot);
 
         // Return true on success
         return true;
