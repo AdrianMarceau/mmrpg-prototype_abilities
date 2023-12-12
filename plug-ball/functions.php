@@ -72,7 +72,7 @@ $functions = array(
                 $body = 'The '.$this_ability->print_name().' disabled '.$target_robot->print_name_s().' passive skill!';
                 $this_robot->set_frame('taunt');
                 $target_robot->set_frame('defend');
-                $this_battle->events_create($this_robot, false, $header, $body, array(
+                $this_battle->events_create($target_robot, false, $header, $body, array(
                     'event_flag_camera_action' => true,
                     'event_flag_camera_side' => $target_robot->player->player_side,
                     'event_flag_camera_focus' => $target_robot->robot_position,
