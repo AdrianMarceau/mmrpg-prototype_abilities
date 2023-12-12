@@ -30,6 +30,12 @@ $functions = array(
             'success' => array(1, 130, 0, 10, 'The '.$this_ability->print_name().' surprised the target!'),
             'failure' => array(1, 130, 0, -10, 'The '.$this_ability->print_name().' missed&hellip;')
             ));
+        $this_ability->recovery_options_update(array(
+            'kind' => 'energy',
+            'kickback' => array(20, 0, 0),
+            'success' => array(1, 110, 0, 10, 'The '.$this_ability->print_name().' was enjoyed by the target!'),
+            'failure' => array(1, 110, 0, -10, 'The '.$this_ability->print_name().' missed&hellip;')
+            ));
         $energy_damage_amount = $this_ability->ability_damage;
         $target_robot->trigger_damage($this_robot, $this_ability, $energy_damage_amount, false);
 
