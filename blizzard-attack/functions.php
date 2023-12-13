@@ -71,6 +71,13 @@ $functions = array(
                 $target_robot->set_immunities($immunities);
                 $target_robot->set_base_immunities($immunities);
                 }
+            // If the robot had an affinity to this type, make sure we remove it
+            $affinities = $target_robot->get_affinities();
+            if (in_array($type, $affinities)){
+                $affinities = array_diff($affinities, array($type));
+                $target_robot->set_affinities($affinities);
+                $target_robot->set_base_affinities($affinities);
+                }
             // Print a message showing that this effect is taking place
             $prefix = !empty($prefixes) ? array_shift($prefixes).' ' : '';
             $target_robot->set_frame('defend');
