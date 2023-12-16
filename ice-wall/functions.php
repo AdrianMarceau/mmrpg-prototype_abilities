@@ -138,10 +138,6 @@ $functions = array(
         $is_summoned = isset($this_battle->battle_attachments[$static_attachment_key][$this_attachment_token]) ? true : false;
         //error_log('$is_summoned = '.($is_summoned ? 'true' : 'false'));
 
-        // Check if this ability has a true core-match
-        $is_corematch = $this_robot->robot_core == $this_ability->ability_type ? true : false;
-        //error_log('$is_corematch = '.($is_corematch ? 'true' : 'false'));
-
         // If the summon flag had already been set, reduce the weapon energy to zero
         if ($is_summoned){ $this_ability->set_energy(0); }
         // Otherwise, return the weapon energy back to default
@@ -165,7 +161,7 @@ $functions = array(
         //error_log('$this_ability->ability_speed2 = '.print_r($this_ability->ability_speed2, true));
 
         // If the ability is already summoned and is core-match or Target Module, allow bench targeting
-        if ($is_summoned && ($is_corematch || $this_robot->has_attribute('extended-range'))){ $this_ability->set_target('select_target'); }
+        if ($is_summoned && $this_robot->has_attribute('extended-range')){ $this_ability->set_target('select_target'); }
         else { $this_ability->set_target('auto'); }
         //error_log('$this_ability->ability_target = '.print_r($this_ability->ability_target, true));
 
