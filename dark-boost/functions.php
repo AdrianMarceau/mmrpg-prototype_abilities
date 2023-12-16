@@ -33,7 +33,7 @@ $functions = array(
             'frame' => 'summon',
             'success' => array(0, 0, 0, -10,
                 $this_robot->print_name().' cloaks '.$this_robot->get_pronoun('reflexive').' in darkness! <br />'.
-                $this_robot->get_pronoun('subject').' triggered a '.$this_ability->print_name().'!'
+                ucfirst($this_robot->get_pronoun('subject')).' triggered a '.$this_ability->print_name().'!'
                 )
             ));
         $this_robot->trigger_target($this_robot, $this_ability, array('prevent_default_text' => true));
