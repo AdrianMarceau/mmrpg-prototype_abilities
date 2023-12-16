@@ -49,7 +49,7 @@ $functions = array(
             if ($target_robot->counters[$best_stat.'_mods'] > 0){ $break_amount -= $target_robot->counters[$best_stat.'_mods']; }
             else { $break_amount += ($target_robot->counters[$best_stat.'_mods'] * -1); }
             }
-        rpg_ability::ability_function_stat_break($target_robot, $best_stat, $break_amount, $this_ability, array(
+        rpg_ability::ability_function_stat_break($target_robot, $best_stat, ($break_amount * -1), $this_ability, array(
             'initiator_robot' => $this_robot
             ));
         //error_log('$break_amount = '.print_r($break_amount, true));
