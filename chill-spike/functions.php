@@ -164,7 +164,7 @@ $functions = array(
                     )
                 ),
             'ability_frame' => 2,
-            'ability_frame_animate' => array(2, 3),
+            'ability_frame_animate' => array(2, 3, 2, 4),
             'ability_frame_offset' => array(
                 'x' => (0 + ($existing_attachments * 8)),
                 'y' => (-5 + $existing_attachments),
