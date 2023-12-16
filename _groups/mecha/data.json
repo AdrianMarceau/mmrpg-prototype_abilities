@@ -41,10 +41,23 @@
             "ring-tackle",
             "rodent-rush",
             "skull-shot",
-            "shield-attack",
-            "dark-boost",
-            "dark-break",
-            "dark-drain"
+            "shield-attack"
+        ]
+    },
+    "Unsorted": {
+        "group_class": "mecha",
+        "group_token": "Unsorted",
+        "group_order": 1,
+        "group_child_tokens": [
+            "big-bang",
+            "bone-cannon",
+            "crystal-frag",
+            "jump-shot",
+            "nose-dive",
+            "quantum-gravity",
+            "snipe-shot",
+            "tamp-stamp",
+            "wave-wipeout"
         ]
     }
 }
