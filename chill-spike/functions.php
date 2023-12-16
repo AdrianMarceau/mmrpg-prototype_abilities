@@ -118,6 +118,7 @@ $functions = array(
         $this_attachment_token = 'ability_'.$this_ability_token.'_'.$this_attachment->attachment_token.'_'.$static_attachment_key;
         $this_attachment_image = $this_ability_token;
         $this_attachment_destroy_text = 'The <span class="ability_name ability_type ability_type_freeze">Frozen Spikes</span> below {this_robot} faded away... ';
+        $this_attachment_repeat_text = 'The <span class="ability_name ability_type ability_type_freeze">Frozen Spikes</span> below pierced {this_robot}\'s armor! ';
         $this_attachment_info = array(
             'class' => 'ability',
             'sticky' => true,
@@ -125,6 +126,8 @@ $functions = array(
             'ability_image' => $this_attachment_image,
             'attachment_token' => $this_attachment_token,
             'attachment_duration' => $this_attachment_duration,
+            'attachment_energy' => 0,
+            'attachment_energy_base_percent' => $this_ability->ability_damage,
             'attachment_sticky' => true,
             'attachment_weaknesses' => array('flame', 'laser'),
             'attachment_weaknesses_trigger' => 'either',
