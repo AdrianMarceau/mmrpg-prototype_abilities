@@ -20,6 +20,7 @@ $functions = array(
             'remote-mine_remote-mine',
             'crash-bomber_crash-bomb',
             'chain-blast_chain-bomb',
+            'chill-spike_frozen-spikes',
             );
         $beneficial_object_tokens = array(
             'super-arm_super-block',
