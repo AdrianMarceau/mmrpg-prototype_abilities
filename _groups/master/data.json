@@ -1275,10 +1275,20 @@
             "meteor-knuckle"
         ]
     },
+    "BOSS\/Cache\/Darkness": {
+        "group_class": "master",
+        "group_token": "BOSS\/Cache\/Darkness",
+        "group_order": 144,
+        "group_child_tokens": [
+            "dark-boost",
+            "dark-break",
+            "dark-drain"
+        ]
+    },
     "Hidden\/Unused\/MaybeLater": {
         "group_class": "master",
         "group_token": "Hidden\/Unused\/MaybeLater",
-        "group_order": 144,
+        "group_order": 145,
         "group_child_tokens": [
             "pharaoh-wave",
             "dive-blitzkrieg",
@@ -1292,7 +1302,7 @@
     "Hidden\/Unused\/Deprecated": {
         "group_class": "master",
         "group_token": "Hidden\/Unused\/Deprecated",
-        "group_order": 145,
+        "group_order": 146,
         "group_child_tokens": [
             "attack-shuffle",
             "defense-shuffle",
