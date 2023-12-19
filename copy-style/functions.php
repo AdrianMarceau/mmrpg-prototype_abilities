@@ -101,6 +101,9 @@ $functions = array(
                 if ($this_robot->robot_token !== $target_robot->robot_token
                     && $current_persona !== $target_robot->robot_token){
 
+                    // Trigger this robot's custom function if one has been defined for this context
+                    $this_robot->trigger_custom_function('rpg-skill_disable-skill_before', $extra_objects);
+
                     // Collect the target's token as the persona as well as their current image
                     $persona_token = $target_robot->robot_token;
                     $persona_image_token = $target_robot->robot_image;
@@ -425,6 +428,9 @@ $functions = array(
                 );
             $this_robot->reset_frame();
             $this_robot->reset_frame_styles();
+
+            // Trigger this robot's custom function if one has been defined for this context
+            $this_robot->trigger_custom_function('rpg-skill_disable-skill_before', $extra_objects);
 
             $persona_robot_info = rpg_robot::get_index_info($this_robot->robot_persona);
             $persona_robot_name_span = rpg_type::print_span($this_robot->robot_core, $this_robot->robot_name);
