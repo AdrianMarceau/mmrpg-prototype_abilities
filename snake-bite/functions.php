@@ -133,6 +133,7 @@ $functions = array(
         // If this attack was successful, remove the target's held item from use (not permanently)
         if (!empty($this_robot->robot_base_core)
             && $this_ability->ability_results['this_result'] != 'failure'
+            && !empty($this_ability->ability_results['this_amount'])
             && $target_robot->robot_energy > 0
             && $target_robot->robot_status != 'disabled'){
 
