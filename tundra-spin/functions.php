@@ -21,14 +21,13 @@ $functions = array(
         $relevant_boost_type = 'freeze';
         $relevant_field_multiplier = $this_field->get_multiplier($relevant_boost_type);
         if (!empty($relevant_field_multiplier) && $relevant_field_multiplier > 1){
-            $num_extra_hits = floor(($relevant_field_multiplier - 1) * 10);
+            $num_extra_hits = floor(($relevant_field_multiplier - 1) / 0.5);
             $max_hit_counter += $num_extra_hits;
         }
         //error_log('$relevant_boost_type: '.print_r($relevant_boost_type, true));
         //error_log('$relevant_field_multiplier: '.print_r($relevant_field_multiplier, true));
         //error_log('$num_extra_hits: '.print_r($num_extra_hits, true));
         //error_log('$max_hit_counter: '.print_r($max_hit_counter, true));
-
 
         // Define this ability's attachment token
         $this_attachment_token = 'ability_'.$this_ability->ability_token.'_fx';
@@ -151,7 +150,7 @@ $functions = array(
                 'success' => array($temp_frame, $temp_offset, 0, -10, $temp_success_messages[array_rand($temp_success_messages)]),
                 'failure' => array($temp_frame, ($temp_offset * 2), 0, -10, 'The '.$this_ability->print_name().' missed&hellip;')
                 ));
-            $energy_damage_amount = ceil($energy_damage_amount * 1.10);
+            $energy_damage_amount = $energy_damage_amount;
             $target_robot->trigger_damage($this_robot, $this_ability, $energy_damage_amount, false);
             //error_log('$energy_damage_amount: '.print_r($energy_damage_amount, true));
 
