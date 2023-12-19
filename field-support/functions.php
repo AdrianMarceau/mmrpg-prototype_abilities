@@ -15,7 +15,7 @@ $functions = array(
             // Define the field multipliers for when a Copy Core robot uses the ability (multiply existing)
             $this_field_multipliers = !empty($this_field->field_multipliers) ? $this_field->field_multipliers : array();
 
-        } elseif (empty($this_robot->robot_core)){
+        } elseif (empty($this_robot->robot_core) || $this_robot->robot_core === 'empty'){
 
             // Define the field multipliers for when a Neutral Core robot uses the ability (remove existing)
             foreach ($this_field->field_multipliers AS $temp_type => $temp_multiplier){
