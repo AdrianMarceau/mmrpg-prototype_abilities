@@ -11,9 +11,10 @@ $functions = array(
 
         // Check speed to see how many times buster shot can hit
         $options->num_buster_shots = 1;
+        $options->max_buster_shots = $this_robot->robot_level >= 100 ? $this_robot->robot_level : 99;
         if ($this_robot->robot_speed > $target_robot->robot_speed){
             $options->num_buster_shots = floor($this_robot->robot_speed / $target_robot->robot_speed);
-            if ($options->num_buster_shots > $this_robot->robot_level){ $options->num_buster_shots = $this_robot->robot_level; }
+            if ($options->num_buster_shots > $options->max_buster_shots){ $options->num_buster_shots = $options->max_buster_shots; }
         }
 
         // Trigger this robot's item function if one has been defined for this context
