@@ -52,7 +52,8 @@ $functions = array(
             if (!empty($copy_ability_queue)){
 
                 // Find the position of the current copy-shot ability
-                $this_ability_key = array_search($this_ability->ability_token, $this_robot->robot_abilities);
+                $this_ability_token = $this_ability->ability_token;
+                $this_ability_key = array_search($this_ability_token, $this_robot->robot_abilities);
 
                 // Loop through the opponent's ability history in reverse
                 $num_triggered_abilities = count($copy_ability_queue);
@@ -69,9 +70,14 @@ $functions = array(
                     $this_robot->update_session();
 
                     // Copy the current ability to this robot's list, and update
+                    // (re-add if space so player doesn't have to re-equip)
                     $this_battle->queue_sound_effect('get-big-item');
                     $this_robot->robot_frame = 'taunt';
                     $this_robot->robot_abilities[$this_ability_key] = $new_ability_token;
+                    $re_add_copy_shot = false;
+                    $max_robot_abilities = MMRPG_SETTINGS_BATTLEABILITIES_PERROBOT_MAX;
+                    if (count($this_robot->robot_abilities) < $max_robot_abilities){ $re_add_copy_shot = true; }
+                    if ($re_add_copy_shot){ $this_robot->robot_abilities[] = $this_ability_token; }
                     $this_robot->update_session();
                     $this_player->player_frame = 'victory';
                     $this_player->update_session();
@@ -114,16 +120,20 @@ $functions = array(
                             // Unlock this ability for the robot permanently
                             mmrpg_game_unlock_ability($temp_player_info, $temp_robot_info, $temp_ability_info, true);
 
-                            // Remove the copy shot from this robot's battle settings and replace with new ability
-                            $temp_ability_settings = $_SESSION['GAME']['values']['battle_settings'][$this_player->player_token]['player_robots'][$this_robot->robot_token]['robot_abilities'];
-                            $temp_new_ability_settings = array();
-                            if (!isset($temp_ability_settings[$this_new_ability->ability_token])){
-                                foreach ($temp_ability_settings AS $array){ $temp_new_ability_settings[] = $array['ability_token']; }
-                                $temp_overwrite_position = array_search($this_ability->ability_token, $temp_new_ability_settings);
-                                $temp_new_ability_settings[$temp_overwrite_position] = $this_new_ability->ability_token;
-                                $temp_ability_settings = array();
-                                foreach ($temp_new_ability_settings AS $token){ $temp_ability_settings[$token] = array('ability_token' => $token); }
-                                $_SESSION['GAME']['values']['battle_settings'][$this_player->player_token]['player_robots'][$this_robot->robot_token]['robot_abilities'] = $temp_ability_settings;
+                            // Generate a new settings array for this robot in the session and then save it
+                            $session_token = rpg_game::session_token();
+                            $GAME_SESSION = &$_SESSION['GAME'];
+                            if (!empty($GAME_SESSION['values'])
+                                && !empty($GAME_SESSION['values']['battle_settings'])
+                                && !empty($GAME_SESSION['values']['battle_settings'][$this_player->player_token])){
+                                $PLAYER_BATTLE_SETTINGS = &$GAME_SESSION['values']['battle_settings'][$this_player->player_token];
+                                if (!empty($PLAYER_BATTLE_SETTINGS['player_robots'])
+                                    && !empty($PLAYER_BATTLE_SETTINGS['player_robots'][$this_robot->robot_token])
+                                    && !empty($PLAYER_BATTLE_SETTINGS['player_robots'][$this_robot->robot_token]['robot_abilities'])){
+                                    $new_ability_settings = array();
+                                    foreach ($this_robot->robot_abilities AS $token){ $new_ability_settings[$token] = array('ability_token' => $token); }
+                                    $PLAYER_BATTLE_SETTINGS['player_robots'][$this_robot->robot_token]['robot_abilities'] = $new_ability_settings;
+                                }
                             }
 
                         }
