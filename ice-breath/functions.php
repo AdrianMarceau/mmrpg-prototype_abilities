@@ -20,7 +20,7 @@ $functions = array(
         $this_attachment_token = $this_attachment_info['attachment_token'];
 
         // Target the opposing robot
-        $this_battle->queue_sound_effect('blowing-sound');
+        $this_battle->queue_sound_effect('ice-sound');
         $this_ability->target_options_update(array(
             'frame' => $this_robot->robot_token == 'ice-man' ? 'taunt' : 'shoot',
             'success' => array(0, 110, 0, 10, $this_robot->print_name().' uses the '.$this_ability->print_name().'!')
@@ -127,7 +127,7 @@ $functions = array(
             'attachment_duration' => $this_attachment_duration,
             'attachment_sticky' => true,
             'attachment_switch_disabled' => true,
-            'attachment_weaknesses' => array('flame', 'laser'),
+            'attachment_weaknesses' => array('flame', 'impact', 'explode'),
             'attachment_weaknesses_trigger' => 'either',
             'attachment_destroy' => array(
                 'trigger' => 'special',
