@@ -9,6 +9,7 @@ $functions = array(
         if ($this_robot->robot_gender == 'female'){ $pronoun = 'her'; }
         elseif ($this_robot->robot_gender == 'male'){ $pronoun = 'his'; }
         else { $pronoun = 'its'; }
+        $this_battle->queue_sound_effect('summon-positive');
         $this_ability->target_options_update(array(
             'frame' => 'summon',
             'success' => array(0, -10, 0, -1, $this_robot->print_name().' taps into '.$pronoun.' hidden power...', 1)
@@ -17,6 +18,7 @@ $functions = array(
         $this_robot->trigger_target($target_robot, $this_ability, $target_options);
 
         // Update the ability's target options and trigger
+        $this_battle->queue_sound_effect('cosmic-sound');
         $this_ability->target_options_update(array(
             'frame' => 'throw',
             'success' => array(2, 140, -20, 10, $this_robot->print_name().' releases an '.$this_ability->print_name().'!', 3)
