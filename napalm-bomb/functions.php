@@ -38,7 +38,7 @@ $functions = array(
         // Function to handle the repeated logic of dropping a bomb on a target
         $this_ability_damage = $this_ability->ability_damage;
         $handle_strike = function($target_robot, $strike_num) use (
-            &$this_robot, &$this_ability, &$this_ability_damage,
+            &$this_battle, &$this_robot, &$this_ability, &$this_ability_damage,
             $explosion_attachment_token, $explosion_attachment_info
             ){
 
@@ -74,6 +74,7 @@ $functions = array(
                 ));
 
             // Define the amount and attempt to trigger damage to the target robot
+            $this_battle->queue_sound_effect('explode-sound');
             $trigger_options = array('apply_modifiers' => true, 'apply_position_modifiers' => false);
             $target_robot->set_attachment($explosion_attachment_token, $explosion_attachment_info);
             $target_robot->trigger_damage($this_robot, $this_ability, $this_ability_damage, false, $trigger_options);
@@ -86,18 +87,19 @@ $functions = array(
         // Calculate how much WE is required for repeated attacks
         $weapon_energy_required = $this_robot->calculate_weapon_energy($this_ability, $this_ability->ability_energy, $temp_ability_energy_mods);
 
-        // Target the opposing robot
-        if ($this_robot->robot_weapons >= $weapon_energy_required * 3){
-            $this_ability->target_options_update(array(
-                'frame' => 'throw',
-                'kickback' => array(-10, 0, 0),
-                'success' => array(0, 10, 80, 10, $this_robot->print_name().' releases an array of '.$this_ability->print_name(true).'!')
-                ));
-        } elseif ($this_robot->robot_weapons >= $weapon_energy_required * 2){
+        // Target the opposing robot (+1 strike b/c it auto takes the listed We amount when clicking)
+        $num_bombs_to_drop = floor($this_robot->robot_weapons / $weapon_energy_required) + 1;
+        if ($num_bombs_to_drop >= 3){
             $this_ability->target_options_update(array(
                 'frame' => 'summon',
                 'kickback' => array(-10, 0, 0),
-                'success' => array(0, 10, 180, 10, $this_robot->print_name().' releases a duo of '.$this_ability->print_name(true).'!')
+                'success' => array(0, 10, 80, 10, $this_robot->print_name().' releases an array of '.$this_ability->print_name(true).'!')
+                ));
+        } elseif ($num_bombs_to_drop >= 2){
+            $this_ability->target_options_update(array(
+                'frame' => 'summon',
+                'kickback' => array(-10, 0, 0),
+                'success' => array(0, 10, 110, 10, $this_robot->print_name().' releases a duo of '.$this_ability->print_name(true).'!')
                 ));
         } else {
             $this_ability->target_options_update(array(
@@ -106,6 +108,7 @@ $functions = array(
                 'success' => array(1, 10, 140, 10, $this_robot->print_name().' releases a '.$this_ability->print_name().'!')
                 ));
         }
+        $this_battle->queue_sound_effect('summon-sound');
         $this_robot->trigger_target($target_robot, $this_ability, array('prevent_stats_text' => true));
 
         // Continue triggering the attack until target disabled OR user runs out of weapon energy
