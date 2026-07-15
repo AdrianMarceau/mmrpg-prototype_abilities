@@ -15,16 +15,16 @@ $functions = array(
         $get_next_target_robot = function($robot_id = 0) use($this_battle, $target_player, &$target_robot_ids){
             $robot_info = array();
             $active_robot_keys = array_keys($target_player->values['robots_active']);
+            $allow_robot_repeats = count($target_robot_ids) >= count($active_robot_keys);
             shuffle($active_robot_keys);
             foreach ($active_robot_keys AS $key_key => $robot_key){
                 $robot_info = $target_player->values['robots_active'][$robot_key];
                 if (!empty($robot_id) && $robot_info['robot_id'] !== $robot_id){ continue; }
-                if (!in_array($robot_info['robot_id'], $target_robot_ids)){
-                    $robot_id = $robot_info['robot_id'];
-                    $target_robot_ids[] = $robot_id;
-                    $next_target_robot = rpg_game::get_robot($this_battle, $target_player, $robot_info);
-                    return $next_target_robot;
-                    }
+                if (in_array($robot_info['robot_id'], $target_robot_ids) && !$allow_robot_repeats){ continue; }
+                $robot_id = $robot_info['robot_id'];
+                $target_robot_ids[] = $robot_id;
+                $next_target_robot = rpg_game::get_robot($this_battle, $target_player, $robot_info);
+                return $next_target_robot;
                 }
             };
 
@@ -45,7 +45,7 @@ $functions = array(
         $number_of_blocks++;
 
         // Only add an additional attachments if there are enough targets
-        if ($target_robots_active_count >= 2){
+        if (mt_rand(0, 1) === 0){ // $target_robots_active_count >= 2
             $this_attachment_info2 = $this_attachment_info;
             $this_attachment_info2['ability_id'] .= '02';
             $this_attachment_info2['ability_frame_offset'] = array('x' => 120, 'y' => 55, 'z' => 30);
@@ -57,11 +57,11 @@ $functions = array(
         }
 
         // Only add an additional attachments if there are enough targets
-        if ($target_robots_active_count >= 3){
+        if (mt_rand(0, 1) === 0){ // $target_robots_active_count >= 3
             $this_attachment_info3 = $this_attachment_info;
             $this_attachment_info3['ability_id'] .= '03';
             $this_attachment_info3['ability_frame_offset'] = array('x' => 140, 'y' => 140, 'z' => 20);
-            $this_attachment_info2['ability_frame'] = 3;
+            $this_attachment_info3['ability_frame'] = 3;
             $this_attachment_info3['ability_frame_animate'] = array(3);
             $this_robot->set_attachment($this_attachment_token.'_3', $this_attachment_info3);
             $target_robot_3 = $get_next_target_robot();
@@ -69,7 +69,7 @@ $functions = array(
         }
 
         // Only add an additional attachments if there are enough targets
-        if ($target_robots_active_count >= 4){
+        if (mt_rand(0, 1) === 0){ // $target_robots_active_count >= 4
             $this_attachment_info4 = $this_attachment_info;
             $this_attachment_info4['ability_id'] .= '04';
             $this_attachment_info4['ability_frame_offset'] = array('x' => 240, 'y' => 100, 'z' => 30);
@@ -113,6 +113,10 @@ $functions = array(
         // Remove the fourth attachment as it is no-longer in from view
         if ($this_robot->has_attachment($this_attachment_token.'_4')){ $this_robot->unset_attachment($this_attachment_token.'_4'); }
 
+        // Predefine the success/failure text variables
+        $success_text = '';
+        $failure_text = '';
+
         // Create an empty event for dramatic pause
         $this_robot->set_frame('base');
         $this_battle->events_create(false, false, '', '');
@@ -137,10 +141,6 @@ $functions = array(
 
         // If a second attachment has been created, we can fire it off at a different target
         if (isset($this_attachment_info2)){
-
-            // Define the success/failure text variables
-            $success_text = '';
-            $failure_text = '';
 
             // Adjust damage/recovery text based on results
             if ($this_ability->ability_results['total_strikes'] == 1){ $success_text = 'Another block hit!'; }
