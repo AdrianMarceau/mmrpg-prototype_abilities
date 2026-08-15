@@ -150,8 +150,13 @@ $functions = array(
                             $ptoken = $this_player->player_token;
                             $rtoken = $this_robot->robot_token;
                             $itoken = $new_item_token;
+                            $itoken_equipped = $itoken.'__equipped';
                             if (!empty($_SESSION[$session_token]['values']['battle_settings'][$ptoken]['player_robots'][$rtoken])){
                                 $_SESSION[$session_token]['values']['battle_settings'][$ptoken]['player_robots'][$rtoken]['robot_item'] = $itoken;
+                                if (!isset($_SESSION[$session_token]['values']['battle_items'][$itoken])){ $_SESSION[$session_token]['values']['battle_items'][$itoken] = 0; }
+                                $_SESSION[$session_token]['values']['battle_items'][$itoken] += 1;
+                                if (!isset($_SESSION[$session_token]['values']['battle_items'][$itoken_equipped])){ $_SESSION[$session_token]['values']['battle_items'][$itoken_equipped] = 0; }
+                                $_SESSION[$session_token]['values']['battle_items'][$itoken_equipped] += 1;
                             }
                         }
 
