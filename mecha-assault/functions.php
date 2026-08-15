@@ -5,6 +5,12 @@ $functions = array(
         // Extract all objects into the current scope
         extract($objects);
 
+        // Pull in the session variables in case we need them later
+        $game_session_token = rpg_game::session_token();
+        $GAME_SESSION = &$_SESSION[$game_session_token];
+        $world_session_token = rpg_world::session_token();
+        $WORLD_SESSION = &$_SESSION[$world_session_token];
+
         // Check to see how many robots this player current has on their team
         $num_current_robots = count($this_player->player_robots);
 
@@ -96,23 +102,23 @@ $functions = array(
 
             // If this is a human player, increment the summon counter for this mecha
             if ($this_player->player_side === 'left'){
-                if (!isset($_SESSION['GAME']['values']['robot_database'][$this_mecha_token])){ $_SESSION['GAME']['values']['robot_database'][$this_mecha_token] = array('robot_token' => $this_mecha_token); }
-                if (empty($_SESSION['GAME']['values']['robot_database'][$this_mecha_token]['robot_summoned'])){ $_SESSION['GAME']['values']['robot_database'][$this_mecha_token]['robot_summoned'] = 0; }
-                //if (empty($_SESSION['GAME']['values']['robot_database'][$this_mecha_token]['robot_encountered'])){ $_SESSION['GAME']['values']['robot_database'][$this_mecha_token]['robot_encountered'] = 0; }
-                $this_mecha_summoned_counter = $_SESSION['GAME']['values']['robot_database'][$this_mecha_token]['robot_summoned'] + 1;
-                //$this_mecha_encountered_counter = $_SESSION['GAME']['values']['robot_database'][$this_mecha_token]['robot_encountered'] + 1;
-                $_SESSION['GAME']['values']['robot_database'][$this_mecha_token]['robot_summoned'] = $this_mecha_summoned_counter;
-                //$_SESSION['GAME']['values']['robot_database'][$this_mecha_token]['robot_encountered'] = $this_mecha_encountered_counter;
+                if (!isset($GAME_SESSION['values']['robot_database'][$this_mecha_token])){ $GAME_SESSION['values']['robot_database'][$this_mecha_token] = array('robot_token' => $this_mecha_token); }
+                if (empty($GAME_SESSION['values']['robot_database'][$this_mecha_token]['robot_summoned'])){ $GAME_SESSION['values']['robot_database'][$this_mecha_token]['robot_summoned'] = 0; }
+                //if (empty($GAME_SESSION['values']['robot_database'][$this_mecha_token]['robot_encountered'])){ $GAME_SESSION['values']['robot_database'][$this_mecha_token]['robot_encountered'] = 0; }
+                $this_mecha_summoned_counter = $GAME_SESSION['values']['robot_database'][$this_mecha_token]['robot_summoned'] + 1;
+                //$this_mecha_encountered_counter = $GAME_SESSION['values']['robot_database'][$this_mecha_token]['robot_encountered'] + 1;
+                $GAME_SESSION['values']['robot_database'][$this_mecha_token]['robot_summoned'] = $this_mecha_summoned_counter;
+                //$GAME_SESSION['values']['robot_database'][$this_mecha_token]['robot_encountered'] = $this_mecha_encountered_counter;
             }
             // Else if the target was the human player, increment the encounter counter for this mecha
             elseif ($target_player->player_side === 'left'){
-                if (!isset($_SESSION['GAME']['values']['robot_database'][$this_mecha_token])){ $_SESSION['GAME']['values']['robot_database'][$this_mecha_token] = array('robot_token' => $this_mecha_token); }
-                //if (empty($_SESSION['GAME']['values']['robot_database'][$this_mecha_token]['robot_summoned'])){ $_SESSION['GAME']['values']['robot_database'][$this_mecha_token]['robot_summoned'] = 0; }
-                if (empty($_SESSION['GAME']['values']['robot_database'][$this_mecha_token]['robot_encountered'])){ $_SESSION['GAME']['values']['robot_database'][$this_mecha_token]['robot_encountered'] = 0; }
-                //$this_mecha_summoned_counter = $_SESSION['GAME']['values']['robot_database'][$this_mecha_token]['robot_summoned'] + 1;
-                $this_mecha_encountered_counter = $_SESSION['GAME']['values']['robot_database'][$this_mecha_token]['robot_encountered'] + 1;
-                //$_SESSION['GAME']['values']['robot_database'][$this_mecha_token]['robot_summoned'] = $this_mecha_summoned_counter;
-                $_SESSION['GAME']['values']['robot_database'][$this_mecha_token]['robot_encountered'] = $this_mecha_encountered_counter;
+                if (!isset($GAME_SESSION['values']['robot_database'][$this_mecha_token])){ $GAME_SESSION['values']['robot_database'][$this_mecha_token] = array('robot_token' => $this_mecha_token); }
+                //if (empty($GAME_SESSION['values']['robot_database'][$this_mecha_token]['robot_summoned'])){ $GAME_SESSION['values']['robot_database'][$this_mecha_token]['robot_summoned'] = 0; }
+                if (empty($GAME_SESSION['values']['robot_database'][$this_mecha_token]['robot_encountered'])){ $GAME_SESSION['values']['robot_database'][$this_mecha_token]['robot_encountered'] = 0; }
+                //$this_mecha_summoned_counter = $GAME_SESSION['values']['robot_database'][$this_mecha_token]['robot_summoned'] + 1;
+                $this_mecha_encountered_counter = $GAME_SESSION['values']['robot_database'][$this_mecha_token]['robot_encountered'] + 1;
+                //$GAME_SESSION['values']['robot_database'][$this_mecha_token]['robot_summoned'] = $this_mecha_summoned_counter;
+                $GAME_SESSION['values']['robot_database'][$this_mecha_token]['robot_encountered'] = $this_mecha_encountered_counter;
             }
 
             // Update the summon flag now that we're done with it
@@ -128,35 +134,46 @@ $functions = array(
             $this_mecha_image = !empty($this_mecha_image_token) ? $this_mecha_image_token : $this_mecha_token;
 
             // Generate the new robot and add it to this player's team
+            if ($this_player->player_side === 'left'){
+                error_log('getting next-highest base ID for '.$this_mecha_token.' ...');
+                $this_base_id = mmrpg_prototype_robots_next_base_id($this_mecha_token);
+            }
+            else {
+                error_log('generating next-highest base ID via '.$this_mecha_token.' index ID '.$this_mecha_index_info['robot_id'].' ...');
+                $this_base_id = ($this_mecha_index_info['robot_id'] * 100) + $this_robot->counters['support_mechas_summoned'] + 1;
+            }
+            error_log('creating new '.$this_mecha_info['robot_token'].' w/ $this_base_id = '.print_r($this_base_id, true));
             $this_mecha_key = $temp_summoner_key; //$this_player->counters['robots_active'] + $this_player->counters['robots_disabled'] + 1;
             $this_mecha_id = rpg_game::unique_robot_id($this_player->player_id, $this_mecha_info['robot_id'], ($this_player->counters['robots_total'] + 1));
             $this_mecha_id_token = $this_mecha_id.'_'.$this_mecha_info['robot_token'];
-            $this_boost_abilities = array('attack-boost', 'defense-boost', 'speed-boost', 'energy-boost');
-            $this_break_abilities = array('attack-break', 'defense-break', 'speed-break', 'energy-break');
-            $this_mode_abilities = array('attack-mode', 'defense-mode', 'speed-mode', 'energy-mode');
-            $this_swap_abilities = array('attack-swap', 'defense-swap', 'speed-swap', 'energy-swap');
-            $this_extra_abilities = array_merge($this_boost_abilities, $this_break_abilities, $this_mode_abilities, $this_swap_abilities);
-            shuffle($this_extra_abilities);
+            //$this_boost_abilities = array('attack-boost', 'defense-boost', 'speed-boost', 'energy-boost');
+            //$this_break_abilities = array('attack-break', 'defense-break', 'speed-break', 'energy-break');
+            //$this_mode_abilities = array('attack-mode', 'defense-mode', 'speed-mode', 'energy-mode');
+            //$this_swap_abilities = array('attack-swap', 'defense-swap', 'speed-swap', 'energy-swap');
+            //$this_extra_abilities = array_merge($this_boost_abilities, $this_break_abilities, $this_mode_abilities, $this_swap_abilities);
+            //shuffle($this_extra_abilities);
+            error_log('-> new $this_mecha_key = '.print_r($this_mecha_key, true));
+            error_log('-> new $this_mecha_id = '.print_r($this_mecha_id, true));
+            error_log('-> new $this_mecha_id_token = '.print_r($this_mecha_id_token, true));
 
             // Define the base mecha info with position, level, and base rewards
             $this_mecha_info['robot_id'] = $this_mecha_id;
+            $this_mecha_info['robot_base_id'] = $this_base_id;
             $this_mecha_info['robot_key'] = $temp_summoner_key;
             $this_mecha_info['robot_position'] = 'active';
-            if ($this_mecha_letter !== 'A'){ $this_mecha_info['robot_name'] .= ' '.$this_mecha_letter; }
             $this_mecha_info['robot_image'] = $this_mecha_image;
             $this_mecha_info['robot_item'] = '';
             $this_mecha_info['robot_experience'] = 0;
-            $this_mecha_info['robot_level'] = $this_robot_level;
+            $this_mecha_info['robot_level'] = $this_robot_level; //ceil($this_robot_level / 3);
             $this_mecha_info['robot_weapons'] = $this_robot->robot_base_weapons;
             $this_mecha_info['robot_base_weapons'] = $this_robot->robot_base_weapons;
-            $this_mecha_info['values']['robot_rewards']['robot_energy'] = !empty($this_robot->values['robot_rewards']['robot_energy']) ? $this_robot->values['robot_rewards']['robot_energy'] : 0;
             $this_mecha_info['values']['robot_rewards']['robot_attack'] = !empty($this_robot->values['robot_rewards']['robot_attack']) ? $this_robot->values['robot_rewards']['robot_attack'] : 0;
             $this_mecha_info['values']['robot_rewards']['robot_defense'] = !empty($this_robot->values['robot_rewards']['robot_defense']) ? $this_robot->values['robot_rewards']['robot_defense'] : 0;
             $this_mecha_info['values']['robot_rewards']['robot_speed'] = !empty($this_robot->values['robot_rewards']['robot_speed']) ? $this_robot->values['robot_rewards']['robot_speed'] : 0;
-            $this_mecha_info['counters']['energy_mods'] = !empty($this_robot->counters['energy_mods']) ? $this_robot->counters['energy_mods'] : 0;
             $this_mecha_info['counters']['attack_mods'] = !empty($this_robot->counters['attack_mods']) ? $this_robot->counters['attack_mods'] : 0;
             $this_mecha_info['counters']['defense_mods'] = !empty($this_robot->counters['defense_mods']) ? $this_robot->counters['defense_mods'] : 0;
             $this_mecha_info['counters']['speed_mods'] = !empty($this_robot->counters['speed_mods']) ? $this_robot->counters['speed_mods'] : 0;
+            error_log('-> new $this_mecha_info = '.print_r($this_mecha_info, true));
 
             // Decide which abilities this mecha should have, let's start fresh
             $mecha_ability_list = array();
@@ -209,7 +226,7 @@ $functions = array(
 
             // Finally, give this mecha any abilities from the summoner they're compatible with
             foreach ($this_robot->robot_abilities AS $key => $extra_ability){
-                if ($extra_ability == 'mecha-support'){ continue; }
+                if (strstr($extra_ability, 'mecha-')){ continue; }
                 if (in_array($extra_ability, $mecha_ability_list)){ continue; }
                 if (rpg_robot::has_ability_compatibility($this_mecha_token, $extra_ability, $this_mecha_info['robot_item'])){
                     $mecha_ability_list[] = $extra_ability;
@@ -220,6 +237,7 @@ $functions = array(
             if (count($mecha_ability_list) > 8){
                 $mecha_ability_list = array_slice($mecha_ability_list, 0, 8);
             }
+            error_log('-> new $mecha_ability_list = '.print_r($mecha_ability_list, true));
 
             // Imprint the generated abilities onto the mecha's final info array
             $this_mecha_info['robot_abilities'] = $mecha_ability_list;
@@ -242,6 +260,56 @@ $functions = array(
             $this_robot->set_key($temp_next_key);
             $this_battle->actions_trigger($this_player, $this_robot, $target_player, $target_robot, 'switch', $this_mecha_id_token);
             $this_robot->set_frame('base');
+
+            // If this is a WORLD battle, make sure we also unlock this mecha for the player fully so it's persistent
+            if ($this_battle->flags['world_battle']
+                && $this_player->player_side === 'left'
+                && !empty($this_mecha_info['robot_base_id'])){
+                error_log('oh! this is a world battle! we should fully unlock '.$this_mecha_token.' for free-roam use');
+                // Generate the semi-permanent session key so we can add this robot to the save data
+                $mecha_session_key = $this_mecha_info['robot_base_id'].'_'.$this_mecha_info['robot_token'];
+                // Create new session data for the mecha in the world array
+                $mecha_world_session_array = array(
+                    'energy' => 0,
+                    'weapons' => 0,
+                    'attack' => $this_mecha_info['counters']['attack_mods'],
+                    'defense' => $this_mecha_info['counters']['defense_mods'],
+                    'speed' => $this_mecha_info['counters']['speed_mods']
+                    );
+                // Create a temporary entry in the battle rewards array with this mecha's level, experience, etc.
+                $mecha_battle_rewards_array = array(
+                    'flags' => array(), 'counters' => array(), 'values' => array(),
+                    'robot_id' => $this_mecha_info['robot_base_id'],
+                    'robot_token' => $this_mecha_info['robot_token'],
+                    'robot_level' => $this_mecha_info['robot_level'],
+                    'robot_attack' => $this_mecha_info['values']['robot_rewards']['robot_attack'],
+                    'robot_defense' => $this_mecha_info['values']['robot_rewards']['robot_defense'],
+                    'robot_speed' => $this_mecha_info['values']['robot_rewards']['robot_speed'],
+                    'robot_abilities' => array(),
+                    );
+                // Create a temporary entry in the battle settings array with this mecha's level, experience, etc.
+                $mecha_battle_settings_array = array(
+                    'flags' => array(), 'counters' => array(), 'values' => array(),
+                    'robot_id' => $this_mecha_info['robot_base_id'],
+                    'robot_token' => $this_mecha_info['robot_token'],
+                    'robot_image' => $this_mecha_info['robot_image'],
+                    'original_player' => $this_player->player_token,
+                    'robot_abilities' => array()
+                    );
+                // Loop through abilities and add them to the battle rewards and settings arrays as well
+                foreach ($mecha_ability_list AS $key => $ability_token){
+                    if ($key === 0){ $mecha_battle_rewards_array['robot_abilities'][$ability_token] = array('ability_token' => $ability_token); }
+                    $mecha_battle_settings_array['robot_abilities'][$ability_token] = array('ability_token' => $ability_token);
+                }
+                error_log('NOW $mecha_session_key = '.print_r($mecha_session_key, true));
+                error_log('and $mecha_world_session_array = '.print_r($mecha_world_session_array, true));
+                error_log('and $mecha_battle_rewards_array = '.print_r($mecha_battle_rewards_array, true));
+                error_log('and $mecha_battle_settings_array = '.print_r($mecha_battle_settings_array, true));
+                // Add the generated session arrays to their parents for persistent keeping
+                $WORLD_SESSION['robot_sessions'][$mecha_session_key] = $mecha_world_session_array;
+                $GAME_SESSION['values']['battle_rewards'][$this_player->player_token]['player_robots'][$mecha_session_key] = $mecha_battle_rewards_array;
+                $GAME_SESSION['values']['battle_settings'][$this_player->player_token]['player_robots'][$mecha_session_key] = $mecha_battle_settings_array;
+            }
 
             // Automatically trigger an ability action from the new mecha support robot
             $temp_mecha->robot_reload();
