@@ -106,7 +106,24 @@ $functions = array(
                 $ptoken = $this_player->player_token;
                 $rtoken = $this_robot->robot_token;
                 if (!empty($_SESSION[$session_token]['values']['battle_settings'][$ptoken]['player_robots'][$rtoken])){
+                    $this_old_item_token = $_SESSION[$session_token]['values']['battle_settings'][$ptoken]['player_robots'][$rtoken]['robot_item'];
+                    if (!empty($this_old_item_token)){
+                        $item_token = $this_old_item_token;
+                        $item_token_equipped = $item_token.'__equipped';
+                        if (!isset($_SESSION[$session_token]['values']['battle_items'][$item_token])){ $_SESSION[$session_token]['values']['battle_items'][$item_token] = 1; }
+                        $_SESSION[$session_token]['values']['battle_items'][$item_token] -= 1;
+                        if (!isset($_SESSION[$session_token]['values']['battle_items'][$item_token_equipped])){ $_SESSION[$session_token]['values']['battle_items'][$item_token_equipped] = 1; }
+                        $_SESSION[$session_token]['values']['battle_items'][$item_token_equipped] -= 1;
+                    }
                     $_SESSION[$session_token]['values']['battle_settings'][$ptoken]['player_robots'][$rtoken]['robot_item'] = $this_new_item_token;
+                    if (!empty($this_new_item_token)){
+                        $item_token = $this_new_item_token;
+                        $item_token_equipped = $item_token.'__equipped';
+                        if (!isset($_SESSION[$session_token]['values']['battle_items'][$item_token])){ $_SESSION[$session_token]['values']['battle_items'][$item_token] = 0; }
+                        $_SESSION[$session_token]['values']['battle_items'][$item_token] += 1;
+                        if (!isset($_SESSION[$session_token]['values']['battle_items'][$item_token_equipped])){ $_SESSION[$session_token]['values']['battle_items'][$item_token_equipped] = 0; }
+                        $_SESSION[$session_token]['values']['battle_items'][$item_token_equipped] += 1;
+                    }
                 }
             }
 
@@ -137,7 +154,24 @@ $functions = array(
                 $ptoken = $target_player->player_token;
                 $rtoken = $target_robot->robot_token;
                 if (!empty($_SESSION[$session_token]['values']['battle_settings'][$ptoken]['player_robots'][$rtoken])){
+                    $target_old_item_token = $_SESSION[$session_token]['values']['battle_settings'][$ptoken]['player_robots'][$rtoken]['robot_item'];
+                    if (!empty($target_old_item_token)){
+                        $item_token = $target_old_item_token;
+                        $item_token_equipped = $item_token.'__equipped';
+                        if (!isset($_SESSION[$session_token]['values']['battle_items'][$item_token])){ $_SESSION[$session_token]['values']['battle_items'][$item_token] = 1; }
+                        $_SESSION[$session_token]['values']['battle_items'][$item_token] -= 1;
+                        if (!isset($_SESSION[$session_token]['values']['battle_items'][$item_token_equipped])){ $_SESSION[$session_token]['values']['battle_items'][$item_token_equipped] = 1; }
+                        $_SESSION[$session_token]['values']['battle_items'][$item_token_equipped] -= 1;
+                    }
                     $_SESSION[$session_token]['values']['battle_settings'][$ptoken]['player_robots'][$rtoken]['robot_item'] = $target_new_item_token;
+                    if (!empty($target_new_item_token)){
+                        $item_token = $target_new_item_token;
+                        $item_token_equipped = $item_token.'__equipped';
+                        if (!isset($_SESSION[$session_token]['values']['battle_items'][$item_token])){ $_SESSION[$session_token]['values']['battle_items'][$item_token] = 0; }
+                        $_SESSION[$session_token]['values']['battle_items'][$item_token] += 1;
+                        if (!isset($_SESSION[$session_token]['values']['battle_items'][$item_token_equipped])){ $_SESSION[$session_token]['values']['battle_items'][$item_token_equipped] = 0; }
+                        $_SESSION[$session_token]['values']['battle_items'][$item_token_equipped] += 1;
+                    }
                 }
             }
 
