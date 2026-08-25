@@ -11,6 +11,7 @@ $functions = array(
             'kickback' => array(160, 0, 50),
             'success' => array(0, 12, 0, -10, $this_robot->print_name().' uses '.$this_ability->print_name().'!')
             ));
+        $this_battle->queue_sound_effect('zephyr-sound');
         $this_robot->trigger_target($target_robot, $this_ability);
 
         // Inflict damage on the opposing robot
