@@ -14,26 +14,26 @@ $functions = array(
         if ($this_battle_turn % 3 == 0){
             $this_swing_stage = 3;
             $this_swing_weapon = 'vacuum';
-            $this_ability->set_image($this_ability->ability_token.'-3');
+            $this_ability->set_image($this_ability->ability_token.'_3');
             $this_ability->set_damage($this_ability->ability_base_damage * 3);
         }
         elseif ($this_battle_turn % 2 == 0){
             $this_swing_stage = 2;
             $this_swing_weapon = 'umbrella';
-            $this_ability->set_image($this_ability->ability_token.'-2');
+            $this_ability->set_image($this_ability->ability_token.'_2');
             $this_ability->set_damage($this_ability->ability_base_damage * 2);
         }
         else {
             $this_swing_stage = 1;
             $this_swing_weapon = 'broom';
-            $this_ability->set_image($this_ability->ability_token.'-1');
+            $this_ability->set_image($this_ability->ability_token.'_1');
             $this_ability->reset_damage();
         }
 
         // Update the ability image if the user is in their alt image
         $alt_image_triggers = array('roll_alt', 'roll_alt3', 'roll_alt5');
         if (in_array($this_robot->robot_image, $alt_image_triggers)){
-            $this_ability->set_image($this_ability->ability_image.'-b');
+            $this_ability->set_image($this_ability->ability_image.'b');
         }
 
         // Target the opposing robot
@@ -115,20 +115,20 @@ $functions = array(
         if ($next_battle_turn > 3){ $next_battle_turn = $next_battle_turn % 3; }
 
         if ($next_battle_turn % 3 == 0){
-            $this_ability->set_image($this_ability->ability_token.'-3');
+            $this_ability->set_image($this_ability->ability_token.'_3');
             $this_ability->set_damage($this_ability->ability_base_damage * 3);
         } elseif ($next_battle_turn % 2 == 0){
-            $this_ability->set_image($this_ability->ability_token.'-2');
+            $this_ability->set_image($this_ability->ability_token.'_2');
             $this_ability->set_damage($this_ability->ability_base_damage * 2);
         } else {
-            $this_ability->set_image($this_ability->ability_token.'-1');
+            $this_ability->set_image($this_ability->ability_token.'_1');
             $this_ability->reset_damage();
         }
 
         // Update the ability image if the user is in their alt image
         $alt_image_triggers = array('roll_alt', 'roll_alt3', 'roll_alt5');
         if (in_array($this_robot->robot_image, $alt_image_triggers)){
-            $this_ability->set_image($this_ability->ability_image.'-b');
+            $this_ability->set_image($this_ability->ability_image.'b');
         }
 
         // If the user has Extended Range, allow bench targeting
