@@ -11,6 +11,7 @@
     "ability_image_size": 40,
     "ability_image_editor": "adrianmarceau",
     "ability_image_editor2": "",
+    "ability_image_editor3": "",
     "ability_type": "swift",
     "ability_type2": "",
     "ability_description": "The user strikes at the target with blinding speed before they have a chance to react, dealing damage and causing them to drop any held items in their possession.  Items dropped this way will not be found until the end of the turn.  This ability always goes first.",

@@ -45,43 +45,64 @@ $functions = array(
             && $target_robot->robot_status != 'disabled'
             && !empty($target_robot->robot_item)){
 
-            // Change this robot's frame to a summon now
-            $this_robot->set_frame('taunt');
-            $this_robot->set_frame_offset('x', 80);
-            $this_robot->set_frame_styles('');
+            // Check to see if the target's team is protected by a Magnet Module
+            $magnet_protectors = $target_player->get_value('magnet_protectors');
+            if (!empty($magnet_protectors)){
 
-            // Define this ability's attachment token
-            $this_attachment_token = 'ability_'.$this_ability->ability_token;
-            $this_attachment_info = array(
-                'class' => 'ability',
-                'attachment_token' => $this_attachment_token,
-                'ability_token' => $this_ability->ability_token,
-                'ability_frame' => 2,
-                'ability_frame_animate' => array(2),
-                'ability_frame_offset' => array('x' => 0, 'y' => 60, 'z' => 20)
-                );
+                // The item is protected, so show a generic failure message and safely bypass the theft
+                $target_robot->set_frame('defend');
+                $this_battle->events_create($target_robot, false, '',
+                    '...but '.$target_robot->print_name().'\'s item was protected!',
+                    array(
+                        'event_flag_camera_action' => true,
+                        'event_flag_camera_side' => $target_robot->player->player_side,
+                        'event_flag_camera_focus' => $target_robot->robot_position,
+                        'event_flag_camera_depth' => $target_robot->robot_key
+                        )
+                    );
+                $target_robot->reset_frame();
 
-            // Remove the item from the target robot and update w/ attachment info
-            $old_item_token = $target_robot->robot_item;
-            $old_item = rpg_game::get_item($this_battle, $target_player, $target_robot, array('item_token' => $old_item_token));
-            $target_robot->set_attachment($this_attachment_token, $this_attachment_info);
-            $target_robot->set_counter('item_disabled', 2);
+            } else {
 
-            // Update the ability's target options and trigger
-            $temp_rotate_amount = 45;
-            $old_item->set_frame_styles('opacity: 0.5; transform: rotate('.$temp_rotate_amount.'deg); -webkit-transform: rotate('.$temp_rotate_amount.'deg); -moz-transform: rotate('.$temp_rotate_amount.'deg); ');
-            $old_item->target_options_update(array(
-                'frame' => 'defend',
-                'success' => array(0, -90, 0, 20,
-                    $target_robot->print_name().' dropped '.$target_robot->get_pronoun('possessive2').' held item!'.
-                    '<br /> The '.$old_item->print_name().' was temporarily disabled!'
-                    )
-                ));
-            $target_robot->trigger_target($target_robot, $old_item, array('prevent_default_text' => true));
+                // Change this robot's frame to a summon now
+                $this_robot->set_frame('taunt');
+                $this_robot->set_frame_offset('x', 80);
+                $this_robot->set_frame_styles('');
 
-            // Remove the visual icon attachment from the target
-            unset($target_robot->robot_attachments[$this_attachment_token]);
-            $target_robot->update_session();
+                // Define this ability's attachment token
+                $this_attachment_token = 'ability_'.$this_ability->ability_token;
+                $this_attachment_info = array(
+                    'class' => 'ability',
+                    'attachment_token' => $this_attachment_token,
+                    'ability_token' => $this_ability->ability_token,
+                    'ability_frame' => 2,
+                    'ability_frame_animate' => array(2),
+                    'ability_frame_offset' => array('x' => 0, 'y' => 60, 'z' => 20)
+                    );
+
+                // Remove the item from the target robot and update w/ attachment info
+                $old_item_token = $target_robot->robot_item;
+                $old_item = rpg_game::get_item($this_battle, $target_player, $target_robot, array('item_token' => $old_item_token));
+                $target_robot->set_attachment($this_attachment_token, $this_attachment_info);
+                $target_robot->set_counter('item_disabled', 2);
+
+                // Update the ability's target options and trigger
+                $temp_rotate_amount = 45;
+                $old_item->set_frame_styles('opacity: 0.5; transform: rotate('.$temp_rotate_amount.'deg); -webkit-transform: rotate('.$temp_rotate_amount.'deg); -moz-transform: rotate('.$temp_rotate_amount.'deg); ');
+                $old_item->target_options_update(array(
+                    'frame' => 'defend',
+                    'success' => array(0, -90, 0, 20,
+                        $target_robot->print_name().' dropped '.$target_robot->get_pronoun('possessive2').' held item!'.
+                        '<br /> The '.$old_item->print_name().' was temporarily disabled!'
+                        )
+                    ));
+                $target_robot->trigger_target($target_robot, $old_item, array('prevent_default_text' => true));
+
+                // Remove the visual icon attachment from the target
+                unset($target_robot->robot_attachments[$this_attachment_token]);
+                $target_robot->update_session();
+
+            }
 
         }
 
