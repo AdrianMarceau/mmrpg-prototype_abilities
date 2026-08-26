@@ -23,39 +23,61 @@ $functions = array(
         $old_item_token = false;
         $removed_target_item = false;
         $removed_item_was_consumable = false;
+        
         if ($target_has_item
             && !$target_robot->has_immunity($this_ability->ability_type)
             && !$target_robot->has_immunity($this_ability->ability_type2)){
 
-            // Collect the item token
-            $old_item_token = $target_robot->robot_item;
+            // Check to see if the target's team is protected by a Magnet Module
+            $magnet_protectors = $target_player->get_value('magnet_protectors');
+            if (!empty($magnet_protectors)){
+                
+                // The item is protected, so broadcast a generic failure message and safely bypass the theft
+                $target_robot->set_frame('defend');
+                $this_battle->events_create($target_robot, false, '',
+                    '...but '.$target_robot->print_name().'\'s item was protected!',
+                    array(
+                        'event_flag_camera_action' => true,
+                        'event_flag_camera_side' => $target_robot->player->player_side,
+                        'event_flag_camera_focus' => $target_robot->robot_position,
+                        'event_flag_camera_depth' => $target_robot->robot_key
+                        )
+                    );
+                $target_robot->reset_frame();
+                
+            } else {
 
-            // Check to see if the target item was consumable
-            if (preg_match($consumable_item_regex, $old_item_token)
-                || in_array($old_item_token, array('yashichi'))){
-                $removed_item_was_consumable = true;
-            }
+                // Collect the item token
+                $old_item_token = $target_robot->robot_item;
 
-            // Define this ability's attachment token
-            $temp_rotate_amount = 25;
-            $item_attachment_token = 'item_'.$old_item_token;
-            $item_attachment_info = array(
-                'class' => 'item',
-                'sticky' => true,
-                'attachment_token' => $item_attachment_token,
-                'item_token' => $old_item_token,
-                'item_frame' => 0,
-                'item_frame_animate' => array(0),
-                'item_frame_offset' => array('x' => 0, 'y' => 60, 'z' => 20),
-                'item_frame_styles' => 'opacity: 0.75; transform: rotate('.$temp_rotate_amount.'deg); -webkit-transform: rotate('.$temp_rotate_amount.'deg); -moz-transform: rotate('.$temp_rotate_amount.'deg); '
-                );
+                // Check to see if the target item was consumable
+                if (preg_match($consumable_item_regex, $old_item_token)
+                    || in_array($old_item_token, array('yashichi'))){
+                    $removed_item_was_consumable = true;
+                }
 
-             // Remove the item from the target robot and update w/ attachment info
-            if ($removed_item_was_consumable){
-                $old_item = rpg_game::get_item($this_battle, $target_player, $target_robot, array('item_token' => $old_item_token));
-                $target_robot->set_attachment($item_attachment_token, $item_attachment_info);
-                $target_robot->set_item('');
-                $removed_target_item = true;
+                // Define this ability's attachment token
+                $temp_rotate_amount = 25;
+                $item_attachment_token = 'item_'.$old_item_token;
+                $item_attachment_info = array(
+                    'class' => 'item',
+                    'sticky' => true,
+                    'attachment_token' => $item_attachment_token,
+                    'item_token' => $old_item_token,
+                    'item_frame' => 0,
+                    'item_frame_animate' => array(0),
+                    'item_frame_offset' => array('x' => 0, 'y' => 60, 'z' => 20),
+                    'item_frame_styles' => 'opacity: 0.75; transform: rotate('.$temp_rotate_amount.'deg); -webkit-transform: rotate('.$temp_rotate_amount.'deg); -moz-transform: rotate('.$temp_rotate_amount.'deg); '
+                    );
+
+                 // Remove the item from the target robot and update w/ attachment info
+                if ($removed_item_was_consumable){
+                    $old_item = rpg_game::get_item($this_battle, $target_player, $target_robot, array('item_token' => $old_item_token));
+                    $target_robot->set_attachment($item_attachment_token, $item_attachment_info);
+                    $target_robot->set_item('');
+                    $removed_target_item = true;
+                }
+
             }
 
         }
