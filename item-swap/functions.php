@@ -75,18 +75,36 @@ $functions = array(
         $this_item_index_info = !empty($this_item_token) ? rpg_item::get_index_info($this_item_token) : false;
         $target_item_index_info = !empty($target_item_token) ? rpg_item::get_index_info($target_item_token) : false;
 
-        // Collect this robot's stat mods and the target's so we can swap them
-        //$stat_token = 'attack';
-        //$this_stat_mods = $this_robot->counters[$stat_token.'_mods'];
-        //$target_stat_mods = $target_robot->counters[$stat_token.'_mods'];
-
         // If this robot happens to be targeting itself or the item are the same, do nothing and return now
         if ($has_target_self || $this_item_token === $target_item_token || $target_robot->robot_status != 'active'){
 
             // Update the ability's target options and trigger
             $this_ability->target_options_update(array('frame' => 'defend', 'success' => array(0, 0, 0, 10, '&hellip;but nothing happened.')));
             $this_robot->trigger_target($target_robot, $this_ability, array('prevent_default_text' => true));
-            return;
+            return true;
+
+        }
+
+        // Check to see if the target's team is protected by a Magnet Module (only applies to enemies)
+        $magnet_protectors = $target_player->get_value('magnet_protectors');
+        if (!empty($magnet_protectors) 
+            && $this_player->player_side !== $target_player->player_side 
+            && !empty($target_item_token)){
+            
+            // The item is protected, so show a generic failure message and safely bypass the swap
+            $target_robot->set_frame('defend');
+            $this_battle->events_create($target_robot, false, '',
+                '...but '.$target_robot->print_name().'\'s item was protected!',
+                array(
+                    'event_flag_camera_action' => true,
+                    'event_flag_camera_side' => $target_robot->player->player_side,
+                    'event_flag_camera_focus' => $target_robot->robot_position,
+                    'event_flag_camera_depth' => $target_robot->robot_key
+                    )
+                );
+            $target_robot->reset_frame();
+
+            return true;
 
         }
 
@@ -252,10 +270,9 @@ $functions = array(
         // Extract all objects into the current scope
         extract($objects);
 
-        // Support robots can target allies, while others target the enemy (inlcuding bench w/ Target Module)
-        if ($this_robot->robot_core === '' || $this_robot->robot_class == 'mecha'){ $this_ability->set_target('select_this_ally'); }
-        elseif ($this_robot->has_attribute('extended-range')){ $this_ability->set_target('select_target'); }
-        else { $this_ability->set_target('auto'); }
+        // If the user has Extended Range, allow bench targeting
+        if ($this_robot->has_attribute('extended-range')){ $this_ability->set_target('select_target'); }
+        else { $this_ability->reset_target(); }
 
         // Return true on success
         return true;
