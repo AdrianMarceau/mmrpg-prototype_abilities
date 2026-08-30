@@ -50,9 +50,6 @@ $functions = array(
                 ));
             $energy_damage_amount = $this_robot->robot_energy;
             $this_robot->trigger_damage($target_robot, $this_ability, $energy_damage_amount, true);
-            //$this_robot->trigger_damage($target_robot, $this_ability, $energy_damage_amount, false);
-            //$this_robot->robot_frame = 'defeat';
-            //$this_robot->trigger_disabled($target_robot);
 
         }
 
