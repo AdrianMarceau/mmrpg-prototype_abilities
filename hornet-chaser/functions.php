@@ -29,8 +29,8 @@ $functions = array(
             && !$target_robot->has_immunity($this_ability->ability_type2)){
 
             // Check to see if the target's team is protected by a Magnet Module
-            $magnet_protectors = $target_player->get_value('magnet_protectors');
-            if (!empty($magnet_protectors)){
+            $magnet_robots = $target_player->get_value('magnet_robots');
+            if (!empty($magnet_robots)){
                 
                 // The item is protected, so broadcast a generic failure message and safely bypass the theft
                 $target_robot->set_frame('defend');
