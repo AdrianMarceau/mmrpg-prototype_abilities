@@ -138,14 +138,14 @@ $functions = array(
 
                 // Generate the new robot and add it to this player's team
                 if ($this_player->player_side === 'left'){
-                    error_log('getting next-highest base ID for '.$this_mecha_token.' ...');
+                    //error_log('getting next-highest base ID for '.$this_mecha_token.' ...');
                     $this_base_id = mmrpg_prototype_robots_next_base_id($this_mecha_token);
                 }
                 else {
-                    error_log('generating next-highest base ID via '.$this_mecha_token.' index ID '.$this_mecha_index_info['robot_id'].' ...');
+                    //error_log('generating next-highest base ID via '.$this_mecha_token.' index ID '.$this_mecha_index_info['robot_id'].' ...');
                     $this_base_id = ($this_mecha_index_info['robot_id'] * 100) + $this_robot->counters['support_mechas_summoned'] + 1;
                 }
-                error_log('creating new '.$this_mecha_info['robot_token'].' w/ $this_base_id = '.print_r($this_base_id, true));
+                //error_log('creating new '.$this_mecha_info['robot_token'].' w/ $this_base_id = '.print_r($this_base_id, true));
                 $this_mecha_key = $temp_next_key;
                 $this_mecha_id = rpg_game::unique_robot_id($this_player->player_id, $this_mecha_info['robot_id'], ($this_player->counters['robots_total'] + 1));
                 $this_mecha_id_token = $this_mecha_id.'_'.$this_mecha_info['robot_token'];
@@ -296,10 +296,10 @@ $functions = array(
                 $this_robot->reset_frame();
 
                 // If this is a WORLD battle, make sure we also unlock this mecha for the player fully so it's persistent
-                if ($this_battle->flags['world_battle']
+                if (!empty($this_battle->flags['world_battle'])
                     && $this_player->player_side === 'left'
                     && !empty($this_mecha_info['robot_base_id'])){
-                    error_log('oh! this is a world battle! we should fully unlock '.$this_mecha_token.' for free-roam use');
+                    //error_log('oh! this is a world battle! we should fully unlock '.$this_mecha_token.' for free-roam use');
                     // Generate the semi-permanent session key so we can add this robot to the save data
                     $mecha_session_key = $this_mecha_info['robot_base_id'].'_'.$this_mecha_info['robot_token'];
                     // Create new session data for the mecha in the world array
@@ -335,10 +335,10 @@ $functions = array(
                         if ($key === 0){ $mecha_battle_rewards_array['robot_abilities'][$ability_token] = array('ability_token' => $ability_token); }
                         $mecha_battle_settings_array['robot_abilities'][$ability_token] = array('ability_token' => $ability_token);
                     }
-                    error_log('NOW $mecha_session_key = '.print_r($mecha_session_key, true));
-                    error_log('and $mecha_world_session_array = '.print_r($mecha_world_session_array, true));
-                    error_log('and $mecha_battle_rewards_array = '.print_r($mecha_battle_rewards_array, true));
-                    error_log('and $mecha_battle_settings_array = '.print_r($mecha_battle_settings_array, true));
+                    //error_log('NOW $mecha_session_key = '.print_r($mecha_session_key, true));
+                    //error_log('and $mecha_world_session_array = '.print_r($mecha_world_session_array, true));
+                    //error_log('and $mecha_battle_rewards_array = '.print_r($mecha_battle_rewards_array, true));
+                    //error_log('and $mecha_battle_settings_array = '.print_r($mecha_battle_settings_array, true));
                     // Add the generated session arrays to their parents for persistent keeping
                     $WORLD_SESSION['robot_sessions'][$mecha_session_key] = $mecha_world_session_array;
                     $GAME_SESSION['values']['battle_rewards'][$this_player->player_token]['player_robots'][$mecha_session_key] = $mecha_battle_rewards_array;
