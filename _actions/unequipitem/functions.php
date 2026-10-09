@@ -12,15 +12,31 @@ $functions = array(
         if ($this_player->player_side == 'left'
             && !empty($this_robot->robot_item)
             && empty($this_battle->flags['player_battle'])
-            && empty($this_battle->flags['challenge_battle'])
-            && (empty($_SESSION[$session_token]['values']['battle_items'][$this_robot->robot_item])
-                || $_SESSION[$session_token]['values']['battle_items'][$this_robot->robot_item] < MMRPG_SETTINGS_ITEMS_MAXQUANTITY)){
+            && empty($this_battle->flags['challenge_battle'])){
 
-            // Create inventory slot if not exists yet then add one of these items to it
-            if (empty($_SESSION[$session_token]['values']['battle_items'][$this_robot->robot_item])){ $_SESSION[$session_token]['values']['battle_items'][$this_robot->robot_item] = 0; }
-            $temp_item_quantity_old = $_SESSION[$session_token]['values']['battle_items'][$this_robot->robot_item];
-            $_SESSION[$session_token]['values']['battle_items'][$this_robot->robot_item] += 1;
-            $temp_item_quantity_new = $_SESSION[$session_token]['values']['battle_items'][$this_robot->robot_item];
+            // Define tokens for the item and its equipped counter
+            $item_token = $this_robot->robot_item;
+            $equipped_token = $item_token . '__equipped';
+
+            // Calculate available inventory before unequipping for the battle message
+            $inventory_count = !empty($_SESSION[$session_token]['values']['battle_items'][$item_token]) ? $_SESSION[$session_token]['values']['battle_items'][$item_token] : 0;
+            $equipped_count_old = !empty($_SESSION[$session_token]['values']['battle_items'][$equipped_token]) ? $_SESSION[$session_token]['values']['battle_items'][$equipped_token] : 0;
+            $available_count_old = max(0, $inventory_count - $equipped_count_old);
+
+            // Decrement the equipped counter
+            if (!isset($_SESSION[$session_token]['values']['battle_items'][$equipped_token])){
+                $_SESSION[$session_token]['values']['battle_items'][$equipped_token] = 0;
+            }
+            $_SESSION[$session_token]['values']['battle_items'][$equipped_token] -= 1;
+
+            // Ensure we don't drop below zero just in case
+            if ($_SESSION[$session_token]['values']['battle_items'][$equipped_token] < 0){
+                $_SESSION[$session_token]['values']['battle_items'][$equipped_token] = 0;
+            }
+
+            // Calculate available inventory after unequipping
+            $equipped_count_new = $_SESSION[$session_token]['values']['battle_items'][$equipped_token];
+            $available_count_new = max(0, $inventory_count - $equipped_count_new);
 
             // Remove the item from this robot in the session
             $ptoken = $this_player->player_token;
@@ -58,15 +74,12 @@ $functions = array(
                 'frame' => 'summon',
                 'success' => array(0, -10, 40, 20,
                     $this_robot->print_name().' unequipped '.$this_robot->get_pronoun('possessive2').' held item!'.
-                    '<br /> The '.$old_item->print_name().' was added to the inventory! '.
-                    '<span class="item_stat item_type item_type_none">'.$temp_item_quantity_old.' <sup style="bottom: 2px;">&raquo;</sup> '.$temp_item_quantity_new.'</span>'
+                    '<br /> The '.$old_item->print_name().' was returned to the inventory! '.
+                    '<span class="item_stat item_type item_type_none">'.$available_count_old.' <sup style="bottom: 2px;">&raquo;</sup> '.$available_count_new.'</span>'
                     )
                 ));
             $this_robot->trigger_target($this_robot, $old_item, array('prevent_default_text' => true));
             //$old_item->reset_name();
-
-            // If the item we added to the inventory was a shard, we may need to generate a new core
-            if (strstr($old_item_token, '-shard')){ rpg_item::add_new_shard_to_inventory($old_item_token, $objects); }
 
         }
         // Otherwise this action will always fail (and should have been disabled elsewhere anyway)
@@ -81,6 +94,6 @@ $functions = array(
         // Return true on success
         return true;
 
-        }
+    }
 );
 ?>
