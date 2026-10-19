@@ -295,10 +295,19 @@ $functions = array(
                 $temp_mecha->reset_frame();
                 $this_robot->reset_frame();
 
+                // Check to see if we can make this mecha persistent in the world
+                $allow_persistent_data = $this_player->player_side === 'left' ? true : false;
+                if (empty($this_battle->flags['world_battle'])){ $allow_persistent_data = false; }
+                if (empty($this_mecha_info['robot_base_id'])){ $allow_persistent_data = false; }
+                if ($allow_persistent_data){
+                   $current_player_robots_strings = $this_player->player_side === 'left' ? mmrpg_prototype_robots_unlocked($this_player->player_token, true, true) : array();
+                   $current_player_robots_count = count($current_player_robots_strings);
+                   $max_robots_in_storage = MMRPG_SETTINGS_BATTLEROBOTS_STORAGE_MAX;
+                   if ($current_player_robots_count >= $max_robots_in_storage){ $allow_persistent_data = false; }
+                }
+
                 // If this is a WORLD battle, make sure we also unlock this mecha for the player fully so it's persistent
-                if (!empty($this_battle->flags['world_battle'])
-                    && $this_player->player_side === 'left'
-                    && !empty($this_mecha_info['robot_base_id'])){
+                if ($allow_persistent_data){
                     //error_log('oh! this is a world battle! we should fully unlock '.$this_mecha_token.' for free-roam use');
                     // Generate the semi-permanent session key so we can add this robot to the save data
                     $mecha_session_key = $this_mecha_info['robot_base_id'].'_'.$this_mecha_info['robot_token'];
