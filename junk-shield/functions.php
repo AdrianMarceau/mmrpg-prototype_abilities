@@ -5,12 +5,18 @@ $functions = array(
         // Extract all objects into the current scope
         extract($objects);
 
-        // Define this ability's attachment token
+        // Define the total number of shield pieces
+        $num_shield_pieces = 4;
+
+        // Define the base attachment token and defense multiplier
         $this_effect_multiplier = 1 - ($this_ability->ability_recovery2 / 100);
-        $this_attachment_token = 'ability_'.$this_ability->ability_token;
+        $this_attachment_token = 'ability_'.$this_ability->ability_token.'_junk-shield';
         $this_attachment_info = array(
             'class' => 'ability',
             'ability_token' => $this_ability->ability_token,
+            'ability_image' => $this_ability->ability_image,
+            'attachment_token' => $this_attachment_token,
+            'attachment_group' => $this_attachment_token,
             'attachment_damage_input_breaker' => $this_effect_multiplier,
             'attachment_weaknesses' => array('*'),
             'attachment_weaknesses_trigger' => 'target',
@@ -18,14 +24,15 @@ $functions = array(
                 'trigger' => 'special',
                 'kind' => '',
                 'percent' => true,
+                'modifiers' => false,
                 'frame' => 'taunt',
                 'rates' => array(100, 0, 0),
-                'success' => array(1, -10, 0, -10,
-                    'The '.$this_ability->print_name().' resists all damage!<br /> '.
+                'success' => array(0, -10, 0, -10,
+                    'The '.$this_ability->print_name().' resists damage!<br /> '.
                     $this_robot->print_name().'\'s defenses were bolstered!'
                     ),
-                'failure' => array(1, -10, 0, -10,
-                    'The '.$this_ability->print_name().' resists all damage!<br /> '.
+                'failure' => array(0, -10, 0, -10,
+                    'The '.$this_ability->print_name().' resists damage!<br /> '.
                     $this_robot->print_name().'\'s defenses were bolstered!'
                     )
                 ),
@@ -37,52 +44,79 @@ $functions = array(
                 'modifiers' => false,
                 'frame' => 'defend',
                 'rates' => array(100, 0, 0),
-                'success' => array(9, -10, 0, -10,
-                    'The '.$this_ability->print_name().' faded away!<br /> '.
-                    $this_robot->print_name().' is no longer protected...'
+                'success' => array(0, -9999, -9999, -9999,
+                    'A piece of '.$this_ability->print_name().' debris crumbled away!<br /> '.
+                    $this_robot->print_name().' lost a bit of protection...'
                     ),
-                'failure' => array(9, -10, 0, -10,
-                    'The '.$this_ability->print_name().' faded away!<br /> '.
-                    $this_robot->print_name().' is no longer protected...'
+                'failure' => array(0, -9999, -9999, -9999,
+                    'A piece of '.$this_ability->print_name().' debris crumbled away!<br /> '.
+                    $this_robot->print_name().' lost a bit of protection...'
                     )
                 ),
             'ability_frame' => 0,
-            'ability_frame_animate' => array(1, 2, 0),
+            'ability_frame_animate' => array(0),
             'ability_frame_offset' => array('x' => -10, 'y' => 0, 'z' => -10)
             );
 
-        // If the ability flag was not set, skull barrier cuts damage by half
-        if (!isset($this_robot->robot_attachments[$this_attachment_token])){
+        // Define the frame offset given num pieces (0-indexed for an 8-frame sheet)
+        $this_attachment_info['ability_frame'] = 0;
+        $this_attachment_info['ability_frame_animate'] = array();
+        for ($i = 0; $i < 8; $i++){$this_attachment_info['ability_frame_animate'][] = $i;  }
 
-            // Target this robot's self
+        // Check if this ability is already summoned to the field
+        $is_summoned = false;
+        $is_summoned_in_full = false;
+        $is_summoned_tokens = array();
+        if (!empty($this_robot->robot_attachments)){
+            foreach ($this_robot->robot_attachments AS $token => $attachment){ if (strstr($token, $this_attachment_token.'_')){ $is_summoned_tokens[] = $token; } }
+            if (!empty($is_summoned_tokens)){ $is_summoned = true; }
+        }
+
+        // If the user has Quick Charge, auto-charge the ability
+        if ($this_robot->has_attribute('quick-charge')){ $is_summoned = true; $is_summoned_in_full = true; }
+
+        // If the ability flag was not set, this ability begins charging / summoning
+        if (!$is_summoned){
+
+            // Loop through and attach each piece of the shield to the user
+            $temp_animate_sequence = $this_attachment_info['ability_frame_animate'];
+            for ($i = 1; $i <= $num_shield_pieces; $i++){
+                $temp_attachment_token = $this_attachment_token.'_'.$i;
+                $temp_attachment_info = $this_attachment_info;
+                $temp_attachment_info['attachment_token'] = $temp_attachment_token;
+                $temp_attachment_info['ability_frame_animate'] = $temp_animate_sequence;
+                $this_robot->robot_attachments[$temp_attachment_token] = $temp_attachment_info;
+                array_push($temp_animate_sequence, array_shift($temp_animate_sequence));
+                array_push($temp_animate_sequence, array_shift($temp_animate_sequence));
+            }
+            $this_robot->update_session();
+
+            // Target this robot's self to trigger the summon text
             $this_ability->target_options_update(array(
                 'frame' => 'summon',
-                'success' => array(0, -10, 0, -10, $this_robot->print_name().' raises the '.$this_ability->print_name().'!')
+                'success' => array(0, -10, 0, -10, $this_robot->print_name().' raises a '.$this_ability->print_name().'!')
                 ));
-            $this_robot->trigger_target($this_robot, $this_ability);
+            $this_robot->trigger_target($this_robot, $this_ability, array('prevent_default_text' => true));
 
-            // Increase this robot's defense stat
+            // Trigger the creation text for the shield's attachments
             $this_ability->target_options_update($this_attachment_info['attachment_create'], true);
             $this_robot->trigger_target($this_robot, $this_ability);
 
-            // Attach this ability attachment to the robot using it
-            $this_robot->robot_attachments[$this_attachment_token] = $this_attachment_info;
-            $this_robot->update_session();
-
         }
-        // Else if the ability flag was set, leaf shield is thrown and defense is lowered by 30%
-        else {
+        // Else if the ability was summoned in full via charge module, throw all at once
+        elseif ($is_summoned_in_full){
 
-            // Collect the attachment from the robot to back up its info
-            $this_attachment_info = $this_robot->robot_attachments[$this_attachment_token];
-            // Remove this ability attachment to the robot using it
-            unset($this_robot->robot_attachments[$this_attachment_token]);
-            $this_robot->update_session();
+            // Target this robot's self to trigger the summon text
+            $this_ability->target_options_update(array(
+                'frame' => 'summon',
+                'success' => array(0, -10, 0, -10, $this_robot->print_name().' raises a '.$this_ability->print_name().'!')
+                ));
+            $this_robot->trigger_target($this_robot, $this_ability, array('prevent_default_text' => true));
 
             // Target the opposing robot
             $this_ability->target_options_update(array(
-                'frame' => 'summon',
-                'success' => array(0, 85, -10, -10, $this_robot->print_name().' releases the '.$this_ability->print_name().'!')
+                'frame' => 'throw',
+                'success' => array(0, 85, -10, -10, $this_robot->print_name().' throws the '.$this_ability->print_name().'!')
                 ));
             $this_robot->trigger_target($target_robot, $this_ability);
 
@@ -90,26 +124,69 @@ $functions = array(
             $this_ability->damage_options_update(array(
                 'kind' => 'energy',
                 'kickback' => array(5, 0, 0),
-                'success' => array(1, -75, 0, -10, 'The '.$this_ability->print_name().' collided with the target!'),
-                'failure' => array(1, -85, 0, -10, 'The '.$this_ability->print_name().' missed the target...')
+                'success' => array(0, -75, 0, -10, 'The '.$this_ability->print_name().' crashed into the target!'),
+                'failure' => array(0, -85, 0, -10, 'The '.$this_ability->print_name().' missed the target...')
                 ));
             $this_ability->recovery_options_update(array(
                 'kind' => 'energy',
                 'frame' => 'taunt',
                 'kickback' => array(0, 0, 0),
-                'success' => array(1, -75, 0, -10, 'The '.$this_ability->print_name().' collided with the target!'),
-                'failure' => array(1, -85, 0, -10, 'The '.$this_ability->print_name().' missed the target...')
+                'success' => array(0, -75, 0, -10, 'The '.$this_ability->print_name().' crashed the target!'),
+                'failure' => array(0, -85, 0, -10, 'The '.$this_ability->print_name().' missed the target...')
                 ));
-            $energy_damage_amount = $this_ability->ability_damage;
+            $energy_damage_amount = ($this_ability->ability_base_damage * $num_shield_pieces);
             $target_robot->trigger_damage($this_robot, $this_ability, $energy_damage_amount);
 
-            // Decrease this robot's defense stat
-            $this_ability->target_options_update($this_attachment_info['attachment_destroy']);
-            $this_robot->trigger_target($this_robot, $this_ability);
+        }
+        // Else if the ability flag was set, pieces of the shield are thrown individually
+        else {
+
+            // Loop through and throw each piece of the shield
+            for ($i = 1; $i <= $num_shield_pieces; $i++){
+                $temp_attachment_token = $this_attachment_token.'_'.$i;
+                if (isset($this_robot->robot_attachments[$temp_attachment_token])){
+                    $temp_attachment_info = $this_robot->robot_attachments[$temp_attachment_token];
+
+                    // If the target robot is NOT disabled, we can shoot them again
+                    if ($target_robot->robot_status != 'disabled'
+                        && $target_robot->robot_energy > 0){
+
+                        // Remove this specific shield piece from the user
+                        unset($this_robot->robot_attachments[$temp_attachment_token]);
+                        $this_robot->update_session();
+
+                        // Target the opposing robot with the throw action
+                        $this_ability->target_options_update(array(
+                            'frame' => 'throw',
+                            'success' => array(0, 110, -10, -10, $this_robot->print_name().' releases a piece of debris!')
+                            ));
+                        $this_robot->trigger_target($target_robot, $this_ability);
+
+                        // Inflict damage on the opposing robot with this debris piece
+                        $this_ability->damage_options_update(array(
+                            'kind' => 'energy',
+                            'kickback' => array(5, 0, 0),
+                            'success' => array(0, -35, 0, -10, 'The '.$this_ability->print_name().' piece struck the target!'),
+                            'failure' => array(0, -65, 0, -10, 'The '.$this_ability->print_name().' piece missed the target...')
+                            ));
+                        $this_ability->recovery_options_update(array(
+                            'kind' => 'energy',
+                            'frame' => 'taunt',
+                            'kickback' => array(0, 0, 0),
+                            'success' => array(0, -35, 0, -10, 'The '.$this_ability->print_name().' piece struck the target!'),
+                            'failure' => array(0, -65, 0, -10, 'The '.$this_ability->print_name().' piece missed the target...')
+                            ));
+                        $energy_damage_amount = $this_ability->ability_damage;
+                        $target_robot->trigger_damage($this_robot, $this_ability, $energy_damage_amount);
+
+                    }
+
+                }
+            }
 
         }
 
-        // Either way, update this ability's settings to prevent recovery
+        // Ensure this ability's settings use the destroy frame/text for future interactions
         $this_ability->damage_options_update($this_attachment_info['attachment_destroy'], true);
         $this_ability->recovery_options_update($this_attachment_info['attachment_destroy'], true);
         $this_ability->update_session();
@@ -123,21 +200,39 @@ $functions = array(
         // Extract all objects into the current scope
         extract($objects);
 
+        // Define the total number of shield pieces
+        $num_shield_pieces = 4;
+
         // Define this ability's attachment token
-        $this_attachment_token = 'ability_'.$this_ability->ability_token;
+        $this_attachment_token = 'ability_'.$this_ability->ability_token.'_junk-shield';
+
+        // Check if this ability is already summoned
+        $is_summoned = isset($this_robot->robot_attachments[$this_attachment_token]) ? true : false;
+
+        // Check if this ability is already summoned
+        $is_summoned = false;
+        $is_summoned_in_full = false;
+        $is_summoned_tokens = array();
+        if (!empty($this_robot->robot_attachments)){
+            foreach ($this_robot->robot_attachments AS $token => $attachment){ if (strstr($token, $this_attachment_token.'_')){ $is_summoned_tokens[] = $token; } }
+            if (!empty($is_summoned_tokens)){ $is_summoned = true; }
+        }
 
         // If the ability flag had already been set, reduce the weapon energy to zero
-        if (isset($this_robot->robot_attachments[$this_attachment_token])){ $this_ability->ability_energy = 0; }
+        if ($is_summoned){ $this_ability->set_energy(0); }
         // Otherwise, return the weapon energy back to default
-        else { $this_ability->ability_energy = $this_ability->ability_base_energy; }
+        else { $this_ability->reset_energy(); }
 
-        // If this ability is already summoned, allow targetting benched robots
-        if (isset($this_robot->robot_attachments[$this_attachment_token])){ $this_ability->ability_target = 'select_target'; }
-        // Else if the ability attachment is not there, change the target back to auto
-        else { $this_ability->ability_target = 'auto'; }
+        // If the user has Quick Charge, auto-charge the ability
+        if ($this_robot->has_attribute('quick-charge')){ $is_summoned = true; $is_summoned_in_full = true; }
 
-        // Update the ability session
-        $this_ability->update_session();
+        // If the user has Extended Range, allow bench targeting
+        if ($is_summoned && $this_robot->has_attribute('extended-range')){ $this_ability->set_target('select_target'); }
+        else { $this_ability->reset_target(); }
+
+        // If the ability is fully summoned, show the correct damage amount
+        if ($is_summoned_in_full){ $this_ability->set_damage($this_ability->ability_base_damage * $num_shield_pieces); }
+        else { $this_ability->reset_damage(); }
 
         // Return true on success
         return true;
