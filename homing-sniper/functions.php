@@ -5,150 +5,82 @@ $functions = array(
         // Extract all objects into the current scope
         extract($objects);
 
-        // Attach three whirlwind attachments to the robot
-        $this_attachment_token = 'ability_'.$this_ability->ability_token;
-        $this_attachment_info = array('class' => 'ability', 'ability_token' => $this_ability->ability_token, 'ability_frame' => 0, 'ability_frame_animate' => array(1, 2));
-        $this_robot->robot_attachments[$this_attachment_token.'_1'] = $this_attachment_info;
-        $this_robot->robot_attachments[$this_attachment_token.'_2'] = $this_attachment_info;
-        $this_robot->robot_attachments[$this_attachment_token.'_1']['ability_frame_offset'] = array('x' => 75, 'y' => -25, 'z' => 10);
-        $this_robot->robot_attachments[$this_attachment_token.'_2']['ability_frame_offset'] = array('x' => 95, 'y' => 25, 'z' => 10);
-        $this_robot->update_session();
+        // Define this ability's attachment token
+        $this_attachment_token = 'ability_'.$this_ability->ability_token.'_lockon';
+        $this_attachment_info = array(
+            'class' => 'ability',
+            'ability_id' => $this_ability->ability_id,
+            'ability_token' => $this_ability->ability_token,
+            'ability_image' => $this_ability->ability_image,
+            'attachment_token' => $this_attachment_token,
+            'attachment_duration' => 2,
+            'attachment_target_lockon' => true,
+            'ability_frame' => 5,
+            'ability_frame_animate' => array(5, 6, 7),
+            'ability_frame_offset' => array('x' => 0, 'y' => 0, 'z' => 10),
+            'attachment_create' => array(
+                'trigger' => 'special',
+                'kind' => '',
+                'percent' => true,
+                'modifiers' => false,
+                'frame' => 'taunt',
+                'rates' => array(100, 0, 0),
+                'success' => array(5, 0, 0, 10, 'A targeting reticle locked onto '.$target_robot->print_name().'!<br /> '.$target_robot->print_name().'\'s evasion was nullified!'),
+                'failure' => array(5, 0, 0, 10, 'A targeting reticle locked onto '.$target_robot->print_name().'!<br /> '.$target_robot->print_name().'\'s evasion was nullified!')
+                ),
+            'attachment_destroy' => array(
+                'trigger' => 'special',
+                'kind' => '',
+                'type' => '',
+                'percent' => true,
+                'modifiers' => false,
+                'frame' => 'defend',
+                'rates' => array(100, 0, 0),
+                'success' => array(0, -9999, -9999, -9999,  'The targeting reticle on '.$target_robot->print_name().' faded away...'),
+                'failure' => array(0, -9999, -9999, -9999, 'The targeting reticle on '.$target_robot->print_name().' faded away...')
+                )
+            );
 
         // Target the opposing robot
-        $this_battle->queue_sound_effect('whirlwind-sound');
-        $this_battle->queue_sound_effect(array('name' => 'whirlwind-sound', 'delay' => 200));
-        $this_battle->queue_sound_effect(array('name' => 'whirlwind-sound', 'delay' => 400));
         $this_ability->target_options_update(array(
             'frame' => 'shoot',
-            'success' => array(0, 115, -25, 10, $this_ability->print_name().' fires whirlwinds!')
+            'success' => array(0, 85, 0, 10, $this_robot->print_name().' fires the '.$this_ability->print_name().'!')
             ));
         $this_robot->trigger_target($target_robot, $this_ability);
 
-        // Update the two whirlwind's animation frames
-        $this_robot->robot_attachments[$this_attachment_token.'_1']['ability_frame'] = 1;
-        $this_robot->robot_attachments[$this_attachment_token.'_2']['ability_frame'] = 1;
-        $this_robot->update_session();
-
         // Inflict damage on the opposing robot
-        $this_battle->queue_sound_effect(array('name' => 'whirlwind-sound', 'volume' => 0.6));
         $this_ability->damage_options_update(array(
             'kind' => 'energy',
-            'kickback' => array(5, 0, 0),
-            'success' => array(1, -80, -25, 10, 'A whirlwind hit!'),
-            'failure' => array(1, -100, -25, -10, 'One of the whirlwinds missed!')
+            'kickback' => array(10, 0, 0),
+            'success' => array(0, -35, 0, 10, 'The '.$this_ability->print_name().' struck the target!'),
+            'failure' => array(0, -65, 0, -10, 'The '.$this_ability->print_name().' missed...')
             ));
         $this_ability->recovery_options_update(array(
             'kind' => 'energy',
             'frame' => 'taunt',
-            'kickback' => array(0, 0, 0),
-            'success' => array(1, -80, -25, 10, 'A whilrwind hit!'),
-            'failure' => array(1, -100, -25, -10, 'One of the whirlwinds missed!')
+            'kickback' => array(10, 0, 0),
+            'success' => array(0, -35, 0, 10, 'The '.$this_ability->print_name().' struck the target!'),
+            'failure' => array(0, -65, 0, -10, 'The '.$this_ability->print_name().' missed...')
             ));
         $energy_damage_amount = $this_ability->ability_damage;
         $target_robot->trigger_damage($this_robot, $this_ability, $energy_damage_amount);
 
-        // Ensure the target has not been disabled
-        if ($target_robot->robot_status != 'disabled'){
+        // Attach the lockon to the target if the attack was successful and they aren't disabled
+        if ($this_ability->ability_results['this_result'] != 'failure' && $target_robot->robot_status != 'disabled'){
+            
+            // Attach the ability to the target
+            $target_robot->robot_attachments[$this_attachment_token] = $this_attachment_info;
+            $target_robot->update_session();
 
-            // Define the success/failure text variables
-            $success_text = '';
-            $failure_text = '';
+            // Target the opposing robot to show the lock-on message
+            $this_ability->target_options_update($this_attachment_info['attachment_create'], true);
+            $target_robot->trigger_target($target_robot, $this_ability, array('prevent_default_text' => true));
 
-            // Adjust damage/recovery text based on results
-            if ($this_ability->ability_results['total_strikes'] == 1){ $success_text = 'Another whirlwind hit!'; }
-            if ($this_ability->ability_results['total_misses'] == 1){ $failure_text = 'Another whirlwind missed!'; }
-
-            // Remove the second extra whirlwind attached to the robot
-            if (isset($this_robot->robot_attachments[$this_attachment_token.'_2'])){
-                unset($this_robot->robot_attachments[$this_attachment_token.'_2']);
-                $this_robot->update_session();
-            }
-
-            // Update the remaining whirlwind's animation frame
-            $this_robot->robot_attachments[$this_attachment_token.'_1']['ability_frame'] = 2;
-            $this_robot->update_session();
-
-            // Attempt to trigger damage to the target robot again
-            $this_battle->queue_sound_effect(array('name' => 'whirlwind-sound', 'volume' => 0.6));
-            $this_ability->damage_options_update(array(
-                'kind' => 'energy',
-                'kickback' => array(10, 0, 0),
-                'success' => array(2, -40, 25, 10, $success_text),
-                'failure' => array(2, -60, 25, -10, $failure_text)
-                ));
-            $this_ability->recovery_options_update(array(
-                'kind' => 'energy',
-                'frame' => 'taunt',
-                'kickback' => array(0, 0, 0),
-                'success' => array(2, -40, 25, 10, $success_text),
-                'failure' => array(2, -60, 25, -10, $failure_text)
-                ));
-            $target_robot->trigger_damage($this_robot, $this_ability,  $energy_damage_amount);
-
-            // Ensure the target has not been disabled
-            if ($target_robot->robot_status != 'disabled'){
-
-                // Adjust damage/recovery text based on results again
-                if ($this_ability->ability_results['total_strikes'] == 1){ $success_text = 'Another whirlwind hit!'; }
-                elseif ($this_ability->ability_results['total_strikes'] == 2){ $success_text = 'A third whirlwind hit!'; }
-                if ($this_ability->ability_results['total_misses'] == 1){ $failure_text = 'Another whirlwind missed!'; }
-                elseif ($this_ability->ability_results['total_misses'] == 2){ $failure_text = 'A third whirlwind missed!'; }
-
-                // Remove the first extra whirlwind
-                if (isset($this_robot->robot_attachments[$this_attachment_token.'_1'])){
-                    unset($this_robot->robot_attachments[$this_attachment_token.'_1']);
-                    $this_robot->update_session();
-                }
-
-                // Attempt to trigger damage to the target robot a third time
-                $this_battle->queue_sound_effect(array('name' => 'whirlwind-sound', 'volume' => 0.6));
-                $this_ability->damage_options_update(array(
-                    'kind' => 'energy',
-                    'kickback' => array(15, 0, 0),
-                    'success' => array(1, -70, -25, 10, $success_text),
-                    'failure' => array(1, -90, -25, -10, $failure_text)
-                    ));
-                $this_ability->recovery_options_update(array(
-                    'kind' => 'energy',
-                    'frame' => 'taunt',
-                    'kickback' => array(0, 0, 0),
-                    'success' => array(1, -70, -25, 10, $success_text),
-                    'failure' => array(1, -90, -25, -10, $failure_text)
-                    ));
-                $target_robot->trigger_damage($this_robot, $this_ability, $energy_damage_amount);
-
-            }
-
-        }
-
-        // Remove the second whirlwind
-        if (isset($this_robot->robot_attachments[$this_attachment_token.'_2'])){
-            unset($this_robot->robot_attachments[$this_attachment_token.'_2']);
-            $this_robot->update_session();
-        }
-
-        // Remove the third whirlwind
-        if (isset($this_robot->robot_attachments[$this_attachment_token.'_1'])){
-            unset($this_robot->robot_attachments[$this_attachment_token.'_1']);
-            $this_robot->update_session();
         }
 
         // Return true on success
         return true;
 
-        },
-    'ability_function_onload' => function($objects){
-
-        // Extract all objects into the current scope
-        extract($objects);
-
-        // If the user has Extended Range, allow bench targeting
-        if ($this_robot->has_attribute('extended-range')){ $this_ability->set_target('select_target'); }
-        else { $this_ability->reset_target(); }
-
-        // Return true on success
-        return true;
-
-        }
+    }
 );
 ?>
