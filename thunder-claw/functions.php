@@ -34,7 +34,7 @@ $functions = array(
         if ($target_robot->robot_energy > 0 && $target_robot->robot_status != 'disabled'){
             
             // Calculate 50% of the target's remaining weapon energy, rounded up
-            $we_damage_amount = floor($target_robot->robot_weapons * 0.5);
+            $we_damage_amount = ceil($target_robot->robot_weapons * 0.5);
 
             if ($we_damage_amount > 0){
                 
