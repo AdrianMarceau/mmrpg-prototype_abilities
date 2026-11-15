@@ -73,7 +73,7 @@ $functions = array(
             // Target this robot's self
             $this_ability->target_options_update(array(
                 'frame' => 'summon',
-                'success' => array(-1, 0, 50, -10, $this_robot->print_name().' summons the '.$this_ability->print_name().'!')
+                'success' => array(0, -9999, -9999, -9999, $this_robot->print_name().' summons the '.$this_ability->print_name().'!')
                 ));
             $this_robot->trigger_target($this_robot, $this_ability);
 
