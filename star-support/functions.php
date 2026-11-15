@@ -257,6 +257,7 @@ $functions = array(
                         if (!in_array($next_ability_token, $unlocked_player_abilities)){ continue; }
                         $next_ability_info = $mmrpg_index_abilities[$next_ability_token];
                         if ($next_ability_type !== $next_ability_info['ability_type'] && $next_ability_type !== $next_ability_info['ability_type2']){ continue; }
+                        //error_log('$master_ability_list[] = \''.$next_ability_token.'\'');
                         $master_ability_list[] = $next_ability_token;
                         break;
                     }
@@ -288,10 +289,11 @@ $functions = array(
             //error_log('$master_ability_list for '.$this_master_token.' = '.print_r($master_ability_list, true));
             $this_master_info['robot_abilities'] = $master_ability_list;
 
-            // Now that we're set everything up, we can create the new mecha object and apply flags
+            // Now that we're set everything up, we can create the new robot object and apply flags
             $this_new_robot = rpg_game::get_robot($this_battle, $this_player, $this_master_info);
             $this_new_robot->apply_stat_bonuses();
             $this_new_robot_abilities = array();
+            //error_log('$this_new_robot->robot_abilities for '.$this_master_token.' = '.print_r($this_new_robot->robot_abilities, true));
             foreach ($this_new_robot->robot_abilities AS $this_key2 => $this_token){
                 $temp_abilityinfo = array('ability_token' => $this_token);
                 $this_new_robot_abilities[$this_key2] = rpg_game::get_ability($this_battle, $this_player, $this_new_robot, $temp_abilityinfo);
